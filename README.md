@@ -9,6 +9,7 @@ This system combines OCR, NLP, Transformer-based clause classification, semantic
 # 🚀 Core Features
 
 ## 📄 Intelligent Contract Processing
+
 - Upload legal contracts in PDF format
 - OCR-based text extraction from scanned documents
 - Automatic preprocessing and chunking of legal text
@@ -16,19 +17,23 @@ This system combines OCR, NLP, Transformer-based clause classification, semantic
 ---
 
 ## 🧠 NLP & Contract Understanding
+
 - Named Entity Recognition (NER)
 - Legal clause classification using Transformer models
-- Identification of:
-  - Termination clauses
-  - Liability clauses
-  - Confidentiality clauses
-  - Auto-renewal clauses
-  - Payment obligations
-  - Jurisdiction details
+
+### Supported Clause Types
+
+- Termination clauses
+- Liability clauses
+- Confidentiality clauses
+- Auto-renewal clauses
+- Payment obligations
+- Jurisdiction details
 
 ---
 
 ## ⚠️ Explainable Risk Analysis
+
 - Rule-based legal risk scoring
 - Detection of potentially dangerous clauses
 - Business logic-driven contract evaluation
@@ -37,6 +42,7 @@ This system combines OCR, NLP, Transformer-based clause classification, semantic
 ---
 
 ## 🔍 Semantic Search & Retrieval
+
 - Embedding-based semantic search
 - Context-aware retrieval using vector similarity
 - Meaning-based contract exploration
@@ -45,6 +51,7 @@ This system combines OCR, NLP, Transformer-based clause classification, semantic
 ---
 
 ## 🤖 Conversational Contract AI
+
 - Ask natural language questions about uploaded contracts
 - Grounded responses using retrieved contract context
 - LLM-powered legal assistance workflow
@@ -52,6 +59,7 @@ This system combines OCR, NLP, Transformer-based clause classification, semantic
 ---
 
 ## 🌐 Backend & Deployment
+
 - REST API architecture using FastAPI
 - Docker-ready deployment structure
 - AWS-compatible infrastructure
@@ -61,17 +69,21 @@ This system combines OCR, NLP, Transformer-based clause classification, semantic
 # 🧠 System Workflow
 
 ## Step 1 — Contract Upload
+
 The user uploads a legal contract through the frontend interface.
 
 ↓
 
 ## Step 2 — OCR Processing
+
 OCR extracts readable text from scanned PDFs and image-based contracts.
 
 ↓
 
 ## Step 3 — Text Preprocessing
+
 The extracted text is:
+
 - cleaned
 - normalized
 - segmented into semantic chunks
@@ -79,7 +91,9 @@ The extracted text is:
 ↓
 
 ## Step 4 — Named Entity Recognition (NER)
+
 NER models identify and extract:
+
 - Organizations
 - Contract parties
 - Dates
@@ -90,9 +104,11 @@ NER models identify and extract:
 ↓
 
 ## Step 5 — Clause Classification
+
 Transformer-based models classify legal clauses into predefined categories.
 
-Examples:
+### Example Clause Categories
+
 - Termination
 - Liability
 - Confidentiality
@@ -102,9 +118,11 @@ Examples:
 ↓
 
 ## Step 6 — Risk Analysis Engine
+
 Business rules and heuristics evaluate contract risks.
 
-Example:
+### Example Risks
+
 - unlimited liability
 - missing liability cap
 - auto-renewal risks
@@ -113,6 +131,7 @@ Example:
 ↓
 
 ## Step 7 — Embedding Generation
+
 Sentence embeddings are generated from contract chunks.
 
 These embeddings capture semantic meaning rather than exact keywords.
@@ -120,14 +139,17 @@ These embeddings capture semantic meaning rather than exact keywords.
 ↓
 
 ## Step 8 — Vector Database Storage
+
 Embeddings are stored inside a vector database for semantic retrieval.
 
 ↓
 
 ## Step 9 — Conversational AI (RAG)
+
 Users ask questions about the contract.
 
 The system:
+
 1. retrieves relevant chunks using semantic similarity
 2. injects retrieved context into prompts
 3. generates grounded responses using an LLM
@@ -137,23 +159,27 @@ The system:
 # 🛠️ Technology Stack
 
 ## Programming Language
+
 - Python
 
 ---
 
 ## Backend Framework
+
 - FastAPI
 - Uvicorn
 
 ---
 
 ## OCR Pipeline
+
 - Tesseract OCR
 - pdf2image
 
 ---
 
 ## NLP & Deep Learning
+
 - spaCy
 - Hugging Face Transformers
 - Legal-BERT
@@ -164,29 +190,34 @@ The system:
 ---
 
 ## Semantic Retrieval / RAG
+
 - FAISS
 - LangChain
 
 ---
 
 ## Conversational LLM
+
 - Llama 3
 - Mistral
 
 ---
 
 ## Frontend
+
 - React
 
 ---
 
 ## Deployment & Infrastructure
+
 - Docker
 - AWS EC2
 
 ---
 
 ## Version Control
+
 - Git
 - GitHub
 
@@ -259,6 +290,9 @@ CONTRACT_INTELLIGENCE_AI/
 ├── main.py
 ├── README.md
 └── requirements.txt
+```
+
+---
 
 # 👥 Team Responsibilities
 
@@ -278,37 +312,57 @@ CONTRACT_INTELLIGENCE_AI/
 
 ```bash
 git clone <repository-url>
+```
+
+---
 
 ## 2. Navigate to Project Directory
 
 ```bash
 cd CONTRACT_INTELLIGENCE_AI
+```
+
+---
 
 ## 3. Create Virtual Environment
 
 ```bash
 python -m venv contract_ai_env
+```
+
+---
 
 ## 4. Activate Virtual Environment
-Windows
+
+### Windows
 
 ```bash
 contract_ai_env\Scripts\activate
+```
 
-Linux / macOS
+### Linux / macOS
 
 ```bash
 source contract_ai_env/bin/activate
+```
+
+---
 
 ## 5. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
+```
+
+---
 
 ## 6. Run Backend Server
 
 ```bash
 uvicorn main:app --reload
+```
+
+---
 
 # 📌 Current Development Status
 
