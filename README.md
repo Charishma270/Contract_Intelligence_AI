@@ -413,3 +413,4 @@ To build an enterprise-grade AI-powered contract intelligence system capable of:
 This project is intended for educational and research purposes.
 
 Generated outputs should not be considered professional legal advice.
+setup done 
