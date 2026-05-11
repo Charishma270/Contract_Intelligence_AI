@@ -1,16 +1,16 @@
-# 👥 FINAL TEAM ROLES & RESPONSIBILITIES
+# 👥 TEAM ROLES & RESPONSIBILITIES
 
 ---
 
 # 🚀 AI-Powered Contract Intelligence & Risk Scoring System
 
-Using:
+## Using
 - CUAD Dataset
 - Legal NLP
 - RAG Architecture
 - LLM-based Contract Understanding
 
-Dataset:
+## Dataset
 https://huggingface.co/datasets/theatticusproject/cuad
 
 ---
@@ -30,27 +30,33 @@ Build an AI system that can:
 
 # 🧠 IMPORTANT PROJECT REALITY
 
-This project is NOT just:
+This project is **NOT** just:
 
 ```txt
 train model → done
+```
 
 This is a:
 
-software engineering project
-AI engineering project
-systems integration project
-deployment project
-collaboration project
+- Software engineering project
+- AI engineering project
+- Systems integration project
+- Deployment project
+- Collaboration project
 
 The hardest part will usually be:
 
-🔥 Integration
+```txt
+ Integration
+```
 
 NOT model training.
 
-🏗️ FINAL SYSTEM ARCHITECTURE FLOW
+---
 
+# 🏗️ FINAL SYSTEM ARCHITECTURE FLOW
+
+```txt
 Frontend Upload
         ↓
 FastAPI Backend
@@ -74,11 +80,15 @@ RAG Retrieval
 LLM Response Generation
         ↓
 Frontend Dashboard + Chatbot
+```
 
-📂 FINAL COMMON PROJECT STRUCTURE
+---
 
-EVERYONE MUST FOLLOW THIS STRUCTURE.
+# 📂 FINAL COMMON PROJECT STRUCTURE
 
+## EVERYONE MUST FOLLOW THIS STRUCTURE
+
+```txt
 project-root/
 │
 ├── backend/
@@ -145,241 +155,333 @@ project-root/
 ├── requirements.txt
 ├── README.md
 └── main.py
+```
 
-👤 MEMBER 1 — OCR, DOCUMENT PROCESSING & DATA ENGINEER
-🎯 Main Responsibility
+---
+
+# 👤 MEMBER 1 — OCR, DOCUMENT PROCESSING & DATA ENGINEER
+
+## 🎯 Main Responsibility
 
 Convert uploaded contracts into clean, structured, AI-ready text.
 
-🧠 Concepts to Understand
-OCR
-PDF parsing
-image preprocessing
-text cleaning
-chunking
-metadata handling
-CUAD preprocessing
-⚙️ Responsibilities
-📄 PDF Handling
+---
+
+## 🧠 Concepts to Understand
+
+- OCR
+- PDF parsing
+- Image preprocessing
+- Text cleaning
+- Chunking
+- Metadata handling
+- CUAD preprocessing
+
+---
+
+## ⚙️ Responsibilities
+
+### 📄 PDF Handling
 
 Handle:
 
-uploaded PDFs
-scanned contracts
-image-based contracts
-multi-page documents
-🔍 OCR Pipeline
+- Uploaded PDFs
+- Scanned contracts
+- Image-based contracts
+- Multi-page documents
 
-Using:
+---
 
-Tesseract OCR
-pdf2image
+### 🔍 OCR Pipeline
 
-Tasks:
+#### Using
+- Tesseract OCR
+- pdf2image
 
-page extraction
-OCR text extraction
-scanned document handling
-🧹 Text Cleaning
+#### Tasks
+- Page extraction
+- OCR text extraction
+- Scanned document handling
+
+---
+
+### 🧹 Text Cleaning
 
 Clean:
 
-broken text
-spacing errors
-OCR noise
-artifacts
-✂️ Chunking Strategy
+- Broken text
+- Spacing errors
+- OCR noise
+- Artifacts
+
+---
+
+### ✂️ Chunking Strategy
 
 VERY IMPORTANT.
 
 Create:
 
-semantic chunks
-overlapping chunks
-token-safe chunks
+- Semantic chunks
+- Overlapping chunks
+- Token-safe chunks
 
-Suggested:
+#### Suggested
 
+```python
 chunk_size = 500
 chunk_overlap = 100
-🧠 Metadata Generation
+```
+
+---
+
+### 🧠 Metadata Generation
 
 Every chunk MUST contain:
 
+```json
 {
   "contract_id": "",
   "chunk_id": "",
   "page_number": 1,
   "chunk_text": ""
 }
+```
 
 This helps:
 
-frontend highlighting
-chatbot citations
-debugging
-📦 CUAD Dataset Preparation
+- Frontend highlighting
+- Chatbot citations
+- Debugging
 
-Tasks:
+---
 
-inspect CUAD structure
-parse annotations
-create train/test splits
-preprocess labels
-🛠️ Technologies
-Python
-Tesseract
-pdf2image
-regex
-nltk/spacy preprocessing
-📌 Deliverables
+### 📦 CUAD Dataset Preparation
 
-✅ OCR pipeline
-✅ Clean text extraction
-✅ Chunked contracts
-✅ Metadata-enriched chunks
-✅ Processed CUAD dataset
+#### Tasks
+- Inspect CUAD structure
+- Parse annotations
+- Create train/test splits
+- Preprocess labels
 
-👤 MEMBER 2 — LEGAL AI ENGINEER (NLP + CLAUSE ANALYSIS)
-🎯 Main Responsibility
+---
+
+## 🛠️ Technologies
+
+- Python
+- Tesseract
+- pdf2image
+- regex
+- nltk/spacy preprocessing
+
+---
+
+## 📌 Deliverables
+
+- ✅ OCR pipeline
+- ✅ Clean text extraction
+- ✅ Chunked contracts
+- ✅ Metadata-enriched chunks
+- ✅ Processed CUAD dataset
+
+---
+
+# 👤 MEMBER 2 — LEGAL AI ENGINEER (NLP + CLAUSE ANALYSIS)
+
+## 🎯 Main Responsibility
 
 Build AI models that understand legal contracts.
 
-🧠 Concepts to Understand
-transformers
-tokenization
-embeddings
-legal NLP
-clause classification
-fine-tuning
-inference
-⚙️ Responsibilities
-🧠 Named Entity Recognition (NER)
+---
+
+## 🧠 Concepts to Understand
+
+- transformers
+- tokenization
+- embeddings
+- legal NLP
+- clause classification
+- fine-tuning
+- inference
+
+---
+
+## ⚙️ Responsibilities
+
+### 🧠 Named Entity Recognition (NER)
 
 Extract:
 
-organizations
-dates
-money values
-jurisdictions
-contract parties
+- Organizations
+- Dates
+- Money values
+- Jurisdictions
+- Contract parties
 
-Using:
+#### Using
+- spaCy
+- transformers
 
-spaCy
-transformers
-⚖️ Clause Classification
+---
+
+### ⚖️ Clause Classification
 
 Initially focus ONLY on:
 
-Termination
-Confidentiality
-Liability
-Auto Renewal
+- Termination
+- Confidentiality
+- Liability
+- Auto Renewal
 
 DO NOT start with all 41 CUAD labels initially.
 
-🤖 Transformer Fine-Tuning
+---
 
-Use:
+### 🤖 Transformer Fine-Tuning
 
-Legal-BERT
-RoBERTa
+#### Use
+- Legal-BERT
+- RoBERTa
 
-Tasks:
+#### Tasks
+- Tokenization
+- Label mapping
+- Training
+- Evaluation
+- Inference
 
-tokenization
-label mapping
-training
-evaluation
-inference
-📊 Evaluation
+---
 
-Metrics:
+### 📊 Evaluation
 
-precision
-recall
-F1-score
-🚨 Risk Scoring Logic
+#### Metrics
+- Precision
+- Recall
+- F1-score
 
-Example:
+---
 
-Unlimited liability → High Risk
-Auto renewal → Medium Risk
-Missing termination clause → High Risk
-📦 Structured Output Format
+### 🚨 Risk Scoring Logic
+
+#### Example
+
+- Unlimited liability → High Risk
+- Auto renewal → Medium Risk
+- Missing termination clause → High Risk
+
+---
+
+### 📦 Structured Output Format
+
+```json
 {
   "clause_type": "",
   "risk_level": "",
   "confidence": 0.0,
   "page_number": 1
 }
-🛠️ Technologies
-Hugging Face Transformers
-PyTorch
-spaCy
-tokenizers
-📌 Deliverables
+```
 
-✅ Clause classifier
-✅ NER pipeline
-✅ Risk scoring logic
-✅ Structured AI outputs
-✅ Inference pipeline
+---
 
-👤 MEMBER 3 — AI RETRIEVAL & LLM ENGINEER (RAG)
-🎯 Main Responsibility
+## 🛠️ Technologies
+
+- Hugging Face Transformers
+- PyTorch
+- spaCy
+- tokenizers
+
+---
+
+## 📌 Deliverables
+
+- ✅ Clause classifier
+- ✅ NER pipeline
+- ✅ Risk scoring logic
+- ✅ Structured AI outputs
+- ✅ Inference pipeline
+
+---
+
+# 👤 MEMBER 3 — AI RETRIEVAL & LLM ENGINEER (RAG)
+
+## 🎯 Main Responsibility
 
 Build semantic search and conversational AI.
 
-🧠 Concepts to Understand
-embeddings
-semantic similarity
-vector databases
-RAG
-prompt engineering
-LLM orchestration
-⚙️ Responsibilities
-🧬 Embedding Generation
+---
 
-Using:
+## 🧠 Concepts to Understand
 
-Sentence Transformers
+- embeddings
+- semantic similarity
+- vector databases
+- RAG
+- prompt engineering
+- LLM orchestration
 
-Recommended model:
+---
 
+## ⚙️ Responsibilities
+
+### 🧬 Embedding Generation
+
+#### Using
+- Sentence Transformers
+
+#### Recommended Model
+
+```python
 all-MiniLM-L6-v2
+```
 
 Generate embeddings for:
 
-chunks
-user queries
-🗂️ Vector Database
+- Chunks
+- User queries
+
+---
+
+### 🗂️ Vector Database
 
 Initially use:
 
+```txt
 FAISS
+```
 
 NOT Pinecone initially.
 
 Keep setup simple first.
 
-🔍 Semantic Retrieval
+---
+
+### 🔍 Semantic Retrieval
 
 Retrieve semantically similar chunks.
 
-Example:
+#### Example
 
+```txt
 "What are the termination risks?"
-🔗 LangChain Integration
+```
+
+---
+
+### 🔗 LangChain Integration
 
 Build:
 
-retrievers
-chains
-prompt workflows
-context injection
-🤖 RAG Pipeline
+- Retrievers
+- Chains
+- Prompt workflows
+- Context injection
+
+---
+
+### 🤖 RAG Pipeline
+
+```txt
 User Query
     ↓
 Embedding Search
@@ -389,101 +491,156 @@ Retrieve Relevant Chunks
 Inject Context into Prompt
     ↓
 LLM Generates Response
-💬 Contract Chatbot
+```
+
+---
+
+### 💬 Contract Chatbot
 
 Develop:
 
-contract Q&A
-AI summaries
-risk explanations
-🚨 Hallucination Reduction
+- Contract Q&A
+- AI summaries
+- Risk explanations
+
+---
+
+### 🚨 Hallucination Reduction
 
 Implement:
 
-grounded responses
-source-aware answering
-citation-aware answers
+- Grounded responses
+- Source-aware answering
+- Citation-aware answers
 
-Example:
+#### Example
 
+```txt
 "According to Page 7..."
-🔔 Embedding Version Tracking
+```
+
+---
+
+### 🔔 Embedding Version Tracking
 
 Track:
 
-embedding models
-retrieval configurations
-chunking configurations
+- Embedding models
+- Retrieval configurations
+- Chunking configurations
 
-Example:
+#### Example
 
+```python
 embedding_model = "all-MiniLM-L6-v2"
 top_k = 5
-🛠️ Technologies
-Sentence Transformers
-FAISS
-LangChain
-Hugging Face
-Llama 3
-📌 Deliverables
+```
 
-✅ Embedding pipeline
-✅ FAISS vector DB
-✅ RAG workflow
-✅ Contract chatbot
-✅ AI summaries & Q&A
+---
 
-👤 MEMBER 4 — BACKEND & SYSTEMS INTEGRATION LEAD
-🎯 Main Responsibility
+## 🛠️ Technologies
+
+- Sentence Transformers
+- FAISS
+- LangChain
+- Hugging Face
+- Llama 3
+
+---
+
+## 📌 Deliverables
+
+- ✅ Embedding pipeline
+- ✅ FAISS vector DB
+- ✅ RAG workflow
+- ✅ Contract chatbot
+- ✅ AI summaries & Q&A
+
+---
+
+# 👤 MEMBER 4 — BACKEND & SYSTEMS INTEGRATION LEAD
+
+## 🎯 Main Responsibility
 
 Connect ALL modules into ONE working system.
 
-🧠 Concepts to Understand
-APIs
-async workflows
-JSON schemas
-backend orchestration
-integration
-⚙️ Responsibilities
-🌐 FastAPI Backend
+---
+
+## 🧠 Concepts to Understand
+
+- APIs
+- async workflows
+- JSON schemas
+- backend orchestration
+- integration
+
+---
+
+## ⚙️ Responsibilities
+
+### 🌐 FastAPI Backend
 
 Build:
 
-backend architecture
-routing
-request handling
-🔌 API Endpoints
+- Backend architecture
+- Routing
+- Request handling
+
+---
+
+### 🔌 API Endpoints
+
+```http
 POST /upload
 POST /analyze
 POST /chat
 GET  /contracts
 GET  /risk-score
-🔄 Pipeline Integration
+```
+
+---
+
+### 🔄 Pipeline Integration
 
 Connect:
 
-OCR
-NLP
-RAG
-frontend
+- OCR
+- NLP
+- RAG
+- frontend
 
 This role acts as the:
 
+```txt
 🔥 Technical Lead
-🧠 Shared Schema Management
+```
+
+---
+
+### 🧠 Shared Schema Management
 
 Maintain:
 
+```txt
 schemas/
 shared_models/
-⚡ Async Processing
+```
+
+---
+
+### ⚡ Async Processing
 
 Handle:
 
-large contract processing
-long inference jobs
-background tasks
-📦 Standardized API Responses
+- Large contract processing
+- Long inference jobs
+- Background tasks
+
+---
+
+### 📦 Standardized API Responses
+
+```json
 {
   "contract_id": "",
   "risk_score": 0,
@@ -491,120 +648,179 @@ background tasks
   "clauses": [],
   "summary": ""
 }
-🔒 Error Handling
+```
+
+---
+
+### 🔒 Error Handling
 
 Implement:
 
-validation
-exception handling
-API stability
-🔀 Git Coordination
+- Validation
+- Exception handling
+- API stability
 
-Responsibilities:
+---
 
-PR reviews
-merge coordination
-API consistency
-schema consistency
-🔔 API Documentation Responsibility
+### 🔀 Git Coordination
+
+#### Responsibilities
+- PR reviews
+- Merge coordination
+- API consistency
+- Schema consistency
+
+---
+
+### 🔔 API Documentation Responsibility
 
 Maintain:
 
+```txt
 Swagger/OpenAPI docs
 docs/api_contracts.md
-🛠️ Technologies
-FastAPI
-Uvicorn
-Pydantic
-async Python
-📌 Deliverables
+```
 
-✅ Backend APIs
-✅ Integrated workflows
-✅ Shared schemas
-✅ Stable orchestration
-✅ Unified backend system
+---
 
-👤 MEMBER 5 — FRONTEND, DEVOPS & QA ENGINEER
-🎯 Main Responsibility
+## 🛠️ Technologies
+
+- FastAPI
+- Uvicorn
+- Pydantic
+- async Python
+
+---
+
+## 📌 Deliverables
+
+- ✅ Backend APIs
+- ✅ Integrated workflows
+- ✅ Shared schemas
+- ✅ Stable orchestration
+- ✅ Unified backend system
+
+---
+
+# 👤 MEMBER 5 — FRONTEND, DEVOPS & QA ENGINEER
+
+## 🎯 Main Responsibility
 
 Build UI and deploy the complete system.
 
-🧠 Concepts to Understand
-React
-frontend architecture
-API integration
-Docker
-deployment
-testing
-⚙️ Responsibilities
-🎨 Frontend Dashboard
+---
+
+## 🧠 Concepts to Understand
+
+- React
+- frontend architecture
+- API integration
+- Docker
+- deployment
+- testing
+
+---
+
+## ⚙️ Responsibilities
+
+### 🎨 Frontend Dashboard
 
 Build:
 
-upload page
-dashboard
-clause viewer
-chatbot UI
-risk visualization
-🔗 Frontend ↔ Backend Integration
+- Upload page
+- Dashboard
+- Clause viewer
+- Chatbot UI
+- Risk visualization
+
+---
+
+### 🔗 Frontend ↔ Backend Integration
 
 Integrate frontend with backend APIs.
 
-📊 Visualization
+---
+
+### 📊 Visualization
 
 Display:
 
-risk scores
-highlighted clauses
-extracted entities
-summaries
-🐳 Dockerization
+- Risk scores
+- Highlighted clauses
+- Extracted entities
+- Summaries
+
+---
+
+### 🐳 Dockerization
 
 Create:
 
-Dockerfiles
-docker-compose.yml
-☁️ Deployment
+- Dockerfiles
+- docker-compose.yml
+
+---
+
+### ☁️ Deployment
 
 Deploy on:
 
+```txt
 AWS EC2
-🧪 QA & Testing
+```
+
+---
+
+### 🧪 QA & Testing
 
 Test:
 
-upload flow
-chatbot flow
-frontend rendering
-API integration
-📈 Monitoring
+- Upload flow
+- Chatbot flow
+- Frontend rendering
+- API integration
+
+---
+
+### 📈 Monitoring
 
 Display:
 
-loading states
-inference progress
-processing logs
-🛠️ Technologies
-React
-TailwindCSS
-Axios
-Docker
-AWS
-📌 Deliverables
+- Loading states
+- Inference progress
+- Processing logs
 
-✅ Frontend dashboard
-✅ Chatbot UI
-✅ Dockerized deployment
-✅ Cloud deployment
-✅ Testing workflows
+---
 
-🔥 COMMON RULES EVERYONE MUST FOLLOW
-📦 COMMON VARIABLE NAMES
+## 🛠️ Technologies
+
+- React
+- TailwindCSS
+- Axios
+- Docker
+- AWS
+
+---
+
+## 📌 Deliverables
+
+- ✅ Frontend dashboard
+- ✅ Chatbot UI
+- ✅ Dockerized deployment
+- ✅ Cloud deployment
+- ✅ Testing workflows
+
+---
+
+# 🔥 COMMON RULES EVERYONE MUST FOLLOW
+
+## 📦 COMMON VARIABLE NAMES
 
 EVERYONE MUST USE SAME VARIABLE NAMES.
 
-✅ USE THESE
+### ✅ USE THESE
+
+```txt
 contract_id
 chunk_id
 chunk_text
@@ -616,18 +832,29 @@ summary
 embedding
 user_query
 retrieved_chunks
-❌ NEVER RANDOMLY CHANGE VARIABLE NAMES
+```
+
+---
+
+### ❌ NEVER RANDOMLY CHANGE VARIABLE NAMES
 
 BAD:
 
+```txt
 docId
 riskScore
 chunkTxt
+```
 
 This causes integration failure.
 
-📦 COMMON JSON STRUCTURES
-CONTRACT FORMAT
+---
+
+# 📦 COMMON JSON STRUCTURES
+
+## CONTRACT FORMAT
+
+```json
 {
   "contract_id": "",
   "filename": "",
@@ -638,7 +865,13 @@ CONTRACT FORMAT
   "risk_score": 0,
   "summary": ""
 }
-CHUNK FORMAT
+```
+
+---
+
+## CHUNK FORMAT
+
+```json
 {
   "chunk_id": "",
   "contract_id": "",
@@ -646,21 +879,40 @@ CHUNK FORMAT
   "chunk_text": "",
   "embedding": []
 }
-ENTITY FORMAT
+```
+
+---
+
+## ENTITY FORMAT
+
+```json
 {
   "entity_type": "",
   "entity_value": "",
   "page_number": 1
 }
-CLAUSE FORMAT
+```
+
+---
+
+## CLAUSE FORMAT
+
+```json
 {
   "clause_type": "",
   "risk_level": "",
   "confidence": 0.0,
   "page_number": 1
 }
-🔥 GIT WORKFLOW
-🌿 Branch Structure
+```
+
+---
+
+# 🔥 GIT WORKFLOW
+
+## 🌿 Branch Structure
+
+```txt
 main
 develop
 
@@ -669,42 +921,64 @@ feature/nlp
 feature/rag
 feature/backend
 feature/frontend
-✅ DAILY GIT FLOW
+```
+
+---
+
+## ✅ DAILY GIT FLOW
 
 Every member:
 
+```bash
 git checkout develop
 git pull origin develop
 
 git checkout feature/your-branch
 
-work
-commit
-push
+# work
+# commit
+# push
 
-create PR → develop
-🚫 NEVER
+# create PR → develop
+```
 
-❌ Push directly to main
-❌ Work on outdated code
-❌ Merge without testing
+---
 
-✅ COMMIT MESSAGE FORMAT
+## 🚫 NEVER
+
+- ❌ Push directly to main
+- ❌ Work on outdated code
+- ❌ Merge without testing
+
+---
+
+## ✅ COMMIT MESSAGE FORMAT
+
+```txt
 week1-mon: implemented OCR extraction pipeline
 week1-tue: added clause classification inference
 week2-wed: integrated FAISS retrieval
-🔥 WEEKLY INTEGRATION RULE
+```
 
-At end of EVERY week:
+---
+
+# 🔥 WEEKLY INTEGRATION RULE
+
+At the end of EVERY week:
 
 ALL members MUST:
 
-merge into develop
-test complete pipeline
-validate schemas
-fix broken APIs
-resolve merge conflicts
-🔥 ORDER OF DEVELOPMENT
+- Merge into develop
+- Test complete pipeline
+- Validate schemas
+- Fix broken APIs
+- Resolve merge conflicts
+
+---
+
+# 🔥 ORDER OF DEVELOPMENT
+
+```txt
 1. OCR Pipeline
         ↓
 2. NLP Pipeline
@@ -716,36 +990,47 @@ resolve merge conflicts
 5. Frontend Integration
         ↓
 6. Deployment
-🔥 ENVIRONMENT VARIABLES RULE
+```
+
+---
+
+# 🔥 ENVIRONMENT VARIABLES RULE
 
 NEVER hardcode:
 
-API keys
-tokens
-AWS credentials
-model secrets
+- API keys
+- Tokens
+- AWS credentials
+- Model secrets
 
 Use:
 
+```txt
 .env
-🔥 IMPORTANT PROJECT REALITY
+```
+
+---
+
+# 🔥 IMPORTANT PROJECT REALITY
 
 Your biggest challenge will NOT be:
 
-transformers
-LLMs
-embeddings
+- transformers
+- LLMs
+- embeddings
 
 It will be:
 
+```txt
 integration consistency
+```
 
 That’s why:
 
-shared schemas
-shared variable names
-Git discipline
-common APIs
-structured workflow
+- Shared schemas
+- Shared variable names
+- Git discipline
+- Common APIs
+- Structured workflow
 
 matter MORE than fancy models.
