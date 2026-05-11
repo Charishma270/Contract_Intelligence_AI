@@ -1,30 +1,38 @@
-👥 FINAL TEAM ROLES & RESPONSIBILITIES
-🚀 AI-Powered Contract Intelligence & Risk Scoring System
+# 👥 FINAL TEAM ROLES & RESPONSIBILITIES
+
+---
+
+# 🚀 AI-Powered Contract Intelligence & Risk Scoring System
 
 Using:
-
-CUAD Dataset
-Legal NLP
-RAG Architecture
-LLM-based Contract Understanding
+- CUAD Dataset
+- Legal NLP
+- RAG Architecture
+- LLM-based Contract Understanding
 
 Dataset:
-CUAD Dataset
+https://huggingface.co/datasets/theatticusproject/cuad
 
-🎯 PROJECT GOAL
+---
+
+# 🎯 PROJECT GOAL
 
 Build an AI system that can:
 
-Read uploaded contracts
-Extract legal entities
-Detect important clauses
-Analyze risks
-Perform semantic search
-Answer contract-related questions using LLMs
-🧠 IMPORTANT PROJECT REALITY
+- Read uploaded contracts
+- Extract legal entities
+- Detect important clauses
+- Analyze risks
+- Perform semantic search
+- Answer contract-related questions using LLMs
+
+---
+
+# 🧠 IMPORTANT PROJECT REALITY
 
 This project is NOT just:
 
+```txt
 train model → done
 
 This is a:
@@ -37,11 +45,12 @@ collaboration project
 
 The hardest part will usually be:
 
-🔥 integration
+🔥 Integration
 
 NOT model training.
 
 🏗️ FINAL SYSTEM ARCHITECTURE FLOW
+
 Frontend Upload
         ↓
 FastAPI Backend
@@ -65,6 +74,7 @@ RAG Retrieval
 LLM Response Generation
         ↓
 Frontend Dashboard + Chatbot
+
 📂 FINAL COMMON PROJECT STRUCTURE
 
 EVERYONE MUST FOLLOW THIS STRUCTURE.
@@ -72,10 +82,48 @@ EVERYONE MUST FOLLOW THIS STRUCTURE.
 project-root/
 │
 ├── backend/
+│   ├── api/
+│   ├── routes/
+│   ├── services/
+│   ├── utils/
+│   └── config/
+│
 ├── frontend/
+│   ├── public/
+│   └── src/
+│       ├── components/
+│       ├── pages/
+│       ├── services/
+│       ├── hooks/
+│       └── utils/
+│
 ├── ocr/
-├── nlp/
+│   ├── extraction/
+│   ├── preprocessing/
+│   └── outputs/
+│
 ├── rag/
+│   ├── chunking/
+│   ├── prompts/
+│   ├── retrieval/
+│   └── vector_db/
+│
+├── risk_engine/
+│   ├── analysis/
+│   ├── rules/
+│   └── scoring/
+│
+├── models/
+│   ├── clause_classifier/
+│   ├── embeddings/
+│   ├── llm/
+│   └── ner/
+│
+├── schemas/
+│   ├── common/
+│   ├── api/
+│   └── models/
+│
 ├── shared/
 │
 ├── data/
@@ -85,15 +133,19 @@ project-root/
 │
 ├── uploads/
 ├── logs/
-├── schemas/
-├── docs/
+├── notebooks/
 ├── tests/
+├── docs/
+├── scripts/
 │
 ├── .env
 ├── .env.example
-├── requirements.txt
+├── .gitignore
 ├── docker-compose.yml
-└── README.md
+├── requirements.txt
+├── README.md
+└── main.py
+
 👤 MEMBER 1 — OCR, DOCUMENT PROCESSING & DATA ENGINEER
 🎯 Main Responsibility
 
