@@ -1,16 +1,8 @@
-"""
-Mock OCR Service
-================
-Returns realistic OCR output matching the OCROutput schema.
-Used until Sruthi's real OCR pipeline is integrated.
-"""
-
 import uuid
 from typing import Optional
 
 from backend.schemas.ocr_schema import OCRChunk, OCROutput
 
-# Sample legal text chunks for mocking
 _MOCK_PAGES = [
     (
         "MASTER SERVICES AGREEMENT\n\n"
@@ -54,21 +46,6 @@ _MOCK_PAGES = [
 
 
 def run_mock_ocr(contract_id: str, file_path: Optional[str] = None) -> OCROutput:
-    """
-    Simulate OCR processing and return structured text chunks.
-
-    Parameters
-    ----------
-    contract_id : str
-        UUID of the contract being processed.
-    file_path : str, optional
-        Path to the uploaded PDF (unused in mock).
-
-    Returns
-    -------
-    OCROutput
-        Mocked OCR results with realistic legal contract text.
-    """
     chunks = []
     for page_num, text in enumerate(_MOCK_PAGES, start=1):
         chunks.append(
