@@ -298,11 +298,11 @@ CONTRACT_INTELLIGENCE_AI/
 
 | Team Member | Responsibility |
 |---|---|
-| Member 1 | OCR & Document Processing |
-| Member 2 | NLP / NER / Clause Classification |
-| Member 3 | Embeddings / RAG / Vector Database |
-| Member 4 | Backend API Development |
-| Member 5 | Frontend / Deployment / DevOps |
+| Sruthi Lakshmi Mada | OCR, Data Pipeline & Document Processing |
+| Charishma Ganta     | Legal AI Engineer                        |
+| Tisha Soni          | AI Retrieval and LLM Engineer            |
+| Shah Rushabh        | Backend & System Integration Lead        |       
+| Mukt Patel          | Frontend, DevOps & QA Engineer           |
 
 ---
 
