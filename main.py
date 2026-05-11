@@ -1,7 +1,3 @@
-"""
-Contract Intelligence AI - FastAPI Backend Entry Point
-"""
-
 import os
 import time
 from contextlib import asynccontextmanager

@@ -1,30 +1,7 @@
-"""
-Mock RAG Service
-================
-Returns realistic FAISS retrieval results and a generated answer,
-matching the schema Tisha's real retrieval module will produce.
-"""
-
 from backend.schemas.rag_schema import ChatResponse, RetrievedChunk
 
 
 def run_mock_rag(contract_id: str, query: str) -> ChatResponse:
-    """
-    Simulate RAG retrieval + LLM generation.
-
-    Parameters
-    ----------
-    contract_id : str
-        UUID of the contract being queried.
-    query : str
-        Natural language user question.
-
-    Returns
-    -------
-    ChatResponse
-        Mocked response with retrieved chunks and citations.
-    """
-    # Simulate retrieved chunks from FAISS
     retrieved_chunks = [
         RetrievedChunk(
             chunk_id="chunk-001",
@@ -60,7 +37,6 @@ def run_mock_rag(contract_id: str, query: str) -> ChatResponse:
         ),
     ]
 
-    # Simulate LLM-generated answer
     answer = (
         f"Based on the contract for '{contract_id}', regarding your question: "
         f"'{query}' — The agreement includes a termination for convenience clause "
@@ -71,7 +47,6 @@ def run_mock_rag(contract_id: str, query: str) -> ChatResponse:
     )
 
     citations = [f"Page {c.page}" for c in retrieved_chunks]
-    # Deduplicate while preserving order
     seen = set()
     unique_citations = []
     for c in citations:

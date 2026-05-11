@@ -1,26 +1,7 @@
-"""
-Mock NLP Service
-================
-Returns realistic NER entities and CUAD clause predictions.
-Covers the 4 clauses Charishma is targeting:
-  - Termination For Convenience
-  - Renewal Term
-  - Cap On Liability
-  - Uncapped Liability
-"""
-
 from backend.schemas.nlp_schema import ClausePrediction, EntityPrediction, NLPOutput
 
 
 def run_mock_nlp(contract_id: str) -> NLPOutput:
-    """
-    Simulate NLP processing with realistic clause & entity results.
-
-    Returns
-    -------
-    NLPOutput
-        Mocked NLP results with extractive QA spans and NER entities.
-    """
     clauses = [
         ClausePrediction(
             clause_type="Termination For Convenience",

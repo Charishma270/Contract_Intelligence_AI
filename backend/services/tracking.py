@@ -1,11 +1,3 @@
-"""
-Contract Tracking Service — SQLite via SQLAlchemy
-==================================================
-Manages the Contract table: status workflow tracking,
-CRUD operations, and pagination support.
-Database stored at data/contracts.db.
-"""
-
 import os
 from datetime import datetime
 from typing import List, Optional
@@ -15,9 +7,6 @@ from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
 from backend.schemas.contract_schema import ContractMetadata, ContractStatus
 
-# ---------------------------------------------------------------------------
-# Database setup
-# ---------------------------------------------------------------------------
 DB_DIR = "data"
 DB_PATH = os.path.join(DB_DIR, "contracts.db")
 DATABASE_URL = f"sqlite:///{DB_PATH}"
@@ -27,11 +16,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 
-# ---------------------------------------------------------------------------
-# ORM Model
-# ---------------------------------------------------------------------------
 class ContractRecord(Base):
-    """SQLAlchemy ORM model for the contracts table."""
     __tablename__ = "contracts"
 
     contract_id = Column(String, primary_key=True, index=True)
@@ -46,17 +31,12 @@ class ContractRecord(Base):
     file_size_bytes = Column(Integer, nullable=True)
 
 
-# ---------------------------------------------------------------------------
-# Database initialisation
-# ---------------------------------------------------------------------------
 def init_db():
-    """Create all tables if they don't exist."""
     os.makedirs(DB_DIR, exist_ok=True)
     Base.metadata.create_all(bind=engine)
 
 
 def get_db() -> Session:
-    """Yield a database session (for FastAPI dependency injection)."""
     db = SessionLocal()
     try:
         yield db
@@ -64,15 +44,11 @@ def get_db() -> Session:
         db.close()
 
 
-# ---------------------------------------------------------------------------
-# CRUD helpers
-# ---------------------------------------------------------------------------
 def create_contract(
     contract_id: str,
     filename: str,
     file_size_bytes: Optional[int] = None,
 ) -> ContractMetadata:
-    """Insert a new contract record."""
     db = SessionLocal()
     try:
         record = ContractRecord(
@@ -91,7 +67,6 @@ def create_contract(
 
 
 def get_contract(contract_id: str) -> Optional[ContractMetadata]:
-    """Fetch a single contract by ID."""
     db = SessionLocal()
     try:
         record = db.query(ContractRecord).filter(
@@ -103,7 +78,6 @@ def get_contract(contract_id: str) -> Optional[ContractMetadata]:
 
 
 def list_contracts(skip: int = 0, limit: int = 20) -> List[ContractMetadata]:
-    """List contracts with pagination."""
     db = SessionLocal()
     try:
         records = (
@@ -123,7 +97,6 @@ def update_status(
     status: ContractStatus,
     error_message: Optional[str] = None,
 ) -> Optional[ContractMetadata]:
-    """Update the processing status of a contract."""
     db = SessionLocal()
     try:
         record = db.query(ContractRecord).filter(
@@ -142,7 +115,6 @@ def update_status(
 
 
 def _to_metadata(record: ContractRecord) -> ContractMetadata:
-    """Convert ORM record to Pydantic model."""
     return ContractMetadata(
         contract_id=record.contract_id,
         filename=record.filename,
