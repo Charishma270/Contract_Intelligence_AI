@@ -1,14 +1,30 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Dashboard from "./pages/Dashboard";
+
 function App() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <h1 className="text-5xl font-bold text-blue-600">
-        Tailwind Working 
-      </h1>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
 export default App;
+
+// function App() {
+//   return (
+//     <div className="min-h-screen flex items-center justify-center bg-gray-100">
+//       <h1 className="text-5xl font-bold text-blue-600">
+//         Tailwind Working 
+//       </h1>
+//     </div>
+//   );
+// }
+
+// export default App;
 
 // import { useState } from 'react'
 // import reactLogo from './assets/react.svg'
