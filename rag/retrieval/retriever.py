@@ -1,42 +1,48 @@
-from rag.retrieval.embedder import generate_embedding
-from rag.vector_db.faiss_store import add_embedding, search_embedding
-from rag.chunking.chunker import chunk_text
+import pandas as pd
+
 from rag.chunking.preprocessor import clean_text
+from rag.retrieval.embedder import generate_embedding
+from rag.vector_db.faiss_store import (
+    add_embedding,
+    search_embedding
+)
 
-# Sample contract text
-sample_contract = """
-This   agreement may terminate with 30 days notice!!!
+# Load dataset
+df = pd.read_csv("data/processed/clause_classification_dataset.csv")
 
-Confidential information must not be shared@@@
+print("\nLoading and indexing legal clauses...\n")
 
-Unlimited liability applies to damages.
+# Store clauses into FAISS
+for index, row in df.iterrows():
 
-Payment must be completed within 15 days.
+    text = str(row["text"])
 
-The client may renew the agreement annually.
-"""
+    cleaned_text = clean_text(text)
 
-# Clean contract text
-cleaned_contract = clean_text(sample_contract)
+    if cleaned_text.strip() == "":
+        continue
 
-# Generate chunks automatically
-chunks = chunk_text(cleaned_contract, chunk_size=8)
+    embedding = generate_embedding(cleaned_text)
 
-# Store embeddings in FAISS
-for chunk in chunks:
-    embedding = generate_embedding(chunk)
-    add_embedding(embedding, chunk)
+    add_embedding(embedding, cleaned_text)
 
 # User query
 query = "termination clause"
 
+print(f"\nUser Query: {query}\n")
+
 # Generate query embedding
 query_embedding = generate_embedding(query)
 
-# Retrieve most relevant chunks
+# Search similar clauses
 results = search_embedding(query_embedding)
 
-print("\nTop Retrieved Chunks:\n")
+print("\nTop Retrieved Legal Clauses:\n")
 
-for result in results:
+# Remove duplicates
+unique_results = list(set(results))
+
+# Print results
+for result in unique_results:
     print(result)
+    print("\n" + "-" * 80 + "\n")
