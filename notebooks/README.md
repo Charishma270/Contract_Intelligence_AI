@@ -32,6 +32,7 @@ Initial exploration and understanding of the CUAD (Contract Understanding Atticu
 - Contracts are divided into paragraphs
 - Each paragraph contains legal Q&A annotations
 - `is_impossible=True` indicates absence of a clause
+- Legal datasets often require extensive preprocessing before model training
 
 ---
 
@@ -40,6 +41,7 @@ Initial exploration and understanding of the CUAD (Contract Understanding Atticu
 - Dataset understanding
 - Label analysis
 - Clause inspection
+- Dataset structure validation
 - Preprocessing strategy planning
 
 ---
@@ -62,6 +64,7 @@ Convert the CUAD legal QA dataset into a binary clause classification dataset su
 - Implemented contextual clause extraction
 - Reduced dataset size significantly by avoiding full-contract duplication
 - Generated structured classification dataset
+- Exported processed dataset for downstream ML pipelines
 
 ---
 
@@ -114,13 +117,14 @@ Convert the CUAD legal QA dataset into a binary clause classification dataset su
 - Reduced dataset noise significantly
 - Improved ML suitability for classification tasks
 - Prevented model memorization of company names
+- Improved feature relevance for downstream classifiers
 
 ---
 
 # 3️⃣ `baseline_clause_classifier.ipynb`
 
 ## 🎯 Purpose
-Train and evaluate a baseline machine learning model for legal clause classification before transformer fine-tuning.
+Train and evaluate a baseline Logistic Regression classifier for legal clause classification before transformer fine-tuning.
 
 ---
 
@@ -139,6 +143,7 @@ Train and evaluate a baseline machine learning model for legal clause classifica
 - Analyzed confusion matrix
 - Performed feature importance analysis
 - Compared preprocessing impact before vs after clause-level extraction
+- Implemented Stratified K-Fold Cross Validation
 
 ---
 
@@ -168,7 +173,9 @@ Evaluation Metrics
 
 ---
 
-## 📈 Baseline Model Results
+## 📈 Logistic Regression Results
+
+### Hold-Out Evaluation
 
 | Metric | Score |
 |---|---|
@@ -179,10 +186,22 @@ Evaluation Metrics
 
 ---
 
+### Cross Validation Results
+
+| Metric | Mean Score |
+|---|---|
+| Accuracy | 90.6% |
+| Precision | 94.4% |
+| Recall | 79.0% |
+| F1-Score | 86.0% |
+
+---
+
 ## 📌 Key Findings
 
 - Clause-level preprocessing dramatically improved performance
 - Model learned legal terminology instead of memorizing company names
+- Cross-validation confirmed stable generalization performance
 - Most predictive features:
   - liability
   - termination
@@ -213,16 +232,104 @@ models/baseline_classifier/
 - Preprocessing quality strongly affects NLP model performance
 - Clause-level contextual snippets outperform full-contract inputs
 - Baseline ML models provide critical validation before transformer fine-tuning
+- Cross-validation is essential for reliability verification
 - Recall is especially important for legal AI systems
+
+---
+
+# 4️⃣ `baseline_clause_classifier_svm.ipynb`
+
+## 🎯 Purpose
+Train and evaluate a LinearSVC baseline classifier for legal clause classification and compare performance against Logistic Regression.
+
+---
+
+## ✅ Work Completed
+
+- Reused processed clause classification dataset
+- Applied identical preprocessing and TF-IDF configuration
+- Trained LinearSVC classifier
+- Evaluated:
+  - Accuracy
+  - Precision
+  - Recall
+  - F1-score
+- Compared model performance against Logistic Regression baseline
+- Analyzed reduction in false negatives
+- Validated improvement in clause detection reliability
+
+---
+
+## ⚙️ ML Pipeline
+
+```txt
+Clause Dataset
+    ↓
+TF-IDF Vectorization
+    ↓
+LinearSVC
+    ↓
+Evaluation Metrics
+```
+
+---
+
+## 📊 LinearSVC Results
+
+| Metric | Score |
+|---|---|
+| Accuracy | 93.9% |
+| Precision | 94.9% |
+| Recall | 87.9% |
+| F1-Score | 91.3% |
+
+---
+
+## 📌 Key Findings
+
+- LinearSVC outperformed Logistic Regression across all evaluation metrics
+- Significant recall improvement:
+  - 81.9% → 87.9%
+- False negatives reduced:
+  - 27 → 18
+- "Termination For Convenience" classification improved substantially
+- SVM margin-based classification handled sparse TF-IDF vectors more effectively
+
+---
+
+## 🧠 Key Learnings
+
+- LinearSVC performs strongly on sparse high-dimensional legal text
+- Better margin separation improved clause detection recall
+- Strong preprocessing enabled classical ML models to achieve high performance
+- Baseline comparisons provide meaningful benchmarks before transformer fine-tuning
+
+---
+
+# 📊 Baseline Model Comparison
+
+| Model | Accuracy | Precision | Recall | F1-Score |
+|---|---|---|---|---|
+| Logistic Regression | 91.4% | 93.9% | 81.9% | 87.5% |
+| LinearSVC | 93.9% | 94.9% | 87.9% | 91.3% |
+
+---
+
+## 🧠 Comparison Summary
+
+- LinearSVC achieved the best overall performance
+- Largest improvement observed in recall
+- Clause-level preprocessing was the biggest contributor to model improvement
+- Classical ML baselines established strong benchmark performance prior to Legal-BERT experimentation
 
 ---
 
 ## 🚧 Next Planned Steps
 
-- Cross-validation experiments
-- SVM baseline comparison
 - Hyperparameter tuning
+- Confidence score calibration
 - Legal-BERT tokenizer integration
 - Legal-BERT fine-tuning
+- Transformer benchmarking
 - Inference pipeline development
 - API integration
