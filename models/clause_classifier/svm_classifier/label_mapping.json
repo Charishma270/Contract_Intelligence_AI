@@ -1,0 +1,22 @@
+{
+  "label_names": [
+    "Cap On Liability",
+    "Renewal Term",
+    "Termination For Convenience",
+    "Uncapped Liability"
+  ],
+  "target_mapping": {
+    "0": "clause_absent",
+    "1": "clause_present"
+  },
+  "label_distribution": {
+    "Renewal Term": 510,
+    "Termination For Convenience": 510,
+    "Uncapped Liability": 510,
+    "Cap On Liability": 510
+  },
+  "target_distribution": {
+    "0": 1295,
+    "1": 745
+  }
+}

@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
+import Upload from "./pages/Upload"; 
+import ClauseViewer from "./pages/ClauseViewer";
 
 function App() {
   return (
@@ -7,6 +9,11 @@ function App() {
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        
+        
+        <Route path="/upload" element={<Upload />} />
+        <Route path="/viewer" element={<ClauseViewer />} />
+        
       </Routes>
     </BrowserRouter>
   );
