@@ -112,7 +112,10 @@ backend/
 ├── routes/
 │   ├── __init__.py
 │   ├── upload.py          # POST /api/upload
-│   └── contracts.py       # GET /api/contracts
+│   ├── contracts.py       # GET /api/contracts
+│   ├── analyze.py         # POST /api/analyze
+│   ├── risk.py            # GET /api/risk-score/{id}
+│   └── chat.py            # POST /api/chat
 ├── schemas/
 │   ├── __init__.py
 │   ├── ocr_schema.py
@@ -122,6 +125,7 @@ backend/
 ├── services/
 │   ├── __init__.py
 │   ├── tracking.py        # SQLite + SQLAlchemy
+│   ├── pipeline.py        # Sequential pipeline orchestrator
 │   ├── mock_ocr.py
 │   ├── mock_nlp.py
 │   └── mock_rag.py
@@ -143,7 +147,7 @@ backend/
 ## Error Handling
 
 | Status | Meaning                     |
-|--------|-----------------------------|
+|--------|-----------------------------| 
 | 400    | Bad request / invalid input |
 | 404    | Contract not found          |
 | 413    | File too large (>20 MB)     |
@@ -152,10 +156,17 @@ backend/
 
 ---
 
-## Next Steps (Week 2+)
+## Progress
 
-- [ ] `/api/analyze` — full pipeline orchestration
-- [ ] `/api/risk-score` — risk scoring endpoint
-- [ ] `/api/chat` — RAG chatbot with Tisha's FAISS retrieval
+- [x] `/api/upload` — PDF upload with validation
+- [x] `/api/contracts` — contract listing & status
+- [x] `/api/analyze` — full pipeline orchestration (Day 8)
+- [x] `/api/risk-score` — rule-based risk scoring endpoint (Day 10)
+- [x] `/api/chat` — RAG chatbot with FAISS retrieval (Day 9)
+
+## Next Steps
+
 - [ ] Celery async task processing
-- [ ] Real OCR/NLP/RAG integration
+- [ ] Real OCR/NLP/RAG integration (replace mocks)
+- [ ] WebSocket support for live processing updates
+- [ ] Authentication & authorization
