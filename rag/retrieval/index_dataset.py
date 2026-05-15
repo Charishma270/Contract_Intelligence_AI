@@ -1,8 +1,15 @@
 import pandas as pd
 
 from rag.chunking.preprocessor import clean_text
+from rag.chunking.chunker import chunk_text
 from rag.retrieval.embedder import generate_embedding
-from rag.vector_db.faiss_store import add_embedding
+
+from rag.vector_db.faiss_store import (
+    add_embedding,
+    save_index
+)
+
+
 
 # Load processed dataset
 df = pd.read_csv("data/processed/clause_classification_dataset.csv")
@@ -22,14 +29,28 @@ for index, row in df.iterrows():
     if cleaned_text.strip() == "":
         continue
 
-    # Generate embedding
-    embedding = generate_embedding(cleaned_text)
+    # Split into chunks
+    chunks = chunk_text(cleaned_text)
 
-    # Store in FAISS
-    add_embedding(embedding, cleaned_text)
+    # Generate embeddings for each chunk
+    for chunk in chunks:
+
+        embedding = generate_embedding(chunk)
+
+        add_embedding(
+            embedding,
+            {
+                "text": chunk,
+                "label_name": row["label_name"],
+                "target": int(row["target"])
+            }
+        )
 
     # Progress log
     if index % 100 == 0:
         print(f"Indexed {index} rows")
 
+
 print("\nFAISS indexing completed successfully!")
+
+save_index()

@@ -10,39 +10,37 @@ from rag.vector_db.faiss_store import (
 # Load dataset
 df = pd.read_csv("data/processed/clause_classification_dataset.csv")
 
-print("\nLoading and indexing legal clauses...\n")
+print("\nTesting metadata-aware retrieval...\n")
 
-# Store clauses into FAISS
-for index, row in df.iterrows():
+# Index small sample for testing
+sample_df = df
+
+for _, row in sample_df.iterrows():
 
     text = str(row["text"])
 
     cleaned_text = clean_text(text)
 
-    if cleaned_text.strip() == "":
-        continue
-
     embedding = generate_embedding(cleaned_text)
 
-    add_embedding(embedding, cleaned_text)
+    add_embedding(
+        embedding,
+        {
+            "text": cleaned_text,
+            "label_name": row["label_name"],
+            "target": int(row["target"])
+        }
+    )
 
-# User query
-query = "termination clause"
+# Test query
+query = "liability clause"
 
-print(f"\nUser Query: {query}\n")
-
-# Generate query embedding
 query_embedding = generate_embedding(query)
 
-# Search similar clauses
-results = search_embedding(query_embedding)
+results = search_embedding(query_embedding, top_k=2)
 
-print("\nTop Retrieved Legal Clauses:\n")
+print("\nRetrieved Results:\n")
 
-# Remove duplicates
-unique_results = list(set(results))
-
-# Print results
 for result in results:
 
     print(f"Label: {result['label_name']}")
@@ -53,4 +51,3 @@ for result in results:
     print(result["text"])
 
     print("\n" + "-" * 80 + "\n")
-    
