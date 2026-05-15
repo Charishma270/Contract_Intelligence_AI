@@ -5,6 +5,14 @@ from rag.vector_db.faiss_store import (
     search_embedding
 )
 
+from risk_engine.analysis.classifier_inference import (
+    classify_clause
+)
+
+from risk_engine.scoring.risk_rules import (
+    calculate_risk
+)
+
 print("\nLoading FAISS index...\n")
 
 # Load FAISS index
@@ -15,7 +23,7 @@ query = "termination clause"
 
 print(f"\nUser Query: {query}\n")
 
-# Generate embedding
+# Generate query embedding
 query_embedding = generate_embedding(query)
 
 print("Embedding Shape:", query_embedding.shape)
@@ -37,7 +45,22 @@ if len(results) == 0:
 # Display results
 for result in results:
 
-    print(f"Label: {result['label_name']}")
+    # ML classification
+    predicted_label = classify_clause(
+        result["text"]
+    )
+
+    # Risk scoring
+    risk_level = calculate_risk(
+        predicted_label
+    )
+
+    # Output
+    print(f"Retrieved Label: {result['label_name']}")
+    print(f"Predicted Label: {predicted_label}")
+
+    print(f"Risk Level: {risk_level}")
+
     print(f"Target: {result['target']}")
     print(f"Similarity Score: {result['score']:.4f}")
 
