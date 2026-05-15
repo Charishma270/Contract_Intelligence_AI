@@ -18,7 +18,7 @@ function Sidebar() {
           Clause Viewer
         </Link>
 
-        <Link to="/chat" className="hover:text-blue-400">
+        <Link to="/chatbot" className="hover:text-blue-400">
           Chatbot
         </Link>
       </nav>

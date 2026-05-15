@@ -1,0 +1,63 @@
+{
+  "model": "LogisticRegression",
+  "vectorizer": "TfidfVectorizer",
+  "vectorizer_params": {
+    "max_features": 10000,
+    "ngram_range": [
+      1,
+      2
+    ],
+    "stop_words": "english",
+    "min_df": 2,
+    "max_df": 0.95
+  },
+  "split": {
+    "test_size": 0.2,
+    "random_state": 42,
+    "stratified": true,
+    "train_samples": 1632,
+    "test_samples": 408
+  },
+  "overall_metrics": {
+    "accuracy": 0.9142,
+    "precision": 0.9385,
+    "recall": 0.8188,
+    "f1_score": 0.8746
+  },
+  "confusion_matrix": {
+    "true_negatives": 251,
+    "false_positives": 8,
+    "false_negatives": 27,
+    "true_positives": 122
+  },
+  "per_label_metrics": {
+    "Cap On Liability": {
+      "samples": 98,
+      "accuracy": 0.898,
+      "precision": 1.0,
+      "recall": 0.8039,
+      "f1_score": 0.8913
+    },
+    "Renewal Term": {
+      "samples": 108,
+      "accuracy": 0.9259,
+      "precision": 0.9355,
+      "recall": 0.8286,
+      "f1_score": 0.8788
+    },
+    "Termination For Convenience": {
+      "samples": 105,
+      "accuracy": 0.8762,
+      "precision": 0.9032,
+      "recall": 0.7368,
+      "f1_score": 0.8116
+    },
+    "Uncapped Liability": {
+      "samples": 97,
+      "accuracy": 0.9588,
+      "precision": 0.8889,
+      "recall": 0.96,
+      "f1_score": 0.9231
+    }
+  }
+}
