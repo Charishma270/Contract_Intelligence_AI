@@ -2,7 +2,6 @@ import pandas as pd
 
 from rag.chunking.preprocessor import clean_text
 from rag.chunking.chunker import chunk_text
-
 from rag.retrieval.embedder import generate_embedding
 
 from rag.vector_db.faiss_store import (
@@ -16,7 +15,6 @@ from rag.vector_db.faiss_store import (
 df = pd.read_csv("data/processed/clause_classification_dataset.csv")
 
 print("\nIndexing dataset into FAISS...\n")
-
 
 # Store embeddings
 for index, row in df.iterrows():
