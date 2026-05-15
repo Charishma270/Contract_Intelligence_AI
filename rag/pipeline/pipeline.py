@@ -41,7 +41,10 @@ def run_pipeline(query):
     # No results case
     if len(results) == 0:
         print("No matching clauses found.")
-        return
+        return []
+
+    # Store final pipeline output
+    pipeline_results = []
 
     # Track duplicate clauses
     seen_clauses = set()
@@ -67,6 +70,25 @@ def run_pipeline(query):
             predicted_label
         )
 
+        # Store structured output
+        pipeline_results.append({
+
+            "retrieved_label": result["label_name"],
+
+            "predicted_label": predicted_label,
+
+            "risk_level": risk_level,
+
+            "target": result["target"],
+
+            "similarity_score": round(
+                result["score"],
+                4
+            ),
+
+            "clause_text": clause_text
+        })
+
         # Display formatted output
         print(f"\nRESULT #{index}")
         print("=" * 80)
@@ -84,10 +106,15 @@ def run_pipeline(query):
 
         print("\n" + "-" * 80)
 
+    # Return structured results
+    return pipeline_results
+
 
 # Run pipeline
 if __name__ == "__main__":
 
     user_query = "contract termination"
 
-    run_pipeline(user_query)
+    final_results = run_pipeline(user_query)
+
+    print("\nPipeline executed successfully!")
