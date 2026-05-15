@@ -2,17 +2,18 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import Upload from "./pages/Upload"; 
 import ClauseViewer from "./pages/ClauseViewer";
+import Chatbot from "./pages/Chatbot";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+
         <Route path="/" element={<Dashboard />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        
-        
         <Route path="/upload" element={<Upload />} />
         <Route path="/viewer" element={<ClauseViewer />} />
+        <Route path="/chatbot" element={<Chatbot />} />
         
       </Routes>
     </BrowserRouter>
