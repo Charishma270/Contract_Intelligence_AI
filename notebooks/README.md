@@ -478,7 +478,112 @@ models/legal_bert_classifier/
 
 ---
 
+# 6️⃣ `multi_label_clause_dataset.ipynb`
+
+## 🎯 Purpose
+
+Transform the CUAD dataset into a full **multi-label classification** dataset across all 41 legal clause categories, with contract-level provenance tracking to prevent train/test data leakage.
+
+This replaces the previous 4-label binary classification format with a proper multi-label structure suitable for Legal-BERT fine-tuning.
+
+---
+
+## ✅ Work Completed
+
+- Loaded full CUAD dataset (510 contracts)
+- Auto-extracted all 41 unique clause labels
+- Built label engineering pipeline:
+  - `all_labels` sorted list
+  - `label_to_index` mapping
+  - `index_to_label` mapping
+- Preserved clause-level contextual extraction logic:
+  - `extract_positive_text()` — answer span + surrounding context
+  - `extract_negative_text()` — random contract excerpt
+- Implemented two-pass multi-label aggregation:
+  - Pass 1: collect all (snippet, label, target, contract_id) tuples
+  - Pass 2: aggregate labels per unique snippet using logical OR
+- Added `contract_id` provenance tracking on every row
+- Built contract-level train/test split function
+- Comprehensive dataset validation
+- Saved dataset, label mappings, and statistics
+
+---
+
+## 📊 Dataset Format
+
+| text | contract_id | Affiliate License-Licensee | ... | Warranty Duration |
+|---|---|---|---|---|
+| clause snippet | ContractName | 0 | ... | 1 |
+| clause snippet | ContractName | 1 | ... | 0 |
+
+Each label column is binary: `1` = clause present, `0` = clause absent.
+
+---
+
+## ⚙️ Key Design Decisions
+
+### Multi-Label Aggregation
+- One row per unique snippet (not one row per label decision)
+- Labels merged via logical OR across all QA annotations
+- Eliminates 41x row duplication
+
+### Contract-Level Leakage Prevention
+- Every snippet stores its source `contract_id`
+- `get_contract_level_split()` splits by contract — not random rows
+- Prevents model from learning document style instead of legal semantics
+
+### Negative Snippet Noise
+- Known limitation: random negative excerpts may contain unannotated clause language
+- Acceptable for now — positives provide strong learning signal
+
+---
+
+## 📌 Final Dataset Statistics
+
+| Property | Value |
+|---|---|
+| Total Rows | 20,104 |
+| Total Columns | 43 (text + contract_id + 41 labels) |
+| Labels | 41 |
+| Unique Contracts | 510 |
+| Null Values | 0 |
+| Duplicate Rows | 0 |
+| Label Values | Binary (0, 1) |
+
+---
+
+## 📂 Saved Outputs
+
+Stored inside:
+
+```txt
+data/processed/
+```
+
+### Includes
+
+- `multi_label_clause_dataset.csv` — full dataset (14.4 MB)
+- `label_mapping.json` — label-to-index and index-to-label mappings
+- `dataset_statistics.json` — comprehensive dataset statistics
+- `label_distribution.png` — positive count per label chart
+- `multilabel_distribution.png` — active labels per snippet histogram
+
+---
+
+## 🧠 Key Learnings
+
+- Multi-label classification requires sigmoid activation (not softmax)
+- `BCEWithLogitsLoss` is the correct loss function (not `CrossEntropyLoss`)
+- Contract-level splitting is critical for realistic legal NLP evaluation
+- Two-pass aggregation prevents snippet duplication while preserving all label information
+- Rare labels in legal datasets require careful imbalance handling during training
+
+---
+
 # 📊 Final Model Benchmark Comparison
+
+> **Note**: These benchmarks are from the previous 4-label binary classification experiments.
+> Multi-label evaluation on all 41 labels will follow in the next phase.
 
 | Model | Accuracy | Precision | Recall | F1-Score |
 |---|---|---|---|---|
@@ -497,15 +602,17 @@ models/legal_bert_classifier/
 - Transformer models significantly improve semantic legal understanding
 - Recall is the most important metric for legal AI risk detection systems
 - Legal-BERT substantially reduced dangerous false negatives
+- Contract-level train/test splitting prevents data leakage in legal NLP
+- Multi-label aggregation avoids dataset bloat while preserving label richness
 
 ---
 
 ## 🚧 Next Planned Steps
 
-- Multi-label Legal-BERT classification
-- Training on all 41 CUAD labels
+- ~~Multi-label dataset creation~~ ✅ Complete
+- Multi-label Legal-BERT fine-tuning (41 labels, sigmoid + BCEWithLogitsLoss)
 - Hyperparameter tuning
-- Threshold calibration
+- Threshold calibration per label
 - Confidence score analysis
 - Inference API development
 - Legal risk scoring system
