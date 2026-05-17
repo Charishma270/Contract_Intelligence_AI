@@ -121,9 +121,6 @@ htmlcov/
 *.sqlite3
 *.db
 
-# Vector DB artifacts
-data/vector_store/
-
 # Embeddings
 data/embeddings/
 
