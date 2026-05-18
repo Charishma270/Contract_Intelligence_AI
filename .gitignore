@@ -13,6 +13,7 @@ venv/
 env/
 ENV/
 contract_ai_env/
+contract_ai_gpu_env/
 
 # -----------------------------
 # Environment Variables
@@ -119,3 +120,10 @@ htmlcov/
 # -----------------------------
 *.sqlite3
 *.db
+
+# Embeddings
+data/embeddings/
+
+# Python cache
+__pycache__/
+*.pyc
