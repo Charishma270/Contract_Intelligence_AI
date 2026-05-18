@@ -9,7 +9,7 @@ from fastapi import APIRouter, HTTPException
 
 from backend.schemas.rag_schema import ChatRequest, ChatResponse
 from backend.services.tracking import get_contract
-from backend.services.mock_rag import run_mock_rag
+from backend.services.rag import run_rag
 
 router = APIRouter()
 
@@ -38,7 +38,7 @@ async def chat_with_contract(request: ChatRequest):
         )
 
     try:
-        response = run_mock_rag(request.contract_id, request.query)
+        response = run_rag(request.contract_id, request.query)
         return response
     except Exception as e:
         raise HTTPException(
