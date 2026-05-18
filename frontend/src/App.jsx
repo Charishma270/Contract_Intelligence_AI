@@ -3,6 +3,7 @@ import Dashboard from "./pages/Dashboard";
 import Upload from "./pages/Upload"; 
 import ClauseViewer from "./pages/ClauseViewer";
 import Chatbot from "./pages/Chatbot";
+import Analyze from "./pages/Analyze";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/upload" element={<Upload />} />
         <Route path="/viewer" element={<ClauseViewer />} />
         <Route path="/chatbot" element={<Chatbot />} />
+       <Route path="/analyze" element={<Analyze />} />
         
       </Routes>
     </BrowserRouter>
