@@ -580,16 +580,132 @@ data/processed/
 
 ---
 
+# 7️⃣ `multi_label_baseline_classifier.ipynb`
+
+## 🎯 Purpose
+
+Train and evaluate a multi-label classical ML baseline using TF-IDF + OneVsRestClassifier(LinearSVC) across all 41 CUAD legal clause categories.
+
+This establishes a benchmark before multi-label Legal-BERT fine-tuning.
+
+---
+
+## ✅ Work Completed
+
+- Loaded multi-label dataset (20,104 samples, 41 labels)
+- Implemented contract-level train/test split (zero leakage verified)
+- Built TF-IDF vectorization pipeline (10,000 features, bigrams)
+- Trained OneVsRestClassifier with LinearSVC (41 independent classifiers)
+- Evaluated with full multi-label metrics suite
+- Performed per-label performance analysis
+- Identified high-risk labels via false negative analysis
+- Generated per-label F1 and recall visualizations
+- Saved model, vectorizer, metrics, and label mapping
+
+---
+
+## ⚙️ ML Pipeline
+
+```txt
+Multi-Label Dataset (20,104 × 43)
+    ↓
+Contract-Level Split (408 train / 102 test)
+    ↓
+TF-IDF Vectorization (10,000 features)
+    ↓
+OneVsRestClassifier(LinearSVC) × 41 labels
+    ↓
+Multi-Label Evaluation
+```
+
+---
+
+## 📊 TF-IDF Configuration
+
+| Parameter | Value |
+|---|---|
+| Max Features | 10,000 |
+| N-Grams | Unigrams + Bigrams |
+| Stop Words | English |
+| Min DF | 2 |
+| Max DF | 0.95 |
+
+---
+
+## 📈 Multi-Label SVM Results
+
+### Overall Metrics
+
+| Metric | Score |
+|---|---|
+| Subset Accuracy (Exact Match) | 75.49% |
+| Hamming Loss | 0.0072 |
+
+### Aggregated Metrics
+
+| Averaging | Precision | Recall | F1-Score |
+|---|---|---|---|
+| Micro | 59.30% | 34.18% | 43.37% |
+| Macro | 48.53% | 22.80% | 27.96% |
+
+---
+
+## 📌 Key Findings
+
+- **High subset accuracy** (75.49%) — most snippets have all labels correct
+- **Very low hamming loss** (0.0072) — only 0.72% of individual label predictions are wrong
+- **Micro vs macro gap** reveals that common labels are predicted well but rare labels suffer
+- **Low macro recall** (22.80%) highlights that many labels lack sufficient positive examples for TF-IDF to capture patterns
+- Contract-level splitting provides realistic (harder) evaluation compared to random splitting
+
+---
+
+## 📂 Saved Outputs
+
+Stored inside:
+
+```txt
+models/multi_label_svm_classifier/
+```
+
+### Includes
+
+- `svm_model.pkl` — trained OneVsRest LinearSVC model
+- `tfidf_vectorizer.pkl` — fitted TF-IDF vectorizer
+- `metrics.json` — comprehensive metrics (overall, micro, macro, per-label)
+- `label_mapping.json` — label-to-index mappings
+- `per_label_f1.png` — per-label F1 score chart
+- `per_label_recall.png` — per-label recall chart
+
+---
+
+## 🧠 Key Learnings
+
+- Multi-label evaluation is fundamentally harder than single-label
+- Subset accuracy is extremely strict — entire 41-label vector must match exactly
+- Hamming loss provides a more forgiving per-label view
+- Macro metrics expose rare label failures hidden by micro aggregation
+- TF-IDF + SVM struggles with labels that have few positive examples
+- This baseline sets the benchmark for transformer improvement
+
+---
+
 # 📊 Final Model Benchmark Comparison
 
-> **Note**: These benchmarks are from the previous 4-label binary classification experiments.
-> Multi-label evaluation on all 41 labels will follow in the next phase.
+### Single-Label Experiments (4 labels, binary classification)
 
 | Model | Accuracy | Precision | Recall | F1-Score |
 |---|---|---|---|---|
 | Logistic Regression | 91.4% | 93.9% | 81.9% | 87.5% |
 | LinearSVC | 93.9% | 94.9% | 87.9% | 91.3% |
 | Legal-BERT | 99.0% | 100.0% | 97.3% | 98.6% |
+
+### Multi-Label Experiment (41 labels)
+
+| Model | Subset Acc | Hamming Loss | Micro F1 | Macro F1 |
+|---|---|---|---|---|
+| SVM Baseline (OVR) | 75.49% | 0.0072 | 43.37% | 27.96% |
+| Legal-BERT | — | — | — | — |
 
 ---
 
@@ -604,12 +720,15 @@ data/processed/
 - Legal-BERT substantially reduced dangerous false negatives
 - Contract-level train/test splitting prevents data leakage in legal NLP
 - Multi-label aggregation avoids dataset bloat while preserving label richness
+- Multi-label evaluation requires different metrics than single-label (hamming loss, subset accuracy)
+- TF-IDF baselines establish realistic benchmarks for transformer comparison
 
 ---
 
 ## 🚧 Next Planned Steps
 
 - ~~Multi-label dataset creation~~ ✅ Complete
+- ~~Multi-label SVM baseline~~ ✅ Complete
 - Multi-label Legal-BERT fine-tuning (41 labels, sigmoid + BCEWithLogitsLoss)
 - Hyperparameter tuning
 - Threshold calibration per label
