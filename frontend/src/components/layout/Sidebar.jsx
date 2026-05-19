@@ -21,6 +21,11 @@ function Sidebar() {
         <Link to="/chatbot" className="hover:text-blue-400">
           Chatbot
         </Link>
+
+        <Link to="/analyze" className="hover:text-blue-400">
+          Analyze
+        </Link>
+        
       </nav>
     </div>
   );
