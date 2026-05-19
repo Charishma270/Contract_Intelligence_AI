@@ -1,20 +1,42 @@
 from typing import List
-from pydantic import BaseModel, Field
+
+from pydantic import BaseModel
 
 
-class RetrievedChunk(BaseModel):
-    chunk_id: str = Field(...)
-    text: str = Field(...)
-    page: int = Field(..., ge=1)
-    similarity_score: float = Field(..., ge=0.0, le=1.0)
+class QueryRequest(BaseModel):
+
+    query: str
 
 
-class ChatRequest(BaseModel):
-    contract_id: str = Field(...)
-    query: str = Field(..., min_length=1)
+class ClauseResult(BaseModel):
+
+    retrieved_label: str
+
+    classical_prediction: str
+
+    legal_bert_prediction: str
+
+    risk_level: str
+
+    semantic_score: float
+
+    bert_confidence: float
+
+    bert_confidence_band: str
+
+    final_confidence: float
+
+    reliability_band: str
+
+    model_disagreement: bool
+
+    weak_prediction: bool
+
+    target: int
+
+    clause_text: str
 
 
-class ChatResponse(BaseModel):
-    answer: str = Field(...)
-    retrieved_chunks: List[RetrievedChunk] = Field(default_factory=list)
-    citations: List[str] = Field(default_factory=list)
+class QueryResponse(BaseModel):
+
+    results: List[ClauseResult]

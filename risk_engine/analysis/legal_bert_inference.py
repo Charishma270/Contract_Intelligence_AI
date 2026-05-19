@@ -36,6 +36,20 @@ model.eval()
 print("Legal-BERT loaded successfully!\n")
 
 
+def get_confidence_band(confidence):
+
+    if confidence >= 0.90:
+        return "Very Strong"
+
+    elif confidence >= 0.75:
+        return "Strong"
+
+    elif confidence >= 0.60:
+        return "Moderate"
+
+    return "Weak"
+
+
 def predict_clause_with_legal_bert(text):
 
     # Tokenize text
@@ -80,12 +94,21 @@ def predict_clause_with_legal_bert(text):
 
         prediction = "Other Clause"
 
+    confidence = round(
+        confidence,
+        4
+    )
+
+    confidence_band = get_confidence_band(
+        confidence
+    )
+
     return {
 
         "prediction": prediction,
 
-        "confidence": round(
-            confidence,
-            4
-        )
+        "confidence": confidence,
+
+        "confidence_band":
+            confidence_band
     }

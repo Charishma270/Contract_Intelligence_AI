@@ -16,6 +16,7 @@ from backend.routes.upload import router as upload_router
 from backend.routes.contracts import router as contracts_router
 from backend.routes.analyze import router as analyze_router
 from backend.services.tracking import init_db
+from backend.routes.rag_routes import router as rag_router
 
 
 @asynccontextmanager
@@ -78,6 +79,11 @@ async def add_process_time_header(request: Request, call_next):
 app.include_router(upload_router,    prefix="/api", tags=["Upload"])
 app.include_router(contracts_router, prefix="/api", tags=["Contracts"])
 app.include_router(analyze_router,   prefix="/api", tags=["Analysis"])
+app.include_router(
+    rag_router,
+    prefix="/api",
+    tags=["RAG Pipeline"]
+)
 
 
 # ---------------------------------------------------------------------------
