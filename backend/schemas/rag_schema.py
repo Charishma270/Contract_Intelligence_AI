@@ -3,6 +3,36 @@ from typing import List
 from pydantic import BaseModel
 
 
+# -------------------------------------------------------------------
+# OLD MOCK RAG SCHEMAS
+# (required by existing backend pipeline)
+# -------------------------------------------------------------------
+
+class RetrievedChunk(BaseModel):
+
+    chunk_id: str
+
+    text: str
+
+    page: int
+
+    similarity_score: float
+
+
+class ChatResponse(BaseModel):
+
+    answer: str
+
+    retrieved_chunks: List[RetrievedChunk]
+
+    citations: List[str]
+
+
+# -------------------------------------------------------------------
+# NEW HYBRID RAG PIPELINE SCHEMAS
+# (your Legal-BERT + FAISS integration)
+# -------------------------------------------------------------------
+
 class QueryRequest(BaseModel):
 
     query: str
