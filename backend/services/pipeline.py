@@ -163,8 +163,20 @@ def run_pipeline(contract_id: str) -> AnalysisResponse:
     # --- Stage 3: RAG Indexing ---
     try:
         logger.info(f"[{contract_id}] Stage 3/4: Indexing for RAG...")
-        # In the real pipeline, this is where Tisha's FAISS indexing would run
-        # For now, we just mark it done (mock_rag handles retrieval on-demand)
+        
+        # Integrate FAISS indexing
+        if ocr_output and ocr_output.chunks:
+            from rag.chunking.preprocessor import clean_text
+            from rag.retrieval.embedder import generate_embedding
+            from rag.vector_db.faiss_store import add_embedding
+            
+            for chunk in ocr_output.chunks:
+                cleaned_text = clean_text(chunk.text)
+                if cleaned_text.strip():
+                    text_with_meta = f"[Contract: {contract_id}, Page: {chunk.page}] {cleaned_text}"
+                    embedding = generate_embedding(text_with_meta)
+                    add_embedding(embedding, text_with_meta)
+                    
         update_contract_status(contract_id, ContractStatus.RAG_INDEXED)
         logger.info(f"[{contract_id}] RAG indexing complete")
     except Exception as e:

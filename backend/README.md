@@ -112,7 +112,10 @@ backend/
 ├── routes/
 │   ├── __init__.py
 │   ├── upload.py          # POST /api/upload
-│   └── contracts.py       # GET /api/contracts
+│   ├── contracts.py       # GET /api/contracts
+│   ├── analyze.py         # POST /api/analyze
+│   ├── risk.py            # GET /api/risk-score/{id}
+│   └── chat.py            # POST /api/chat
 ├── schemas/
 │   ├── __init__.py
 │   ├── ocr_schema.py
@@ -122,11 +125,15 @@ backend/
 ├── services/
 │   ├── __init__.py
 │   ├── tracking.py        # SQLite + SQLAlchemy
+│   ├── pipeline.py        # Sequential pipeline orchestrator
+│   ├── rag.py             # FAISS RAG retrieval service
 │   ├── mock_ocr.py
 │   ├── mock_nlp.py
 │   └── mock_rag.py
 ├── utils/
-│   └── __init__.py
+│   ├── __init__.py
+│   ├── exceptions.py      # Centralized exception hierarchy  [NEW Day 12]
+│   └── validators.py      # Reusable request validators       [NEW Day 12]
 └── README.md              # ← you are here
 ```
 
@@ -142,20 +149,66 @@ backend/
 
 ## Error Handling
 
+### HTTP Status Codes
+
 | Status | Meaning                     |
-|--------|-----------------------------|
+|--------|-----------------------------| 
 | 400    | Bad request / invalid input |
 | 404    | Contract not found          |
 | 413    | File too large (>20 MB)     |
 | 415    | Unsupported file type       |
 | 500    | Internal server error       |
 
+### Error Response Format (Day 12)
+
+All errors return a consistent JSON structure:
+
+```json
+{
+  "detail": "Human-readable error message",
+  "error_type": "ContractNotFoundError",
+  "path": "/api/contracts/invalid-id"
+}
+```
+
+### Custom Exception Types
+
+| Exception | Status | When |
+|-----------|--------|------|
+| `InvalidContractIdError` | 400 | contract_id is not a valid UUID |
+| `ContractNotFoundError` | 404 | contract_id doesn't exist in DB |
+| `ContractAlreadyFailedError` | 400 | Contract previously failed processing |
+| `ContractNotAnalyzedError` | 400 | Contract hasn't been analyzed yet |
+| `EmptyQueryError` | 400 | Chat query is empty/whitespace |
+| `EmptyFileError` | 400 | Uploaded file is 0 bytes |
+| `FileTooLargeError` | 413 | File exceeds 20 MB limit |
+| `UnsupportedFileTypeError` | 415 | Non-PDF file uploaded |
+| `PipelineError` | 500 | Pipeline stage failure |
+
+### Validation Features (Day 12)
+
+- **UUID format validation** on all contract_id path parameters
+- **PDF magic byte check** on upload (validates `%PDF-` header)
+- **Empty file rejection** on upload
+- **Query sanitization** on chat endpoint
+- **Contract status checks** before analysis and risk scoring
+- **X-Request-ID** header on all responses for traceability
+
 ---
 
-## Next Steps (Week 2+)
+## Progress
 
-- [ ] `/api/analyze` — full pipeline orchestration
-- [ ] `/api/risk-score` — risk scoring endpoint
-- [ ] `/api/chat` — RAG chatbot with Tisha's FAISS retrieval
+- [x] `/api/upload` — PDF upload with validation
+- [x] `/api/contracts` — contract listing & status
+- [x] `/api/analyze` — full pipeline orchestration (Day 8)
+- [x] `/api/chat` — RAG chatbot with FAISS retrieval (Day 9)
+- [x] `/api/risk-score` — rule-based risk scoring endpoint (Day 10)
+- [x] Comprehensive error handling & validation (Day 12)
+
+## Next Steps
+
+- [ ] Structured logging with file output (Day 13)
+- [ ] Real OCR integration (Day 14)
 - [ ] Celery async task processing
-- [ ] Real OCR/NLP/RAG integration
+- [ ] Real NLP/RAG integration (replace mocks)
+- [ ] Authentication & authorization
