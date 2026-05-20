@@ -690,6 +690,91 @@ models/multi_label_svm_classifier/
 
 ---
 
+# 8️⃣ `tokenized_multi_label_dataset.ipynb`
+
+## 🎯 Purpose
+
+Preprocess and tokenize the multi-label CUAD dataset using Legal-BERT tokenizer, creating reusable HuggingFace Dataset objects saved to disk for future training.
+
+This notebook is **preprocessing only** — no model training.
+
+---
+
+## ✅ Work Completed
+
+- Loaded multi-label dataset (20,104 samples, 41 labels)
+- Loaded Legal-BERT tokenizer (`nlpaueb/legal-bert-base-uncased`)
+- Performed contract-level train/test split (zero leakage verified)
+- Tokenized all text with padding and truncation (max_length=256)
+- Created HuggingFace Datasets with input_ids, attention_mask, labels, contract_id
+- Validated tokenized shapes, label dimensions, and data types
+- Saved tokenized datasets to disk (Arrow format)
+- Saved tokenizer for reproducibility
+- Verified reload from disk
+
+---
+
+## ⚙️ Tokenization Configuration
+
+| Parameter | Value |
+|---|---|
+| Tokenizer | nlpaueb/legal-bert-base-uncased |
+| Vocab Size | 30,522 |
+| Max Length | 256 |
+| Padding | max_length |
+| Truncation | True |
+| Label Type | float32 (for BCEWithLogitsLoss) |
+
+---
+
+## 📊 Dataset Statistics
+
+| Split | Samples | Size on Disk |
+|---|---|---|
+| Train | 16,073 | 25.97 MB |
+| Test | 4,031 | 6.53 MB |
+
+Each sample contains:
+
+| Field | Shape | Type |
+|---|---|---|
+| input_ids | [256] | int |
+| attention_mask | [256] | int |
+| labels | [41] | float32 |
+| contract_id | — | string |
+
+---
+
+## 📂 Saved Outputs
+
+```txt
+data/processed/tokenized_multi_label_dataset/
+├── train/
+│   ├── data-00000-of-00001.arrow
+│   ├── dataset_info.json
+│   └── state.json
+└── test/
+    ├── data-00000-of-00001.arrow
+    ├── dataset_info.json
+    └── state.json
+
+models/legal_bert_multilabel/tokenizer/
+├── tokenizer.json
+└── tokenizer_config.json
+```
+
+---
+
+## 🧠 Key Learnings
+
+- Transformer tokenization converts text to numerical token IDs
+- input_ids are vocabulary indices; attention_mask indicates real vs padding tokens
+- Multi-label targets must be float32 for BCEWithLogitsLoss compatibility
+- max_length=256 balances information retention with training efficiency
+- Saving tokenized datasets avoids re-tokenization during training experiments
+
+---
+
 # 📊 Final Model Benchmark Comparison
 
 ### Single-Label Experiments (4 labels, binary classification)
@@ -722,6 +807,7 @@ models/multi_label_svm_classifier/
 - Multi-label aggregation avoids dataset bloat while preserving label richness
 - Multi-label evaluation requires different metrics than single-label (hamming loss, subset accuracy)
 - TF-IDF baselines establish realistic benchmarks for transformer comparison
+- Tokenized datasets should be saved to disk for reproducibility and training efficiency
 
 ---
 
@@ -729,6 +815,7 @@ models/multi_label_svm_classifier/
 
 - ~~Multi-label dataset creation~~ ✅ Complete
 - ~~Multi-label SVM baseline~~ ✅ Complete
+- ~~Transformer tokenization preprocessing~~ ✅ Complete
 - Multi-label Legal-BERT fine-tuning (41 labels, sigmoid + BCEWithLogitsLoss)
 - Hyperparameter tuning
 - Threshold calibration per label
