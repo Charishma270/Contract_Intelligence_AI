@@ -15,6 +15,10 @@ from risk_engine.analysis.legal_bert_inference import (
     predict_clause_with_legal_bert
 )
 
+from risk_engine.analysis.multi_label_inference import (
+    predict_multi_labels
+)
+
 from risk_engine.scoring.risk_rules import (
     calculate_risk
 )
@@ -44,7 +48,9 @@ def run_pipeline(query):
 
     # No results case
     if len(results) == 0:
+
         print("No matching clauses found.")
+
         return []
 
     # Store structured output
@@ -56,18 +62,19 @@ def run_pipeline(query):
     # Process retrieved clauses
     for index, result in enumerate(results, start=1):
 
-        # Skip weak semantic matches
-        if result["score"] < 0.68:
-
-            continue
-
         clause_text = result["text"]
 
-        # Skip duplicate clauses
+        # Skip duplicates
         if clause_text in seen_clauses:
+
             continue
 
         seen_clauses.add(clause_text)
+
+        # Skip weak semantic matches
+        if result["score"] < 0.65:
+
+            continue
 
         # Classical ML prediction
         predicted_label = classify_clause(
@@ -84,62 +91,111 @@ def run_pipeline(query):
 
             continue
 
-        # Detect disagreement between models
+        # Multi-label SVM predictions
+        multi_labels = predict_multi_labels(
+            clause_text
+        )
+
+        # Detect disagreement
         model_disagreement = (
 
             predicted_label
             != bert_result["prediction"]
         )
 
-        # Risk scoring based on Legal-BERT
-        risk_level = calculate_risk(
-            bert_result["prediction"]
-        )
+        # Confidence bands
+        if bert_result["confidence"] >= 0.95:
 
-        # Weighted hybrid ranking
-        hybrid_score = round(
+            confidence_band = "Very Strong"
+
+        elif bert_result["confidence"] >= 0.85:
+
+            confidence_band = "Strong"
+
+        else:
+
+            confidence_band = "Moderate"
+
+        # Hybrid confidence score
+        final_confidence = round(
 
             (
-                (0.4 * result["score"])
+                result["score"]
                 +
-                (0.6 * bert_result["confidence"])
-            ),
+                bert_result["confidence"]
+            ) / 2,
 
             4
         )
 
-        # Build backend-compatible response
-        structured_result = {
+        # Reliability bands
+        if final_confidence >= 0.85:
 
-            "clause_type":
-                predicted_label,
+            reliability_band = "Highly Reliable"
+
+        elif final_confidence >= 0.70:
+
+            reliability_band = "Reliable"
+
+        else:
+
+            reliability_band = "Needs Review"
+
+        # Weak prediction heuristic
+        weak_prediction = (
+
+            final_confidence < 0.70
+        )
+
+        # Risk scoring
+        risk_level = calculate_risk(
+            bert_result["prediction"]
+        )
+
+        # Structured backend response
+        structured_result = {
 
             "retrieved_label":
                 result["label_name"],
 
+            "classical_prediction":
+                predicted_label,
+
+            "legal_bert_prediction":
+                bert_result["prediction"],
+
+            "multi_label_predictions":
+                multi_labels,
+
             "risk_level":
                 risk_level,
 
-            "similarity_score":
+            "semantic_score":
                 round(
                     result["score"],
                     4
                 ),
 
-            "hybrid_score":
-                hybrid_score,
-
-            "target":
-                result["target"],
-
-            "legal_bert_prediction":
-                bert_result["prediction"],
-
-            "legal_bert_confidence":
+            "bert_confidence":
                 bert_result["confidence"],
+
+            "bert_confidence_band":
+                confidence_band,
+
+            "final_confidence":
+                final_confidence,
+
+            "reliability_band":
+                reliability_band,
 
             "model_disagreement":
                 model_disagreement,
+
+            "weak_prediction":
+                weak_prediction,
+
+            "target":
+                result["target"],
 
             "clause_text":
                 clause_text
@@ -152,6 +208,7 @@ def run_pipeline(query):
 
         # Terminal display
         print(f"\nRESULT #{index}")
+
         print("=" * 80)
 
         print(
@@ -160,7 +217,7 @@ def run_pipeline(query):
         )
 
         print(
-            f"Classical ML Prediction : "
+            f"Classical Prediction : "
             f"{predicted_label}"
         )
 
@@ -170,13 +227,8 @@ def run_pipeline(query):
         )
 
         print(
-            f"Legal-BERT Confidence : "
-            f"{bert_result['confidence']}"
-        )
-
-        print(
-            f"Hybrid Score : "
-            f"{hybrid_score}"
+            f"Multi-Label Predictions : "
+            f"{multi_labels}"
         )
 
         print(
@@ -185,20 +237,35 @@ def run_pipeline(query):
         )
 
         print(
-            f"Target : "
-            f"{result['target']}"
-        )
-
-        print(
-            f"Similarity Score : "
+            f"Semantic Score : "
             f"{result['score']:.4f}"
         )
 
-        # Model disagreement warning
+        print(
+            f"Legal-BERT Confidence : "
+            f"{bert_result['confidence']}"
+        )
+
+        print(
+            f"Final Confidence : "
+            f"{final_confidence}"
+        )
+
+        print(
+            f"Reliability Band : "
+            f"{reliability_band}"
+        )
+
         if model_disagreement:
 
             print(
                 "\nMODEL DISAGREEMENT DETECTED"
+            )
+
+        if weak_prediction:
+
+            print(
+                "\nWEAK PREDICTION — REVIEW ADVISED"
             )
 
         print("\nClause:\n")
@@ -206,16 +273,6 @@ def run_pipeline(query):
         print(clause_text[:500] + "...")
 
         print("\n" + "-" * 80)
-
-    # Sort by weighted hybrid ranking
-    pipeline_results = sorted(
-
-        pipeline_results,
-
-        key=lambda x: x["hybrid_score"],
-
-        reverse=True
-    )
 
     # Return structured results
     return pipeline_results

@@ -1,15 +1,20 @@
 """
 Analyze Route — /analyze endpoint
 ==================================
-Day 8: Main pipeline endpoint. Takes a contract_id, runs it through
-OCR → NLP → RAG → Risk scoring sequentially, returns structured analysis.
+Day 8: Main pipeline endpoint.
+Day 12: Enhanced error handling with typed exceptions and validators.
 """
 
-from fastapi import APIRouter, HTTPException
+import logging
+
+from fastapi import APIRouter
 
 from backend.schemas.contract_schema import AnalysisResponse
-from backend.services.tracking import get_contract
 from backend.services.pipeline import run_pipeline
+from backend.utils.exceptions import PipelineError
+from backend.utils.validators import validate_contract_not_failed
+
+logger = logging.getLogger("contract_ai.analyze")
 
 router = APIRouter()
 
@@ -25,32 +30,30 @@ async def analyze_contract(contract_id: str):
       3. RAG vector indexing
       4. Risk scoring
 
+    Raises:
+      - 400: Invalid contract_id or contract previously failed
+      - 404: Contract not found
+      - 500: Pipeline processing error
+
     Returns a unified AnalysisResponse with clauses, entities, and risk breakdown.
     """
-    # Check contract exists
-    contract = get_contract(contract_id)
-    if not contract:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Contract '{contract_id}' not found. Upload a PDF first via /api/upload."
-        )
-
-    # Check it hasn't already failed
-    if contract.status == "failed":
-        raise HTTPException(
-            status_code=400,
-            detail=f"Contract '{contract_id}' previously failed: {contract.error_message}"
-        )
+    # Validates: UUID format, exists, not failed
+    contract = validate_contract_not_failed(contract_id)
+    logger.info(f"Starting analysis pipeline for contract {contract_id}")
 
     try:
         result = run_pipeline(contract_id)
+        logger.info(f"Pipeline completed for contract {contract_id}")
         return result
     except FileNotFoundError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise PipelineError(
+            stage="file_lookup",
+            contract_id=contract_id,
+            detail=str(e),
+        )
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"Pipeline failed for contract '{contract_id}': {str(e)}"
+        raise PipelineError(
+            stage="validation",
+            contract_id=contract_id,
+            detail=str(e),
         )

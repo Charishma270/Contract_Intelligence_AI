@@ -1,24 +1,44 @@
+"""
+Contracts Route — /contracts endpoints
+=======================================
+Day 5: Contract listing and status retrieval.
+Day 12: Enhanced error handling using centralized validators.
+"""
+
 from typing import List
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Query
 
 from backend.schemas.contract_schema import ContractMetadata
-from backend.services.tracking import get_contract, list_contracts
+from backend.services.tracking import list_contracts
+from backend.utils.validators import validate_contract_exists
 
 router = APIRouter()
 
 
 @router.get("/contracts/{contract_id}", response_model=ContractMetadata)
 async def get_contract_status(contract_id: str):
-    contract = get_contract(contract_id)
-    if not contract:
-        raise HTTPException(status_code=404, detail=f"Contract '{contract_id}' not found")
+    """
+    Get the current status and metadata of a specific contract.
+
+    Raises:
+      - 400: Invalid contract_id format
+      - 404: Contract not found
+    """
+    contract = validate_contract_exists(contract_id)
     return contract
 
 
 @router.get("/contracts", response_model=List[ContractMetadata])
 async def list_all_contracts(
-    skip: int = Query(0, ge=0),
-    limit: int = Query(20, ge=1, le=100),
+    skip: int = Query(0, ge=0, description="Number of records to skip"),
+    limit: int = Query(20, ge=1, le=100, description="Max records to return"),
 ):
+    """
+    List all contracts with pagination (newest first).
+
+    Query params:
+      - skip: offset (default 0)
+      - limit: max results (default 20, max 100)
+    """
     return list_contracts(skip=skip, limit=limit)
