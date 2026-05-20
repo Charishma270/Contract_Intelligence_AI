@@ -3,8 +3,10 @@ Contracts Route — /contracts endpoints
 =======================================
 Day 5: Contract listing and status retrieval.
 Day 12: Enhanced error handling using centralized validators.
+Day 13: Added structured logging.
 """
 
+import logging
 from typing import List
 
 from fastapi import APIRouter, Query
@@ -12,6 +14,8 @@ from fastapi import APIRouter, Query
 from backend.schemas.contract_schema import ContractMetadata
 from backend.services.tracking import list_contracts
 from backend.utils.validators import validate_contract_exists
+
+logger = logging.getLogger("contract_ai.contracts")
 
 router = APIRouter()
 
@@ -26,6 +30,7 @@ async def get_contract_status(contract_id: str):
       - 404: Contract not found
     """
     contract = validate_contract_exists(contract_id)
+    logger.info(f"Contract status lookup: id={contract_id}, status={contract.status}")
     return contract
 
 
@@ -41,4 +46,6 @@ async def list_all_contracts(
       - skip: offset (default 0)
       - limit: max results (default 20, max 100)
     """
-    return list_contracts(skip=skip, limit=limit)
+    results = list_contracts(skip=skip, limit=limit)
+    logger.info(f"Listed contracts: skip={skip}, limit={limit}, returned={len(results)}")
+    return results

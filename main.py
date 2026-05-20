@@ -10,6 +10,8 @@ Day 12:
 - Added RAG pipeline integration
 - Added request-id middleware
 - Added structured exception handling
+Day 13: Integrated structured logging with file output,
+        request-scoped context, and request/response logging.
 """
 
 import os
@@ -57,15 +59,13 @@ from backend.utils.exceptions import (
     ContractAIError
 )
 
-
-# ---------------------------------------------------------
-# Logging
-# ---------------------------------------------------------
-logging.basicConfig(
-    level=logging.INFO
+from backend.utils.logging_config import (
+    setup_logging,
+    request_id_ctx,
 )
 
-logger = logging.getLogger(__name__)
+
+logger = logging.getLogger("contract_ai")
 
 
 # ---------------------------------------------------------
@@ -74,7 +74,7 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
 
-    """Initialize DB and directories."""
+    """Initialize logging, DB, and directories on startup."""
 
     os.makedirs(
         "uploads",
@@ -91,6 +91,7 @@ async def lifespan(app: FastAPI):
         exist_ok=True
     )
 
+    setup_logging()
     init_db()
 
     logger.info(
@@ -119,7 +120,7 @@ app = FastAPI(
         "risk scoring."
     ),
 
-    version="0.3.0",
+    version="0.4.0",
 
     lifespan=lifespan,
 )
@@ -211,10 +212,19 @@ async def add_request_metadata(
     request: Request,
     call_next
 ):
+    """Add request ID, process time, and structured request/response logging."""
 
     request_id = str(
         uuid.uuid4()
     )[:8]
+
+    request_id_ctx.set(request_id)
+
+    client_ip = request.client.host if request.client else "unknown"
+    logger.info(
+        f"\u2192 {request.method} {request.url.path} "
+        f"(client={client_ip})"
+    )
 
     start = time.perf_counter()
 
@@ -234,6 +244,11 @@ async def add_request_metadata(
     response.headers[
         "X-Request-ID"
     ] = request_id
+
+    logger.info(
+        f"\u2190 {request.method} {request.url.path} "
+        f"status={response.status_code} time={elapsed:.4f}s"
+    )
 
     return response
 
@@ -314,7 +329,7 @@ async def health_check():
             "Contract Intelligence AI",
 
         "version":
-            "0.3.0",
+            "0.4.0",
     }
 
 
