@@ -357,12 +357,208 @@
 
 // ultra updateddddddddd
 
+// import { useState } from "react";
+// import Layout from "../components/layout/Layout";
+
+// function Analyze() {
+//   const [input, setInput] = useState("");
+//   const [expandedIndex, setExpandedIndex] = useState(null);
+
+//   // MOCK DATA (temporary until backend works)
+//   const mockResults = [
+//     {
+//       clause_type: "Termination Clause",
+//       retrieved_label: "Contract Termination",
+//       legal_bert_prediction: "Termination",
+//       legal_bert_confidence: 0.97,
+//       risk_level: "High",
+//       similarity_score: 0.69,
+//       hybrid_score: 0.83,
+//       model_disagreement: true,
+//       clause_text:
+//         "Either party may terminate this agreement immediately upon breach of contract or failure to meet obligations within 30 days of notice.",
+//     },
+//     {
+//       clause_type: "Confidentiality Clause",
+//       retrieved_label: "Confidentiality",
+//       legal_bert_prediction: "Confidentiality",
+//       legal_bert_confidence: 0.89,
+//       risk_level: "Medium",
+//       similarity_score: 0.74,
+//       hybrid_score: 0.79,
+//       model_disagreement: false,
+//       clause_text:
+//         "All confidential information shared between parties shall remain protected and cannot be disclosed without prior written consent.",
+//     },
+//     {
+//       clause_type: "Payment Clause",
+//       retrieved_label: "Payment Terms",
+//       legal_bert_prediction: "Payment",
+//       legal_bert_confidence: 0.81,
+//       risk_level: "Low",
+//       similarity_score: 0.77,
+//       hybrid_score: 0.75,
+//       model_disagreement: false,
+//       clause_text:
+//         "Payment shall be completed within 15 business days after invoice generation.",
+//     },
+//   ];
+
+//   return (
+//     <Layout>
+//       <div className="max-w-7xl mx-auto py-8">
+//         <h1 className="text-5xl font-bold text-center mb-10">
+//           AI Clause Analysis
+//         </h1>
+
+//         {/* INPUT */}
+//         <div className="bg-white rounded-xl shadow-md p-4 mb-8 flex gap-3 items-end">
+//           <textarea
+//             placeholder="Enter query (e.g. termination clause)"
+//             value={input}
+//             onChange={(e) => setInput(e.target.value)}
+//             rows={1}
+//             className="flex-1 border rounded-lg px-4 py-3 resize-none outline-none min-h-[50px] max-h-[140px] overflow-y-auto"
+//             onInput={(e) => {
+//               e.target.style.height = "auto";
+//               e.target.style.height =
+//                 Math.min(e.target.scrollHeight, 140) + "px";
+//             }}
+//           />
+
+//           <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold">
+//             Analyze
+//           </button>
+//         </div>
+
+//         {/* RESULTS */}
+//         <div className="space-y-6">
+//           {mockResults.map((item, index) => (
+//             <div
+//               key={index}
+//               className="bg-white rounded-xl shadow-md p-6"
+//             >
+//               {/* TOP */}
+//               <div className="flex justify-between items-center mb-4">
+//                 <h2 className="text-2xl font-bold">
+//                   {item.clause_type}
+//                 </h2>
+
+//                 <span
+//                   className={`px-4 py-2 rounded-full text-sm font-semibold ${
+//                     item.risk_level === "High"
+//                       ? "bg-red-100 text-red-600"
+//                       : item.risk_level === "Medium"
+//                       ? "bg-yellow-100 text-yellow-700"
+//                       : "bg-green-100 text-green-700"
+//                   }`}
+//                 >
+//                   {item.risk_level} Risk
+//                 </span>
+//               </div>
+
+//               {/* DETAILS */}
+//               <div className="grid md:grid-cols-2 gap-3 mb-5">
+//                 <p>
+//                   <strong>Retrieved Label:</strong>{" "}
+//                   {item.retrieved_label}
+//                 </p>
+
+//                 <p>
+//                   <strong>Transformer Prediction:</strong>{" "}
+//                   {item.legal_bert_prediction}
+//                 </p>
+
+//                 <p>
+//                   <strong>Similarity Score:</strong>{" "}
+//                   {item.similarity_score}
+//                 </p>
+
+//                 <p>
+//                   <strong>Hybrid Score:</strong>{" "}
+//                   {item.hybrid_score}
+//                 </p>
+//               </div>
+
+//               {/* CONFIDENCE */}
+//               <div className="mb-5">
+//                 <div className="flex justify-between mb-2">
+//                   <span className="font-semibold">
+//                     Confidence Score
+//                   </span>
+
+//                   <span className="font-bold text-blue-600">
+//                     {(item.legal_bert_confidence * 100).toFixed(1)}%
+//                   </span>
+//                 </div>
+
+//                 <div className="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
+//                   <div
+//                     className="h-full bg-blue-600"
+//                     style={{
+//                       width: `${
+//                         item.legal_bert_confidence * 100
+//                       }%`,
+//                     }}
+//                   />
+//                 </div>
+//               </div>
+
+//               {/* WARNING */}
+//               {item.model_disagreement && (
+//                 <div className="bg-red-100 text-red-700 px-4 py-3 rounded-lg font-semibold mb-5">
+//                   ⚠ Model Disagreement Detected
+//                 </div>
+//               )}
+
+//               {/* CLAUSE VIEWER */}
+//               <div className="bg-gray-100 rounded-lg p-4">
+//                 <h3 className="font-bold mb-3">
+//                   Clause Text
+//                 </h3>
+
+//                 <p className="text-gray-700">
+//                   {expandedIndex === index
+//                     ? item.clause_text
+//                     : item.clause_text.slice(0, 100) + "..."}
+//                 </p>
+
+//                 <button
+//                   className="text-blue-600 mt-3 font-semibold"
+//                   onClick={() =>
+//                     setExpandedIndex(
+//                       expandedIndex === index
+//                         ? null
+//                         : index
+//                     )
+//                   }
+//                 >
+//                   {expandedIndex === index
+//                     ? "Show Less"
+//                     : "Read More"}
+//                 </button>
+//               </div>
+//             </div>
+//           ))}
+//         </div>
+//       </div>
+//     </Layout>
+//   );
+// }
+
+// export default Analyze;
+
+
+
+// ultra proo updateddddddddddddd
 import { useState } from "react";
 import Layout from "../components/layout/Layout";
+import { analyzeClause } from "../services/api";
 
 function Analyze() {
   const [input, setInput] = useState("");
   const [expandedIndex, setExpandedIndex] = useState(null);
+  const [results, setResults] = useState([]);
 
   // MOCK DATA (temporary until backend works)
   const mockResults = [
@@ -404,6 +600,22 @@ function Analyze() {
     },
   ];
 
+  // ANALYZE FUNCTION
+  const handleAnalyze = async () => {
+    if (!input.trim()) return;
+
+    try {
+      const data = await analyzeClause(input);
+
+      setResults(data);
+    } catch (error) {
+      console.log(error);
+
+      // fallback mock data
+      setResults(mockResults);
+    }
+  };
+
   return (
     <Layout>
       <div className="max-w-7xl mx-auto py-8">
@@ -424,122 +636,133 @@ function Analyze() {
               e.target.style.height =
                 Math.min(e.target.scrollHeight, 140) + "px";
             }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                handleAnalyze();
+              }
+            }}
           />
 
-          <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold">
+          <button
+            onClick={handleAnalyze}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold"
+          >
             Analyze
           </button>
         </div>
 
         {/* RESULTS */}
         <div className="space-y-6">
-          {mockResults.map((item, index) => (
-            <div
-              key={index}
-              className="bg-white rounded-xl shadow-md p-6"
-            >
-              {/* TOP */}
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-bold">
-                  {item.clause_type}
-                </h2>
+          {(results.length > 0 ? results : mockResults).map(
+            (item, index) => (
+              <div
+                key={index}
+                className="bg-white rounded-xl shadow-md p-6"
+              >
+                {/* TOP */}
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-2xl font-bold">
+                    {item.clause_type}
+                  </h2>
 
-                <span
-                  className={`px-4 py-2 rounded-full text-sm font-semibold ${
-                    item.risk_level === "High"
-                      ? "bg-red-100 text-red-600"
-                      : item.risk_level === "Medium"
-                      ? "bg-yellow-100 text-yellow-700"
-                      : "bg-green-100 text-green-700"
-                  }`}
-                >
-                  {item.risk_level} Risk
-                </span>
-              </div>
-
-              {/* DETAILS */}
-              <div className="grid md:grid-cols-2 gap-3 mb-5">
-                <p>
-                  <strong>Retrieved Label:</strong>{" "}
-                  {item.retrieved_label}
-                </p>
-
-                <p>
-                  <strong>Transformer Prediction:</strong>{" "}
-                  {item.legal_bert_prediction}
-                </p>
-
-                <p>
-                  <strong>Similarity Score:</strong>{" "}
-                  {item.similarity_score}
-                </p>
-
-                <p>
-                  <strong>Hybrid Score:</strong>{" "}
-                  {item.hybrid_score}
-                </p>
-              </div>
-
-              {/* CONFIDENCE */}
-              <div className="mb-5">
-                <div className="flex justify-between mb-2">
-                  <span className="font-semibold">
-                    Confidence Score
-                  </span>
-
-                  <span className="font-bold text-blue-600">
-                    {(item.legal_bert_confidence * 100).toFixed(1)}%
+                  <span
+                    className={`px-4 py-2 rounded-full text-sm font-semibold ${
+                      item.risk_level === "High"
+                        ? "bg-red-100 text-red-600"
+                        : item.risk_level === "Medium"
+                        ? "bg-yellow-100 text-yellow-700"
+                        : "bg-green-100 text-green-700"
+                    }`}
+                  >
+                    {item.risk_level} Risk
                   </span>
                 </div>
 
-                <div className="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-blue-600"
-                    style={{
-                      width: `${
-                        item.legal_bert_confidence * 100
-                      }%`,
-                    }}
-                  />
+                {/* DETAILS */}
+                <div className="grid md:grid-cols-2 gap-3 mb-5">
+                  <p>
+                    <strong>Retrieved Label:</strong>{" "}
+                    {item.retrieved_label}
+                  </p>
+
+                  <p>
+                    <strong>Transformer Prediction:</strong>{" "}
+                    {item.legal_bert_prediction}
+                  </p>
+
+                  <p>
+                    <strong>Similarity Score:</strong>{" "}
+                    {item.similarity_score}
+                  </p>
+
+                  <p>
+                    <strong>Hybrid Score:</strong>{" "}
+                    {item.hybrid_score}
+                  </p>
+                </div>
+
+                {/* CONFIDENCE */}
+                <div className="mb-5">
+                  <div className="flex justify-between mb-2">
+                    <span className="font-semibold">
+                      Confidence Score
+                    </span>
+
+                    <span className="font-bold text-blue-600">
+                      {(item.legal_bert_confidence * 100).toFixed(1)}%
+                    </span>
+                  </div>
+
+                  <div className="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-blue-600"
+                      style={{
+                        width: `${
+                          item.legal_bert_confidence * 100
+                        }%`,
+                      }}
+                    />
+                  </div>
+                </div>
+
+                {/* WARNING */}
+                {item.model_disagreement && (
+                  <div className="bg-red-100 text-red-700 px-4 py-3 rounded-lg font-semibold mb-5">
+                    ⚠ Model Disagreement Detected
+                  </div>
+                )}
+
+                {/* CLAUSE VIEWER */}
+                <div className="bg-gray-100 rounded-lg p-4">
+                  <h3 className="font-bold mb-3">
+                    Clause Text
+                  </h3>
+
+                  <p className="text-gray-700">
+                    {expandedIndex === index
+                      ? item.clause_text
+                      : item.clause_text.slice(0, 100) + "..."}
+                  </p>
+
+                  <button
+                    className="text-blue-600 mt-3 font-semibold"
+                    onClick={() =>
+                      setExpandedIndex(
+                        expandedIndex === index
+                          ? null
+                          : index
+                      )
+                    }
+                  >
+                    {expandedIndex === index
+                      ? "Show Less"
+                      : "Read More"}
+                  </button>
                 </div>
               </div>
-
-              {/* WARNING */}
-              {item.model_disagreement && (
-                <div className="bg-red-100 text-red-700 px-4 py-3 rounded-lg font-semibold mb-5">
-                  ⚠ Model Disagreement Detected
-                </div>
-              )}
-
-              {/* CLAUSE VIEWER */}
-              <div className="bg-gray-100 rounded-lg p-4">
-                <h3 className="font-bold mb-3">
-                  Clause Text
-                </h3>
-
-                <p className="text-gray-700">
-                  {expandedIndex === index
-                    ? item.clause_text
-                    : item.clause_text.slice(0, 100) + "..."}
-                </p>
-
-                <button
-                  className="text-blue-600 mt-3 font-semibold"
-                  onClick={() =>
-                    setExpandedIndex(
-                      expandedIndex === index
-                        ? null
-                        : index
-                    )
-                  }
-                >
-                  {expandedIndex === index
-                    ? "Show Less"
-                    : "Read More"}
-                </button>
-              </div>
-            </div>
-          ))}
+            )
+          )}
         </div>
       </div>
     </Layout>
