@@ -133,7 +133,8 @@ backend/
 ├── utils/
 │   ├── __init__.py
 │   ├── exceptions.py      # Centralized exception hierarchy  [NEW Day 12]
-│   └── validators.py      # Reusable request validators       [NEW Day 12]
+│   ├── validators.py      # Reusable request validators       [NEW Day 12]
+│   └── logging_config.py  # Structured logging setup          [NEW Day 13]
 └── README.md              # ← you are here
 ```
 
@@ -196,6 +197,54 @@ All errors return a consistent JSON structure:
 
 ---
 
+## Logging (Day 13)
+
+### Architecture
+
+- **Module:** `backend/utils/logging_config.py`
+- **Logger hierarchy:** All modules use `contract_ai.*` (e.g., `contract_ai.upload`, `contract_ai.pipeline`)
+- **One-call setup:** `setup_logging()` called during app startup in `main.py`
+
+### Output Destinations
+
+| Destination | Format | Handler |
+|-------------|--------|---------|
+| Console (stdout) | Colored, human-readable | `StreamHandler` |
+| File (`logs/contract_ai.log`) | JSON Lines | `TimedRotatingFileHandler` |
+
+### JSON Log Fields
+
+```json
+{
+  "timestamp": "2026-05-20T09:00:00+00:00",
+  "level": "INFO",
+  "logger": "contract_ai.upload",
+  "message": "Uploaded contract abc-123",
+  "request_id": "a1b2c3d4",
+  "module": "upload",
+  "funcName": "upload_contract",
+  "lineno": 95
+}
+```
+
+### Configuration
+
+| Setting | Default | Override |
+|---------|---------|----------|
+| Log level | `INFO` | `LOG_LEVEL` env var or `setup_logging(log_level=...)` |
+| Log directory | `logs/` | `setup_logging(log_dir=...)` |
+| Rotation | Daily at midnight | Built-in |
+| Retention | 30 days | Built-in |
+
+### Request Context
+
+- Every HTTP request gets a unique `request_id` (8-char UUID prefix)
+- The `request_id` is injected into all log lines via `contextvars.ContextVar` (async-safe)
+- Also returned as `X-Request-ID` response header
+- Request/response pairs are logged: `→ GET /api/contracts` / `← GET /api/contracts status=200`
+
+---
+
 ## Progress
 
 - [x] `/api/upload` — PDF upload with validation
@@ -204,10 +253,10 @@ All errors return a consistent JSON structure:
 - [x] `/api/chat` — RAG chatbot with FAISS retrieval (Day 9)
 - [x] `/api/risk-score` — rule-based risk scoring endpoint (Day 10)
 - [x] Comprehensive error handling & validation (Day 12)
+- [x] Structured logging with JSON file output (Day 13)
 
 ## Next Steps
 
-- [ ] Structured logging with file output (Day 13)
 - [ ] Real OCR integration (Day 14)
 - [ ] Celery async task processing
 - [ ] Real NLP/RAG integration (replace mocks)

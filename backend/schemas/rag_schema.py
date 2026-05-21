@@ -19,6 +19,11 @@ class RetrievedChunk(BaseModel):
     similarity_score: float
 
 
+class ChatRequest(BaseModel):
+
+    query: str
+
+
 class ChatResponse(BaseModel):
 
     answer: str
@@ -30,7 +35,7 @@ class ChatResponse(BaseModel):
 
 # -------------------------------------------------------------------
 # NEW HYBRID RAG PIPELINE SCHEMAS
-# (your Legal-BERT + FAISS integration)
+# (Legal-BERT + FAISS integration)
 # -------------------------------------------------------------------
 
 class QueryRequest(BaseModel):
@@ -46,21 +51,27 @@ class ClauseResult(BaseModel):
 
     legal_bert_prediction: str
 
+    multi_label_predictions: List[str]
+
     risk_level: str
 
     semantic_score: float
 
+    keyword_score: float
+
     bert_confidence: float
 
-    bert_confidence_band: str
-
     final_confidence: float
+
+    retrieval_rerank_score: float
 
     reliability_band: str
 
     model_disagreement: bool
 
     weak_prediction: bool
+
+    explanation: str
 
     target: int
 
