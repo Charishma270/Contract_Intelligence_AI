@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict, Any
 
 from pydantic import BaseModel
 
@@ -43,6 +43,21 @@ class QueryRequest(BaseModel):
     query: str
 
 
+# -------------------------------------------------------------------
+# Multi-label prediction structure
+# -------------------------------------------------------------------
+
+class MultiLabelPrediction(BaseModel):
+
+    label: str
+
+    confidence: float
+
+
+# -------------------------------------------------------------------
+# Main clause result schema
+# -------------------------------------------------------------------
+
 class ClauseResult(BaseModel):
 
     retrieved_label: str
@@ -51,9 +66,13 @@ class ClauseResult(BaseModel):
 
     legal_bert_prediction: str
 
-    multi_label_predictions: List[str]
+    multi_label_predictions: List[
+        MultiLabelPrediction
+    ]
 
     risk_level: str
+
+    risk_score: float
 
     semantic_score: float
 
@@ -77,6 +96,10 @@ class ClauseResult(BaseModel):
 
     clause_text: str
 
+
+# -------------------------------------------------------------------
+# Final API response
+# -------------------------------------------------------------------
 
 class QueryResponse(BaseModel):
 
