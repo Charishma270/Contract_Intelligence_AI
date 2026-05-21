@@ -24,6 +24,136 @@ from risk_engine.scoring.risk_rules import (
 )
 
 
+# ---------------------------------------------------------
+# Query Expansion Dictionary
+# ---------------------------------------------------------
+QUERY_EXPANSIONS = {
+
+    "termination": [
+        "terminate",
+        "cancellation",
+        "exit",
+        "breach"
+    ],
+
+    "liability": [
+        "damages",
+        "indemnify",
+        "losses"
+    ],
+
+    "renewal": [
+        "extend",
+        "extension",
+        "continue"
+    ]
+}
+
+
+# ---------------------------------------------------------
+# Query Expansion
+# ---------------------------------------------------------
+def expand_query(query):
+
+    expanded_keywords = []
+
+    query_words = query.lower().split()
+
+    for word in query_words:
+
+        expanded_keywords.append(word)
+
+        if word in QUERY_EXPANSIONS:
+
+            expanded_keywords.extend(
+                QUERY_EXPANSIONS[word]
+            )
+
+    return list(set(expanded_keywords))
+
+
+# ---------------------------------------------------------
+# Keyword Score
+# ---------------------------------------------------------
+def calculate_keyword_score(
+    expanded_keywords,
+    clause_text
+):
+
+    clause_lower = (
+        clause_text.lower()
+    )
+
+    keyword_matches = sum(
+
+        keyword in clause_lower
+
+        for keyword in expanded_keywords
+    )
+
+    keyword_score = (
+
+        keyword_matches
+        /
+        max(len(expanded_keywords), 1)
+    )
+
+    return round(keyword_score, 4)
+
+
+# ---------------------------------------------------------
+# Explainability Helper
+# ---------------------------------------------------------
+def generate_explanation(
+
+    semantic_score,
+    bert_confidence,
+    keyword_score,
+    disagreement
+):
+
+    explanation_parts = []
+
+    if semantic_score >= 0.80:
+
+        explanation_parts.append(
+            "strong semantic similarity"
+        )
+
+    if bert_confidence >= 0.90:
+
+        explanation_parts.append(
+            "high Legal-BERT confidence"
+        )
+
+    if keyword_score >= 0.50:
+
+        explanation_parts.append(
+            "strong keyword overlap"
+        )
+
+    if disagreement:
+
+        explanation_parts.append(
+            "model disagreement detected"
+        )
+
+    if len(explanation_parts) == 0:
+
+        return (
+            "Moderate confidence prediction."
+        )
+
+    return (
+        "Prediction supported by "
+        + ", ".join(explanation_parts)
+        + "."
+    )
+
+
+# ---------------------------------------------------------
+# Main Pipeline
+# ---------------------------------------------------------
 def run_pipeline(query):
 
     print("\nLoading FAISS index...\n")
@@ -33,10 +163,25 @@ def run_pipeline(query):
 
     print(f"\nUser Query: {query}\n")
 
-    # Generate query embedding
-    query_embedding = generate_embedding(query)
+    # Expand query
+    expanded_keywords = expand_query(
+        query
+    )
 
-    print("Embedding Shape:", query_embedding.shape)
+    print(
+        "Expanded Query Keywords:",
+        expanded_keywords
+    )
+
+    # Generate query embedding
+    query_embedding = generate_embedding(
+        query
+    )
+
+    print(
+        "Embedding Shape:",
+        query_embedding.shape
+    )
 
     # Semantic retrieval
     results = search_embedding(
@@ -44,12 +189,16 @@ def run_pipeline(query):
         top_k=5
     )
 
-    print("\nTop Retrieved Legal Clauses:\n")
+    print(
+        "\nTop Retrieved Legal Clauses:\n"
+    )
 
     # No results case
     if len(results) == 0:
 
-        print("No matching clauses found.")
+        print(
+            "No matching clauses found."
+        )
 
         return []
 
@@ -59,8 +208,13 @@ def run_pipeline(query):
     # Track duplicate clauses
     seen_clauses = set()
 
-    # Process retrieved clauses
-    for index, result in enumerate(results, start=1):
+    # -----------------------------------------------------
+    # Process Retrieved Clauses
+    # -----------------------------------------------------
+    for index, result in enumerate(
+        results,
+        start=1
+    ):
 
         clause_text = result["text"]
 
@@ -72,87 +226,207 @@ def run_pipeline(query):
         seen_clauses.add(clause_text)
 
         # Skip weak semantic matches
-        if result["score"] < 0.65:
+        if result["score"] < 0.60:
 
             continue
 
+        # Keyword Score
+        keyword_score = (
+            calculate_keyword_score(
+                expanded_keywords,
+                clause_text
+            )
+        )
+
         # Classical ML prediction
-        predicted_label = classify_clause(
-            clause_text
+        predicted_label = (
+            classify_clause(
+                clause_text
+            )
         )
 
         # Legal-BERT prediction
-        bert_result = predict_clause_with_legal_bert(
-            clause_text
+        bert_result = (
+            predict_clause_with_legal_bert(
+                clause_text
+            )
         )
 
         # Skip weak transformer predictions
-        if bert_result["confidence"] < 0.75:
+        if (
+            bert_result["confidence"]
+            < 0.75
+        ):
 
             continue
 
-        # Multi-label SVM predictions
-        multi_labels = predict_multi_labels(
-            clause_text
+        # Multi-label predictions
+        multi_labels = (
+            predict_multi_labels(
+                clause_text
+            )
         )
 
         # Detect disagreement
         model_disagreement = (
 
             predicted_label
-            != bert_result["prediction"]
-        )
-
-        # Confidence bands
-        if bert_result["confidence"] >= 0.95:
-
-            confidence_band = "Very Strong"
-
-        elif bert_result["confidence"] >= 0.85:
-
-            confidence_band = "Strong"
-
-        else:
-
-            confidence_band = "Moderate"
-
-        # Hybrid confidence score
-        final_confidence = round(
-
-            (
-                result["score"]
-                +
-                bert_result["confidence"]
-            ) / 2,
-
-            4
-        )
-
-        # Reliability bands
-        if final_confidence >= 0.85:
-
-            reliability_band = "Highly Reliable"
-
-        elif final_confidence >= 0.70:
-
-            reliability_band = "Reliable"
-
-        else:
-
-            reliability_band = "Needs Review"
-
-        # Weak prediction heuristic
-        weak_prediction = (
-
-            final_confidence < 0.70
-        )
-
-        # Risk scoring
-        risk_level = calculate_risk(
+            !=
             bert_result["prediction"]
         )
 
-        # Structured backend response
+        # -------------------------------------------------
+        # Weighted Hybrid Confidence
+        # -------------------------------------------------
+        final_confidence = (
+
+            (
+                result["score"]
+                * 0.25
+            )
+
+            +
+
+            (
+                bert_result["confidence"]
+                * 0.65
+            )
+
+            +
+
+            (
+                keyword_score
+                * 0.10
+            )
+        )
+
+        # Disagreement penalty
+        if model_disagreement:
+
+            final_confidence -= 0.08
+
+        # Strong keyword bonus
+        if keyword_score >= 0.80:
+
+            final_confidence += 0.05
+
+        # Clamp confidence
+        final_confidence = max(
+            0,
+            min(
+                round(
+                    final_confidence,
+                    4
+                ),
+                1
+            )
+        )
+
+        # -------------------------------------------------
+        # Retrieval Reranking Score
+        # -------------------------------------------------
+        rerank_score = (
+
+            (
+                result["score"]
+                * 0.50
+            )
+
+            +
+
+            (
+                keyword_score
+                * 0.30
+            )
+
+            +
+
+            (
+                bert_result["confidence"]
+                * 0.20
+            )
+        )
+
+        rerank_score = round(
+            rerank_score,
+            4
+        )
+
+        # -------------------------------------------------
+        # Reliability Bands
+        # -------------------------------------------------
+        if final_confidence >= 0.90:
+
+            reliability_band = (
+                "Highly Reliable"
+            )
+
+        elif final_confidence >= 0.75:
+
+            reliability_band = (
+                "Reliable"
+            )
+
+        elif final_confidence >= 0.60:
+
+            reliability_band = (
+                "Moderate Confidence"
+            )
+
+        else:
+
+            reliability_band = (
+                "Needs Review"
+            )
+
+        # -------------------------------------------------
+        # Weak Prediction Detection
+        # -------------------------------------------------
+        weak_prediction = (
+
+            final_confidence < 0.65
+
+            or
+
+            keyword_score < 0.20
+
+            or
+
+            result["score"] < 0.65
+        )
+
+        # -------------------------------------------------
+        # Risk Scoring
+        # -------------------------------------------------
+        risk_level = (
+            calculate_risk(
+                bert_result["prediction"]
+            )
+        )
+
+        # -------------------------------------------------
+        # Explainability
+        # -------------------------------------------------
+        explanation = (
+            generate_explanation(
+
+                semantic_score=
+                result["score"],
+
+                bert_confidence=
+                bert_result["confidence"],
+
+                keyword_score=
+                keyword_score,
+
+                disagreement=
+                model_disagreement
+            )
+        )
+
+        # -------------------------------------------------
+        # Structured Backend Response
+        # -------------------------------------------------
         structured_result = {
 
             "retrieved_label":
@@ -176,14 +450,17 @@ def run_pipeline(query):
                     4
                 ),
 
+            "keyword_score":
+                keyword_score,
+
             "bert_confidence":
                 bert_result["confidence"],
 
-            "bert_confidence_band":
-                confidence_band,
-
             "final_confidence":
                 final_confidence,
+
+            "retrieval_rerank_score":
+                rerank_score,
 
             "reliability_band":
                 reliability_band,
@@ -194,6 +471,9 @@ def run_pipeline(query):
             "weak_prediction":
                 weak_prediction,
 
+            "explanation":
+                explanation,
+
             "target":
                 result["target"],
 
@@ -201,12 +481,14 @@ def run_pipeline(query):
                 clause_text
         }
 
-        # Store final output
+        # Store result
         pipeline_results.append(
             structured_result
         )
 
-        # Terminal display
+        # -------------------------------------------------
+        # Terminal Output
+        # -------------------------------------------------
         print(f"\nRESULT #{index}")
 
         print("=" * 80)
@@ -242,8 +524,8 @@ def run_pipeline(query):
         )
 
         print(
-            f"Legal-BERT Confidence : "
-            f"{bert_result['confidence']}"
+            f"Keyword Score : "
+            f"{keyword_score}"
         )
 
         print(
@@ -252,8 +534,18 @@ def run_pipeline(query):
         )
 
         print(
+            f"Rerank Score : "
+            f"{rerank_score}"
+        )
+
+        print(
             f"Reliability Band : "
             f"{reliability_band}"
+        )
+
+        print(
+            f"Explanation : "
+            f"{explanation}"
         )
 
         if model_disagreement:
@@ -270,29 +562,58 @@ def run_pipeline(query):
 
         print("\nClause:\n")
 
-        print(clause_text[:500] + "...")
+        print(
+            clause_text[:500]
+            + "..."
+        )
 
-        print("\n" + "-" * 80)
+        print(
+            "\n"
+            + "-" * 80
+        )
 
-    # Return structured results
+    # -----------------------------------------------------
+    # Final Sorting
+    # -----------------------------------------------------
+    pipeline_results = sorted(
+
+        pipeline_results,
+
+        key=lambda x:
+        x["retrieval_rerank_score"],
+
+        reverse=True
+    )
+
     return pipeline_results
 
 
-# Run pipeline
+# ---------------------------------------------------------
+# Run Pipeline
+# ---------------------------------------------------------
 if __name__ == "__main__":
 
-    user_query = "contract termination"
+    user_query = (
+        "contract termination"
+    )
 
     final_results = run_pipeline(
         user_query
     )
 
-    print("\nPipeline executed successfully!")
+    print(
+        "\nPipeline executed successfully!"
+    )
 
-    print("\nStructured Output:\n")
+    print(
+        "\nStructured Output:\n"
+    )
 
     for result in final_results:
 
         print(result)
 
-        print("\n" + "=" * 80)
+        print(
+            "\n"
+            + "=" * 80
+        )

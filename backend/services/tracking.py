@@ -3,9 +3,12 @@ Contract Tracking Service
 =========================
 SQLAlchemy + SQLite for tracking contract status through the pipeline.
 Database stored at data/contracts.db.
+
+Day 13: Added structured logging for DB operations.
 """
 
 import os
+import logging
 from datetime import datetime
 from typing import List, Optional
 
@@ -13,6 +16,8 @@ from sqlalchemy import Column, DateTime, Enum, Integer, String, create_engine
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
 from backend.schemas.contract_schema import ContractMetadata, ContractStatus
+
+logger = logging.getLogger("contract_ai.tracking")
 
 # ---------------------------------------------------------------------------
 # Database setup
@@ -75,6 +80,10 @@ def create_contract(
         db.add(record)
         db.commit()
         db.refresh(record)
+        logger.info(
+            f"Contract created: id={contract_id}, "
+            f"file={filename}, size={file_size_bytes} bytes"
+        )
         return _record_to_schema(record)
     finally:
         db.close()
@@ -126,6 +135,10 @@ def update_contract_status(
             record.error_message = error_message
         db.commit()
         db.refresh(record)
+        logger.info(
+            f"Contract status updated: id={contract_id}, "
+            f"status={status.value}"
+        )
         return _record_to_schema(record)
     finally:
         db.close()
