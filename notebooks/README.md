@@ -775,6 +775,100 @@ models/legal_bert_multilabel/tokenizer/
 
 ---
 
+# 9️⃣ `multi_label_legal_bert_classifier.ipynb`
+
+## 🎯 Purpose
+
+Fine-tune Legal-BERT for multi-label classification across all 41 CUAD legal clause categories using the pre-tokenized dataset, sigmoid activation, and BCEWithLogitsLoss.
+
+---
+
+## ✅ Notebook Contains
+
+- GPU/device detection
+- Tokenized dataset loading (train + test)
+- Label mapping loading
+- Legal-BERT model loading with `problem_type="multi_label_classification"`
+- `compute_metrics()` function (sigmoid + threshold + multi-label metrics)
+- TrainingArguments configuration
+- Trainer setup
+- Training cell (commented — ready to run)
+- Evaluation cell (commented — ready to run)
+- Per-label analysis cell (commented — ready to run)
+- SVM vs Legal-BERT comparison cell (commented — ready to run)
+- Model/tokenizer/metrics saving cells (commented — ready to run)
+- Comprehensive markdown theory explanations
+
+---
+
+## ⚙️ Model Configuration
+
+| Parameter | Value |
+|---|---|
+| Base Model | nlpaueb/legal-bert-base-uncased |
+| Num Labels | 41 |
+| Problem Type | multi_label_classification |
+| Loss Function | BCEWithLogitsLoss (automatic) |
+| Activation | Sigmoid |
+| Threshold | 0.5 |
+| Max Length | 256 |
+| Epochs | 2 |
+| Batch Size | 8 (train) / 16 (eval) |
+| FP16 | Auto (if CUDA available) |
+| Best Model Metric | micro_f1 |
+
+---
+
+## 📊 Metrics Computed
+
+| Category | Metrics |
+|---|---|
+| Overall | Subset Accuracy, Hamming Loss |
+| Micro | Precision, Recall, F1 |
+| Macro | Precision, Recall, F1 |
+| Per-Label | Precision, Recall, F1, Support |
+
+---
+
+## 📂 Output Structure (after training)
+
+```txt
+models/legal_bert_multilabel/
+├── trained_model/
+│   ├── model files
+│   └── tokenizer files
+├── metrics.json
+├── label_mapping.json
+└── checkpoints/
+```
+
+---
+
+## 🧠 Key Concepts Explained
+
+- Multi-label vs multi-class classification
+- Logits, sigmoid, and threshold
+- BCEWithLogitsLoss vs CrossEntropyLoss
+- Why softmax is incorrect for multi-label
+- Independent probability per label
+
+---
+
+## 📌 Execution Status
+
+| Section | Status |
+|---|---|
+| Configuration | ✓ Ready |
+| Dataset loading | ✓ Ready |
+| Model loading | ✓ Ready |
+| Metrics function | ✓ Ready |
+| Trainer setup | ✓ Ready |
+| Training | ⏳ Awaiting manual execution |
+| Evaluation | ⏳ Awaiting training completion |
+| Artifact saving | ⏳ Awaiting training completion |
+
+---
+
 # 📊 Final Model Benchmark Comparison
 
 ### Single-Label Experiments (4 labels, binary classification)
@@ -790,7 +884,7 @@ models/legal_bert_multilabel/tokenizer/
 | Model | Subset Acc | Hamming Loss | Micro F1 | Macro F1 |
 |---|---|---|---|---|
 | SVM Baseline (OVR) | 75.49% | 0.0072 | 43.37% | 27.96% |
-| Legal-BERT | — | — | — | — |
+| Legal-BERT | ⏳ pending | ⏳ pending | ⏳ pending | ⏳ pending |
 
 ---
 
@@ -816,7 +910,8 @@ models/legal_bert_multilabel/tokenizer/
 - ~~Multi-label dataset creation~~ ✅ Complete
 - ~~Multi-label SVM baseline~~ ✅ Complete
 - ~~Transformer tokenization preprocessing~~ ✅ Complete
-- Multi-label Legal-BERT fine-tuning (41 labels, sigmoid + BCEWithLogitsLoss)
+- ~~Multi-label Legal-BERT training pipeline~~ ✅ Pipeline ready
+- **Execute multi-label Legal-BERT training** ⏳ Awaiting GPU execution
 - Hyperparameter tuning
 - Threshold calibration per label
 - Confidence score analysis
