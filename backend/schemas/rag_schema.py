@@ -101,6 +101,17 @@ class ClauseResult(BaseModel):
 # Final API response
 # -------------------------------------------------------------------
 
+class ContractSummary(BaseModel):
+
+    overall_risk: str
+
+    top_detected_labels: List[str]
+
+    high_confidence_clauses: int
+
+
 class QueryResponse(BaseModel):
+
+    summary: ContractSummary
 
     results: List[ClauseResult]
