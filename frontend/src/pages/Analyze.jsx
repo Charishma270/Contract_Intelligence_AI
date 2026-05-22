@@ -837,6 +837,136 @@
 
 //thursdayyyyyyyyyyyyyyyyyyyyyyyyyyy
 
+// import { useState } from "react";
+// import Layout from "../components/layout/Layout";
+// import ResultCard from "../components/analyze/ResultCard";
+// import Loader from "../components/common/Loader";
+// import { analyzeClause } from "../services/api";
+
+// function Analyze() {
+//   const [input, setInput] = useState("");
+//   const [results, setResults] = useState([]);
+//   const [loading, setLoading] = useState(false);
+
+//   // MOCK DATA
+//   const mockResults = [
+//   {
+//     clause_type: "Termination Clause",
+//     retrieved_label: "Contract Termination",
+//     legal_bert_prediction: "Termination",
+//     legal_bert_confidence: 0.97,
+//     risk_level: "High",
+//     similarity_score: 0.69,
+//     hybrid_score: 0.83,
+//     model_disagreement: true,
+//     clause_text:
+//       "Either party may terminate this agreement immediately upon breach of contract or failure to meet obligations within 30 days of notice.",
+//   },
+
+//   {
+//     clause_type: "Confidentiality Clause",
+//     retrieved_label: "Confidentiality",
+//     legal_bert_prediction: "Confidentiality",
+//     legal_bert_confidence: 0.89,
+//     risk_level: "Medium",
+//     similarity_score: 0.74,
+//     hybrid_score: 0.79,
+//     model_disagreement: false,
+//     clause_text:
+//       "All confidential information shared between parties shall remain protected and cannot be disclosed without prior written consent.",
+//   },
+
+//   {
+//     clause_type: "Payment Clause",
+//     retrieved_label: "Payment Terms",
+//     legal_bert_prediction: "Payment",
+//     legal_bert_confidence: 0.81,
+//     risk_level: "Low",
+//     similarity_score: 0.77,
+//     hybrid_score: 0.75,
+//     model_disagreement: false,
+//     clause_text:
+//       "Payment shall be completed within 15 business days after invoice generation.",
+//   },
+// ];
+
+//   // ANALYZE FUNCTION
+//   const handleAnalyze = async () => {
+//     if (!input.trim()) return;
+
+//     setLoading(true);
+
+//     try {
+//       const data = await analyzeClause(input);
+
+//       setResults(data);
+//     } catch (error) {
+//       console.log(error);
+
+//       // fallback mock data
+//       setResults(mockResults);
+//     }
+
+//     setLoading(false);
+//   };
+
+//   return (
+//     <Layout>
+//       <div className="max-w-7xl mx-auto py-8">
+//         <h1 className="text-5xl font-bold text-center mb-10">
+//           AI Clause Analysis
+//         </h1>
+
+//         {/* INPUT */}
+//         <div className="bg-white rounded-xl shadow-md p-4 mb-8 flex gap-3 items-end">
+//           <textarea
+//             placeholder="Enter query (e.g. termination clause)"
+//             value={input}
+//             onChange={(e) => setInput(e.target.value)}
+//             rows={1}
+//             className="flex-1 border rounded-lg px-4 py-3 resize-none outline-none min-h-[50px] max-h-[140px] overflow-y-auto"
+//             onInput={(e) => {
+//               e.target.style.height = "auto";
+//               e.target.style.height =
+//                 Math.min(e.target.scrollHeight, 140) + "px";
+//             }}
+//             onKeyDown={(e) => {
+//               if (e.key === "Enter" && !e.shiftKey) {
+//                 e.preventDefault();
+//                 handleAnalyze();
+//               }
+//             }}
+//           />
+
+//           <button
+//             onClick={handleAnalyze}
+//             className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold"
+//           >
+//             Analyze
+//           </button>
+//         </div>
+
+//         {/* LOADER */}
+//         {loading && <Loader />}
+
+//         {/* RESULTS */}
+//         {!loading && (
+//           <div className="space-y-6">
+//             {results.map((item, index) => (
+//               <ResultCard key={index} item={item} />
+//             ))}
+//           </div>
+//         )}
+//       </div>
+//     </Layout>
+//   );
+// }
+
+// export default Analyze;
+
+
+// fridayyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+
 import { useState } from "react";
 import Layout from "../components/layout/Layout";
 import ResultCard from "../components/analyze/ResultCard";
@@ -847,54 +977,56 @@ function Analyze() {
   const [input, setInput] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   // MOCK DATA
   const mockResults = [
-  {
-    clause_type: "Termination Clause",
-    retrieved_label: "Contract Termination",
-    legal_bert_prediction: "Termination",
-    legal_bert_confidence: 0.97,
-    risk_level: "High",
-    similarity_score: 0.69,
-    hybrid_score: 0.83,
-    model_disagreement: true,
-    clause_text:
-      "Either party may terminate this agreement immediately upon breach of contract or failure to meet obligations within 30 days of notice.",
-  },
+    {
+      clause_type: "Termination Clause",
+      retrieved_label: "Contract Termination",
+      legal_bert_prediction: "Termination",
+      legal_bert_confidence: 0.97,
+      risk_level: "High",
+      similarity_score: 0.69,
+      hybrid_score: 0.83,
+      model_disagreement: true,
+      clause_text:
+        "Either party may terminate this agreement immediately upon breach of contract or failure to meet obligations within 30 days of notice.",
+    },
 
-  {
-    clause_type: "Confidentiality Clause",
-    retrieved_label: "Confidentiality",
-    legal_bert_prediction: "Confidentiality",
-    legal_bert_confidence: 0.89,
-    risk_level: "Medium",
-    similarity_score: 0.74,
-    hybrid_score: 0.79,
-    model_disagreement: false,
-    clause_text:
-      "All confidential information shared between parties shall remain protected and cannot be disclosed without prior written consent.",
-  },
+    {
+      clause_type: "Confidentiality Clause",
+      retrieved_label: "Confidentiality",
+      legal_bert_prediction: "Confidentiality",
+      legal_bert_confidence: 0.89,
+      risk_level: "Medium",
+      similarity_score: 0.74,
+      hybrid_score: 0.79,
+      model_disagreement: false,
+      clause_text:
+        "All confidential information shared between parties shall remain protected and cannot be disclosed without prior written consent.",
+    },
 
-  {
-    clause_type: "Payment Clause",
-    retrieved_label: "Payment Terms",
-    legal_bert_prediction: "Payment",
-    legal_bert_confidence: 0.81,
-    risk_level: "Low",
-    similarity_score: 0.77,
-    hybrid_score: 0.75,
-    model_disagreement: false,
-    clause_text:
-      "Payment shall be completed within 15 business days after invoice generation.",
-  },
-];
+    {
+      clause_type: "Payment Clause",
+      retrieved_label: "Payment Terms",
+      legal_bert_prediction: "Payment",
+      legal_bert_confidence: 0.81,
+      risk_level: "Low",
+      similarity_score: 0.77,
+      hybrid_score: 0.75,
+      model_disagreement: false,
+      clause_text:
+        "Payment shall be completed within 15 business days after invoice generation.",
+    },
+  ];
 
   // ANALYZE FUNCTION
   const handleAnalyze = async () => {
     if (!input.trim()) return;
 
     setLoading(true);
+    setError("");
 
     try {
       const data = await analyzeClause(input);
@@ -902,6 +1034,8 @@ function Analyze() {
       setResults(data);
     } catch (error) {
       console.log(error);
+
+      setError("Backend unavailable. Showing demo results.");
 
       // fallback mock data
       setResults(mockResults);
@@ -940,17 +1074,42 @@ function Analyze() {
 
           <button
             onClick={handleAnalyze}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold"
+            disabled={loading}
+            className={`px-8 py-3 rounded-lg font-semibold text-white ${
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700"
+            }`}
           >
-            Analyze
+            {loading ? "Analyzing..." : "Analyze"}
           </button>
         </div>
 
         {/* LOADER */}
         {loading && <Loader />}
 
+        {/* ERROR */}
+        {error && (
+          <div className="bg-red-100 text-red-700 px-4 py-3 rounded-lg mb-6">
+            {error}
+          </div>
+        )}
+
+        {/* EMPTY STATE */}
+        {!loading && results.length === 0 && (
+          <div className="bg-white rounded-xl shadow-md p-10 text-center">
+            <h2 className="text-2xl font-bold mb-3">
+              No Analysis Yet
+            </h2>
+
+            <p className="text-gray-600">
+              Enter a legal clause query and click Analyze.
+            </p>
+          </div>
+        )}
+
         {/* RESULTS */}
-        {!loading && (
+        {!loading && results.length > 0 && (
           <div className="space-y-6">
             {results.map((item, index) => (
               <ResultCard key={index} item={item} />
