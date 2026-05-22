@@ -9,6 +9,7 @@ Day 9: Extracted from analyze route into a clean reusable function.
 """
 
 import logging
+import uuid
 from typing import Optional
 
 from backend.schemas.contract_schema import (
@@ -16,7 +17,7 @@ from backend.schemas.contract_schema import (
     ContractStatus,
     RiskBreakdown,
 )
-from backend.schemas.ocr_schema import OCROutput
+from backend.schemas.ocr_schema import OCRChunk, OCROutput
 from backend.schemas.nlp_schema import NLPOutput
 from backend.services.tracking import (
     get_contract,
@@ -140,7 +141,31 @@ def run_pipeline(contract_id: str) -> AnalysisResponse:
     ocr_output: Optional[OCROutput] = None
     try:
         logger.info(f"[{contract_id}] Stage 1/4: Running OCR...")
-        ocr_output = run_mock_ocr(contract_id, file_path)
+        try:
+            # Use Sruthi's real OCR pipeline
+            from ocr.ocr_pipeline import process_contract
+            raw_chunks = process_contract(file_path, contract_id)
+            chunks = [
+                OCRChunk(
+                    contract_id=c["contract_id"],
+                    chunk_id=c["chunk_id"],
+                    page=c["page"],
+                    text=c["text"],
+                )
+                for c in raw_chunks
+            ]
+            # Determine total pages from the chunks
+            total_pages = max((c.page for c in chunks), default=0)
+            ocr_output = OCROutput(
+                contract_id=contract_id,
+                chunks=chunks,
+                total_pages=total_pages,
+            )
+            logger.info(f"[{contract_id}] Real OCR pipeline used")
+        except (ImportError, OSError) as ocr_dep_err:
+            # Fallback to mock if Tesseract/Poppler not available
+            logger.warning(f"[{contract_id}] Real OCR unavailable ({ocr_dep_err}), using mock OCR")
+            ocr_output = run_mock_ocr(contract_id, file_path)
         update_contract_status(contract_id, ContractStatus.OCR_DONE)
         logger.info(f"[{contract_id}] OCR complete — {ocr_output.total_pages} pages, {len(ocr_output.chunks)} chunks")
     except Exception as e:
