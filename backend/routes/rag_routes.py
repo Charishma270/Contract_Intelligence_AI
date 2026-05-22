@@ -20,10 +20,17 @@ def analyze_query(
     request: QueryRequest
 ):
 
-    results = analyze_contract_query(
-        request.query
+    pipeline_output = (
+        analyze_contract_query(
+            request.query
+        )
     )
 
     return {
-        "results": results
+
+        "summary":
+            pipeline_output["summary"],
+
+        "results":
+            pipeline_output["results"]
     }
