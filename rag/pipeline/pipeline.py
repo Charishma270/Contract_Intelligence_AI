@@ -314,8 +314,13 @@ def run_pipeline(query):
 
         seen_clauses.add(clause_text)
 
-        # Skip weak semantic matches
-        if result["score"] < 0.60:
+        print(
+            "Semantic Score:",
+            round(result["score"], 4)
+        )
+
+        # Skip extremely weak semantic matches
+        if result["score"] < 0.35:
 
             continue
 
@@ -341,10 +346,18 @@ def run_pipeline(query):
             )
         )
 
-        # Skip weak transformer predictions
+        print(
+            "BERT Confidence:",
+            round(
+                bert_result["confidence"],
+                4
+            )
+        )
+
+        # Skip extremely weak transformer predictions
         if (
             bert_result["confidence"]
-            < 0.75
+            < 0.45
         ):
 
             continue
@@ -521,7 +534,7 @@ def run_pipeline(query):
 
             or
 
-            result["score"] < 0.65
+            result["score"] < 0.40
         )
 
         # -------------------------------------------------
@@ -572,6 +585,11 @@ def run_pipeline(query):
 
             "risk_level":
                 risk_level,
+
+            "risk_score": round(
+                final_confidence * 100,
+                2
+            ),
 
             "semantic_score":
                 round(
