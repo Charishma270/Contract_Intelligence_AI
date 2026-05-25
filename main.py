@@ -51,6 +51,10 @@ from backend.routes.rag_routes import (
     router as rag_router
 )
 
+from backend.routes.frontend_analyze import (
+    router as frontend_analyze_router
+)
+
 from backend.services.tracking import (
     init_db
 )
@@ -308,6 +312,14 @@ app.include_router(
     prefix="/api/rag",
 
     tags=["RAG Pipeline"]
+)
+
+# Frontend integration — no /api prefix (Mukt's frontend calls POST /analyze)
+app.include_router(
+
+    frontend_analyze_router,
+
+    tags=["Frontend Integration"]
 )
 
 

@@ -6,10 +6,10 @@ Runs: OCR → NLP → RAG indexing sequentially, updating status at each stage.
 Each stage is wrapped in try/except for error recovery.
 
 Day 9: Extracted from analyze route into a clean reusable function.
+Day 14: Replaced mock OCR with real OCR integration (pdfplumber + Tesseract).
 """
 
 import logging
-import uuid
 from typing import Optional
 
 from backend.schemas.contract_schema import (
@@ -17,14 +17,14 @@ from backend.schemas.contract_schema import (
     ContractStatus,
     RiskBreakdown,
 )
-from backend.schemas.ocr_schema import OCRChunk, OCROutput
+from backend.schemas.ocr_schema import OCROutput
 from backend.schemas.nlp_schema import NLPOutput
 from backend.services.tracking import (
     get_contract,
     get_contract_file_path,
     update_contract_status,
 )
-from backend.services.mock_ocr import run_mock_ocr
+from backend.services.real_ocr import run_real_ocr
 from backend.services.mock_nlp import run_mock_nlp
 from backend.services.mock_rag import run_mock_rag
 
@@ -141,33 +141,14 @@ def run_pipeline(contract_id: str) -> AnalysisResponse:
     ocr_output: Optional[OCROutput] = None
     try:
         logger.info(f"[{contract_id}] Stage 1/4: Running OCR...")
-        try:
-            # Use Sruthi's real OCR pipeline
-            from ocr.ocr_pipeline import process_contract
-            raw_chunks = process_contract(file_path, contract_id)
-            chunks = [
-                OCRChunk(
-                    contract_id=c["contract_id"],
-                    chunk_id=c["chunk_id"],
-                    page=c["page"],
-                    text=c["text"],
-                )
-                for c in raw_chunks
-            ]
-            # Determine total pages from the chunks
-            total_pages = max((c.page for c in chunks), default=0)
-            ocr_output = OCROutput(
-                contract_id=contract_id,
-                chunks=chunks,
-                total_pages=total_pages,
-            )
-            logger.info(f"[{contract_id}] Real OCR pipeline used")
-        except (ImportError, OSError) as ocr_dep_err:
-            # Fallback to mock if Tesseract/Poppler not available
-            logger.warning(f"[{contract_id}] Real OCR unavailable ({ocr_dep_err}), using mock OCR")
-            ocr_output = run_mock_ocr(contract_id, file_path)
+        ocr_output = run_real_ocr(contract_id, file_path)
         update_contract_status(contract_id, ContractStatus.OCR_DONE)
-        logger.info(f"[{contract_id}] OCR complete — {ocr_output.total_pages} pages, {len(ocr_output.chunks)} chunks")
+        logger.info(
+            f"[{contract_id}] OCR complete — {ocr_output.total_pages} pages, "
+            f"{len(ocr_output.chunks)} chunks, "
+            f"method={ocr_output.extraction_method}, "
+            f"time={ocr_output.processing_time_seconds}s"
+        )
     except Exception as e:
         logger.error(f"[{contract_id}] OCR failed: {e}")
         update_contract_status(contract_id, ContractStatus.FAILED, f"OCR error: {e}")

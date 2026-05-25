@@ -1,1 +1,1 @@
-# OCR Chunking Package
+# OCR chunking submodule

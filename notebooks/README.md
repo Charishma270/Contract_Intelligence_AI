@@ -690,6 +690,185 @@ models/multi_label_svm_classifier/
 
 ---
 
+# 8️⃣ `tokenized_multi_label_dataset.ipynb`
+
+## 🎯 Purpose
+
+Preprocess and tokenize the multi-label CUAD dataset using Legal-BERT tokenizer, creating reusable HuggingFace Dataset objects saved to disk for future training.
+
+This notebook is **preprocessing only** — no model training.
+
+---
+
+## ✅ Work Completed
+
+- Loaded multi-label dataset (20,104 samples, 41 labels)
+- Loaded Legal-BERT tokenizer (`nlpaueb/legal-bert-base-uncased`)
+- Performed contract-level train/test split (zero leakage verified)
+- Tokenized all text with padding and truncation (max_length=256)
+- Created HuggingFace Datasets with input_ids, attention_mask, labels, contract_id
+- Validated tokenized shapes, label dimensions, and data types
+- Saved tokenized datasets to disk (Arrow format)
+- Saved tokenizer for reproducibility
+- Verified reload from disk
+
+---
+
+## ⚙️ Tokenization Configuration
+
+| Parameter | Value |
+|---|---|
+| Tokenizer | nlpaueb/legal-bert-base-uncased |
+| Vocab Size | 30,522 |
+| Max Length | 256 |
+| Padding | max_length |
+| Truncation | True |
+| Label Type | float32 (for BCEWithLogitsLoss) |
+
+---
+
+## 📊 Dataset Statistics
+
+| Split | Samples | Size on Disk |
+|---|---|---|
+| Train | 16,073 | 25.97 MB |
+| Test | 4,031 | 6.53 MB |
+
+Each sample contains:
+
+| Field | Shape | Type |
+|---|---|---|
+| input_ids | [256] | int |
+| attention_mask | [256] | int |
+| labels | [41] | float32 |
+| contract_id | — | string |
+
+---
+
+## 📂 Saved Outputs
+
+```txt
+data/processed/tokenized_multi_label_dataset/
+├── train/
+│   ├── data-00000-of-00001.arrow
+│   ├── dataset_info.json
+│   └── state.json
+└── test/
+    ├── data-00000-of-00001.arrow
+    ├── dataset_info.json
+    └── state.json
+
+models/legal_bert_multilabel/tokenizer/
+├── tokenizer.json
+└── tokenizer_config.json
+```
+
+---
+
+## 🧠 Key Learnings
+
+- Transformer tokenization converts text to numerical token IDs
+- input_ids are vocabulary indices; attention_mask indicates real vs padding tokens
+- Multi-label targets must be float32 for BCEWithLogitsLoss compatibility
+- max_length=256 balances information retention with training efficiency
+- Saving tokenized datasets avoids re-tokenization during training experiments
+
+---
+
+# 9️⃣ `multi_label_legal_bert_classifier.ipynb`
+
+## 🎯 Purpose
+
+Fine-tune Legal-BERT for multi-label classification across all 41 CUAD legal clause categories using the pre-tokenized dataset, sigmoid activation, and BCEWithLogitsLoss.
+
+---
+
+## ✅ Notebook Contains
+
+- GPU/device detection
+- Tokenized dataset loading (train + test)
+- Label mapping loading
+- Legal-BERT model loading with `problem_type="multi_label_classification"`
+- `compute_metrics()` function (sigmoid + threshold + multi-label metrics)
+- TrainingArguments configuration
+- Trainer setup
+- Training cell (commented — ready to run)
+- Evaluation cell (commented — ready to run)
+- Per-label analysis cell (commented — ready to run)
+- SVM vs Legal-BERT comparison cell (commented — ready to run)
+- Model/tokenizer/metrics saving cells (commented — ready to run)
+- Comprehensive markdown theory explanations
+
+---
+
+## ⚙️ Model Configuration
+
+| Parameter | Value |
+|---|---|
+| Base Model | nlpaueb/legal-bert-base-uncased |
+| Num Labels | 41 |
+| Problem Type | multi_label_classification |
+| Loss Function | BCEWithLogitsLoss (automatic) |
+| Activation | Sigmoid |
+| Threshold | 0.5 |
+| Max Length | 256 |
+| Epochs | 2 |
+| Batch Size | 8 (train) / 16 (eval) |
+| FP16 | Auto (if CUDA available) |
+| Best Model Metric | micro_f1 |
+
+---
+
+## 📊 Metrics Computed
+
+| Category | Metrics |
+|---|---|
+| Overall | Subset Accuracy, Hamming Loss |
+| Micro | Precision, Recall, F1 |
+| Macro | Precision, Recall, F1 |
+| Per-Label | Precision, Recall, F1, Support |
+
+---
+
+## 📂 Output Structure (after training)
+
+```txt
+models/legal_bert_multilabel/
+├── trained_model/
+│   ├── model files
+│   └── tokenizer files
+├── metrics.json
+├── label_mapping.json
+└── checkpoints/
+```
+
+---
+
+## 🧠 Key Concepts Explained
+
+- Multi-label vs multi-class classification
+- Logits, sigmoid, and threshold
+- BCEWithLogitsLoss vs CrossEntropyLoss
+- Why softmax is incorrect for multi-label
+- Independent probability per label
+
+---
+
+## 📌 Execution Status
+
+| Section | Status |
+|---|---|
+| Configuration | ✓ Ready |
+| Dataset loading | ✓ Ready |
+| Model loading | ✓ Ready |
+| Metrics function | ✓ Ready |
+| Trainer setup | ✓ Ready |
+| Training | ⏳ Awaiting manual execution |
+| Evaluation | ⏳ Awaiting training completion |
+| Artifact saving | ⏳ Awaiting training completion |
+
+---
+
 # 📊 Final Model Benchmark Comparison
 
 ### Single-Label Experiments (4 labels, binary classification)
@@ -705,7 +884,7 @@ models/multi_label_svm_classifier/
 | Model | Subset Acc | Hamming Loss | Micro F1 | Macro F1 |
 |---|---|---|---|---|
 | SVM Baseline (OVR) | 75.49% | 0.0072 | 43.37% | 27.96% |
-| Legal-BERT | — | — | — | — |
+| Legal-BERT | ⏳ pending | ⏳ pending | ⏳ pending | ⏳ pending |
 
 ---
 
@@ -722,6 +901,7 @@ models/multi_label_svm_classifier/
 - Multi-label aggregation avoids dataset bloat while preserving label richness
 - Multi-label evaluation requires different metrics than single-label (hamming loss, subset accuracy)
 - TF-IDF baselines establish realistic benchmarks for transformer comparison
+- Tokenized datasets should be saved to disk for reproducibility and training efficiency
 
 ---
 
@@ -729,7 +909,9 @@ models/multi_label_svm_classifier/
 
 - ~~Multi-label dataset creation~~ ✅ Complete
 - ~~Multi-label SVM baseline~~ ✅ Complete
-- Multi-label Legal-BERT fine-tuning (41 labels, sigmoid + BCEWithLogitsLoss)
+- ~~Transformer tokenization preprocessing~~ ✅ Complete
+- ~~Multi-label Legal-BERT training pipeline~~ ✅ Pipeline ready
+- **Execute multi-label Legal-BERT training** ⏳ Awaiting GPU execution
 - Hyperparameter tuning
 - Threshold calibration per label
 - Confidence score analysis

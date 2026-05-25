@@ -1,1 +1,1 @@
-# OCR Preprocessing Package
+# OCR preprocessing submodule

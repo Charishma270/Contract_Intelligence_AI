@@ -30,7 +30,7 @@
 | 11 | /chat Endpoint (RAG) | ✅ Done | `backend/routes/chat.py`, `backend/services/rag.py` | `feat(routes): integrate Tisha's FAISS retrieval into /chat endpoint` |
 | 12 | Error Handling & Validation | ✅ Done | `backend/utils/exceptions.py`, `backend/utils/validators.py`, all route files, `main.py`, `backend/README.md` | `feat(backend): add comprehensive error handling across all endpoints` |
 | 13 | Structured Logging | ✅ Done | `backend/utils/logging_config.py`, `main.py`, `tracking.py`, `contracts.py`, `tests/backend/test_logging.py`, `backend/README.md` | `feat(utils): add structured logging with JSON file output` |
-| 14 | Real OCR Integration | ✅ Done | `ocr/ocr_pipeline.py`, `ocr/preprocessing/`, `ocr/chunking/`, `ocr/metadata/`, `backend/services/pipeline.py` | `feat(services): integrate Sruthi's OCR pipeline` |
+| 14 | Real OCR Integration | ✅ Done | `backend/services/real_ocr.py`, `backend/services/ocr_config.py`, `backend/schemas/ocr_schema.py`, `backend/utils/exceptions.py`, `backend/services/pipeline.py`, `tests/backend/test_real_ocr.py` | `feat(services): integrate Sruthi's OCR pipeline with pdfplumber + Tesseract` |
 
 ---
 
@@ -98,9 +98,11 @@ Contract_Intelligence_AI/
 │   ├── services/
 │   │   ├── __init__.py
 │   │   ├── tracking.py              ← SQLite CRUD
-│   │   ├── pipeline.py              ← Orchestrator (real OCR)    [MOD Day 14]
+│   │   ├── pipeline.py              ← Orchestrator              [NEW Day 9]
 │   │   ├── rag.py                   ← FAISS RAG retrieval        [NEW Day 11]
-│   │   ├── mock_ocr.py              ← Fallback OCR
+│   │   ├── real_ocr.py              ← pdfplumber + Tesseract     [NEW Day 14]
+│   │   ├── ocr_config.py            ← OCR configuration          [NEW Day 14]
+│   │   ├── mock_ocr.py
 │   │   ├── mock_nlp.py
 │   │   └── mock_rag.py
 │   └── utils/
@@ -108,18 +110,6 @@ Contract_Intelligence_AI/
 │       ├── exceptions.py            ← Custom exception hierarchy [NEW Day 12]
 │       ├── validators.py            ← Reusable request validators[NEW Day 12]
 │       └── logging_config.py        ← Structured logging setup   [NEW Day 13]
-├── ocr/                             ← Sruthi's OCR pipeline      [NEW Day 14]
-│   ├── __init__.py
-│   ├── ocr_pipeline.py              ← PDF → Tesseract → chunks
-│   ├── preprocessing/
-│   │   ├── __init__.py
-│   │   └── text_preprocessing.py    ← Regex text cleaning
-│   ├── chunking/
-│   │   ├── __init__.py
-│   │   └── chunking.py              ← Sliding window chunker
-│   └── metadata/
-│       ├── __init__.py
-│       └── metadata_builder.py      ← Per-chunk metadata dict
 ├── uploads/
 ├── data/
 │   └── contracts.db                 ← SQLite (auto-created)

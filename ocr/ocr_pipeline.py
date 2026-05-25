@@ -2,9 +2,9 @@ import os
 from pdf2image import convert_from_path
 import pytesseract
 
-from ocr.preprocessing.text_preprocessing import clean_text
-from ocr.chunking.chunking import chunk_text
-from ocr.metadata.metadata_builder import create_metadata
+from preprocessing.text_preprocessing import clean_text
+from chunking.chunking import chunk_text
+from metadata.metadata_builder import create_metadata
 
 # ✅ FIX THESE PATHS (VERY IMPORTANT)
 POPPLER_PATH = r"C:\poppler\poppler-26.02.0\Library\bin"

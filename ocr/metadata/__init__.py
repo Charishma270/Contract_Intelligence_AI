@@ -1,1 +1,1 @@
-# OCR Metadata Package
+# OCR metadata submodule
