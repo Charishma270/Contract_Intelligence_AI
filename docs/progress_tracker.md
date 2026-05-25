@@ -30,7 +30,7 @@
 | 11 | /chat Endpoint (RAG) | ✅ Done | `backend/routes/chat.py`, `backend/services/rag.py` | `feat(routes): integrate Tisha's FAISS retrieval into /chat endpoint` |
 | 12 | Error Handling & Validation | ✅ Done | `backend/utils/exceptions.py`, `backend/utils/validators.py`, all route files, `main.py`, `backend/README.md` | `feat(backend): add comprehensive error handling across all endpoints` |
 | 13 | Structured Logging | ✅ Done | `backend/utils/logging_config.py`, `main.py`, `tracking.py`, `contracts.py`, `tests/backend/test_logging.py`, `backend/README.md` | `feat(utils): add structured logging with JSON file output` |
-| 14 | Real OCR Integration | ⬜ Pending | `backend/services/` | `feat(services): integrate Sruthi's OCR pipeline` |
+| 14 | Real OCR Integration | ✅ Done | `backend/services/real_ocr.py`, `backend/services/ocr_config.py`, `backend/schemas/ocr_schema.py`, `backend/utils/exceptions.py`, `backend/services/pipeline.py`, `tests/backend/test_real_ocr.py` | `feat(services): integrate Sruthi's OCR pipeline with pdfplumber + Tesseract` |
 
 ---
 
@@ -66,11 +66,11 @@
 
 ```
 Week 1: ████████████████████ 100% (7/7)
-Week 2: ████████████████░░░░  86% (6/7)
+Week 2: ████████████████████ 100% (7/7)
 Week 3: ░░░░░░░░░░░░░░░░░░░░   0% (0/7)
 Week 4: ░░░░░░░░░░░░░░░░░░░░   0% (0/7)
 ─────────────────────────────────────
-Total:  █████████░░░░░░░░░░░  46% (13/28)
+Total:  ██████████░░░░░░░░░░  50% (14/28)
 ```
 
 ---
@@ -100,6 +100,8 @@ Contract_Intelligence_AI/
 │   │   ├── tracking.py              ← SQLite CRUD
 │   │   ├── pipeline.py              ← Orchestrator              [NEW Day 9]
 │   │   ├── rag.py                   ← FAISS RAG retrieval        [NEW Day 11]
+│   │   ├── real_ocr.py              ← pdfplumber + Tesseract     [NEW Day 14]
+│   │   ├── ocr_config.py            ← OCR configuration          [NEW Day 14]
 │   │   ├── mock_ocr.py
 │   │   ├── mock_nlp.py
 │   │   └── mock_rag.py

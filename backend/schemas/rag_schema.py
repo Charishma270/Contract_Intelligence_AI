@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict, Any
 
 from pydantic import BaseModel
 
@@ -19,6 +19,11 @@ class RetrievedChunk(BaseModel):
     similarity_score: float
 
 
+class ChatRequest(BaseModel):
+
+    query: str
+
+
 class ChatResponse(BaseModel):
 
     answer: str
@@ -30,13 +35,28 @@ class ChatResponse(BaseModel):
 
 # -------------------------------------------------------------------
 # NEW HYBRID RAG PIPELINE SCHEMAS
-# (your Legal-BERT + FAISS integration)
+# (Legal-BERT + FAISS integration)
 # -------------------------------------------------------------------
 
 class QueryRequest(BaseModel):
 
     query: str
 
+
+# -------------------------------------------------------------------
+# Multi-label prediction structure
+# -------------------------------------------------------------------
+
+class MultiLabelPrediction(BaseModel):
+
+    label: str
+
+    confidence: float
+
+
+# -------------------------------------------------------------------
+# Main clause result schema
+# -------------------------------------------------------------------
 
 class ClauseResult(BaseModel):
 
@@ -46,15 +66,23 @@ class ClauseResult(BaseModel):
 
     legal_bert_prediction: str
 
+    multi_label_predictions: List[
+        MultiLabelPrediction
+    ]
+
     risk_level: str
+
+    risk_score: float
 
     semantic_score: float
 
+    keyword_score: float
+
     bert_confidence: float
 
-    bert_confidence_band: str
-
     final_confidence: float
+
+    retrieval_rerank_score: float
 
     reliability_band: str
 
@@ -62,10 +90,16 @@ class ClauseResult(BaseModel):
 
     weak_prediction: bool
 
+    explanation: str
+
     target: int
 
     clause_text: str
 
+
+# -------------------------------------------------------------------
+# Final API response
+# -------------------------------------------------------------------
 
 class QueryResponse(BaseModel):
 

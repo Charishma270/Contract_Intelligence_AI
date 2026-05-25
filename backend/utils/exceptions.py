@@ -97,6 +97,17 @@ class PipelineError(ContractAIError):
         self.contract_id = contract_id
 
 
+class OCRProcessingError(PipelineError):
+    """Raised when OCR text extraction fails.
+
+    Day 14: Specialized pipeline error for the OCR stage.
+    Automatically sets stage='ocr' for cleaner error reporting.
+    """
+
+    def __init__(self, contract_id: str, detail: str):
+        super().__init__(stage="ocr", contract_id=contract_id, detail=detail)
+
+
 class EmptyQueryError(ContractAIError):
     """Raised when a chat query is empty or whitespace-only."""
 
