@@ -72,6 +72,7 @@ def predict_multilabel_legal_bert(
 
     text,
     threshold=0.30
+    threshold=0.50
 ):
 
     inputs = tokenizer(
@@ -141,3 +142,4 @@ def predict_multilabel_legal_bert(
     )
 
     return detected_labels
+    return detected_labels[:3]

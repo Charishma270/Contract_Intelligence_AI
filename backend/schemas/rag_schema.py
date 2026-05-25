@@ -1,4 +1,4 @@
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
 
 from pydantic import BaseModel
 
@@ -68,11 +68,11 @@ class ClauseResult(BaseModel):
 
     multi_label_predictions: List[
         MultiLabelPrediction
-    ] = []
+    ]
 
     risk_level: str
 
-    risk_score: Optional[float] = None
+    risk_score: float
 
     semantic_score: float
 
@@ -101,6 +101,17 @@ class ClauseResult(BaseModel):
 # Final API response
 # -------------------------------------------------------------------
 
+class ContractSummary(BaseModel):
+
+    overall_risk: str
+
+    top_detected_labels: List[str]
+
+    high_confidence_clauses: int
+
+
 class QueryResponse(BaseModel):
+
+    summary: ContractSummary
 
     results: List[ClauseResult]
