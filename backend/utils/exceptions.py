@@ -108,6 +108,17 @@ class OCRProcessingError(PipelineError):
         super().__init__(stage="ocr", contract_id=contract_id, detail=detail)
 
 
+class NLPProcessingError(PipelineError):
+    """Raised when NLP clause classification or NER fails.
+
+    Day 15: Specialized pipeline error for the NLP stage.
+    Automatically sets stage='nlp' for cleaner error reporting.
+    """
+
+    def __init__(self, contract_id: str, detail: str):
+        super().__init__(stage="nlp", contract_id=contract_id, detail=detail)
+
+
 class EmptyQueryError(ContractAIError):
     """Raised when a chat query is empty or whitespace-only."""
 
