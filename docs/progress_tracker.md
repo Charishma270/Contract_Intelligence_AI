@@ -39,7 +39,7 @@
 | Day | Task | Status | Files | Commit Message |
 |-----|------|--------|-------|----------------|
 | 15 | Integrate Charishma's NLP | ✅ Done | `backend/services/real_nlp.py`, `backend/services/nlp_config.py`, `backend/schemas/nlp_schema.py`, `backend/utils/exceptions.py`, `backend/services/pipeline.py`, `tests/backend/test_real_nlp.py` | `feat(services): integrate Charishma's NER and clause classification` |
-| 16 | Validate Full Pipeline E2E | ⬜ Pending | — | `test(integration): verify end-to-end pipeline with real services` |
+| 16 | Validate Full Pipeline E2E | ✅ Done | `tests/backend/test_e2e_pipeline.py` | `test(integration): verify end-to-end pipeline with real services` |
 | 17 | Celery Async Processing | ⬜ Pending | `backend/services/`, `celery_config.py` | `feat(backend): add Celery async task processing with Redis` |
 | 18 | Vector DB Status Endpoint | ⬜ Pending | `backend/routes/` | `feat(routes): add chunk inspection endpoint for RAG debugging` |
 | 19 | Frontend API Contract Finalization | ⬜ Pending | `backend/schemas/` | `refactor(schemas): finalize frontend-facing response shapes` |
@@ -67,10 +67,10 @@
 ```
 Week 1: ████████████████████ 100% (7/7)
 Week 2: ████████████████████ 100% (7/7)
-Week 3: ███░░░░░░░░░░░░░░░░░  14% (1/7)
+Week 3: ██████░░░░░░░░░░░░░░  29% (2/7)
 Week 4: ░░░░░░░░░░░░░░░░░░░░   0% (0/7)
 ─────────────────────────────────────
-Total:  ███████████░░░░░░░░░  54% (15/28)
+Total:  ████████████░░░░░░░░  57% (16/28)
 ```
 
 ---
