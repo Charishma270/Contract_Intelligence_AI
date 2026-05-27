@@ -68,10 +68,16 @@ def build_chunks(
 
                 chunks.append(chunk)
 
-                start += (
-                    chunk_size
-                    - overlap
+                # -----------------------------------------
+                # Safe overlap handling
+                # -----------------------------------------
+
+                step = max(
+                    1,
+                    chunk_size - overlap
                 )
+
+                start += step
 
             continue
 
@@ -94,14 +100,19 @@ def build_chunks(
 
         else:
 
-            chunks.append(
-                current_chunk.strip()
-            )
+            if current_chunk.strip():
+
+                chunks.append(
+                    current_chunk.strip()
+                )
 
             current_chunk = section
 
+    # -----------------------------------------------------
     # Final chunk
-    if current_chunk:
+    # -----------------------------------------------------
+
+    if current_chunk.strip():
 
         chunks.append(
             current_chunk.strip()
@@ -114,14 +125,73 @@ def build_chunks(
 # Main Chunking Function
 # ---------------------------------------------------------
 
-def chunk_text(text):
+def chunk_text(
+
+    text,
+
+    chunk_size=350,
+
+    overlap=75
+):
+
+    # -----------------------------------------------------
+    # Backward compatibility
+    # -----------------------------------------------------
+
+    if not text:
+
+        return []
 
     sections = split_legal_sections(
         text
     )
 
+    # -----------------------------------------------------
+    # Fallback for non-legal/simple text
+    # -----------------------------------------------------
+
+    if len(sections) == 0:
+
+        words = text.split()
+
+        chunks = []
+
+        start = 0
+
+        while start < len(words):
+
+            end = start + chunk_size
+
+            chunk = " ".join(
+                words[start:end]
+            )
+
+            chunks.append(chunk)
+
+            # ---------------------------------------------
+            # Safe overlap handling
+            # ---------------------------------------------
+
+            step = max(
+                1,
+                chunk_size - overlap
+            )
+
+            start += step
+
+        return chunks
+
+    # -----------------------------------------------------
+    # Legal-aware chunking
+    # -----------------------------------------------------
+
     chunks = build_chunks(
-        sections
+
+        sections,
+
+        chunk_size=chunk_size,
+
+        overlap=overlap
     )
 
     return chunks
