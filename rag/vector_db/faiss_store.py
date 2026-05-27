@@ -3,84 +3,219 @@ import numpy as np
 import pickle
 import os
 
-# Embedding dimension
+from rag.retrieval.bm25_retriever import (
+    build_bm25_index,
+    bm25_search
+)
+
+
+# ---------------------------------------------------------
+# Config
+# ---------------------------------------------------------
+
 dimension = 384
 
-# Create FAISS index
-index = faiss.IndexFlatIP(dimension)
+index = faiss.IndexFlatIP(
+    dimension
+)
 
-# Store metadata
 metadata_store = []
 
 
-def add_embedding(embedding, metadata):
+# ---------------------------------------------------------
+# Add Embedding
+# ---------------------------------------------------------
 
-    global index
-    global metadata_store
-
-    # Ensure correct dtype + shape
-    vector = np.array(embedding, dtype=np.float32).reshape(1, -1)
-
-    # Add vector to FAISS
-    index.add(vector)
-
-    # Store metadata
-    metadata_store.append(metadata)
-
-
-def search_embedding(
-    query_embedding,
-    top_k=3,
-    label_filter=None,
-    target_filter=None
+def add_embedding(
+    embedding,
+    metadata
 ):
 
     global index
     global metadata_store
 
-    # Ensure correct dtype + shape
     vector = np.array(
-        query_embedding,
+
+        embedding,
+
         dtype=np.float32
+
     ).reshape(1, -1)
 
-    print("Search Vector Shape:", vector.shape)
+    index.add(vector)
 
-    # Search FAISS
-    distances, indices = index.search(vector, top_k)
+    metadata_store.append(
+        metadata
+    )
 
-    results = []
 
-    # Retrieve metadata
-    for position, idx in enumerate(indices[0]):
+# ---------------------------------------------------------
+# Hybrid Search
+# ---------------------------------------------------------
+
+def hybrid_search(
+
+    query,
+    query_embedding,
+    top_k=5,
+    semantic_weight=0.60,
+    lexical_weight=0.40 
+):
+
+    global index
+    global metadata_store
+
+    # -----------------------------------------------------
+    # Semantic Search
+    # -----------------------------------------------------
+
+    vector = np.array(
+
+        query_embedding,
+
+        dtype=np.float32
+
+    ).reshape(1, -1)
+
+    distances, indices = index.search(
+        vector,
+        top_k * 3
+    )
+
+    semantic_results = []
+
+    for position, idx in enumerate(
+        indices[0]
+    ):
 
         if idx < len(metadata_store):
 
-            result = metadata_store[idx].copy()
+            result = (
+                metadata_store[idx]
+                .copy()
+            )
 
-            # Apply label filter
-            if label_filter is not None:
-
-                if result["label_name"] != label_filter:
-                    continue
-
-            # Apply target filter
-            if target_filter is not None:
-
-                if result["target"] != target_filter:
-                    continue
-
-            # Add similarity score
-            result["score"] = float(
+            result["semantic_score"] = float(
                 distances[0][position]
             )
 
-            results.append(result)
+            semantic_results.append(
+                result
+            )
 
-    return results
+    # -----------------------------------------------------
+    # BM25 Search
+    # -----------------------------------------------------
+
+    lexical_results = bm25_search(
+
+        query,
+
+        metadata_store,
+
+        top_k=top_k * 3
+    )
+
+    # -----------------------------------------------------
+    # Fusion
+    # -----------------------------------------------------
+
+    combined_results = {}
+
+    # Semantic contribution
+    for result in semantic_results:
+
+        key = result["text"]
+
+        combined_results[key] = {
+
+            **result,
+
+            "fusion_score":
+                result["semantic_score"]
+                * semantic_weight
+        }
+
+    # Lexical contribution
+    for result in lexical_results:
+
+        key = result["text"]
+
+        bm25_score = (
+            result["bm25_score"]
+        )
+
+        if key not in combined_results:
+
+            combined_results[key] = {
+
+                **result,
+
+                "semantic_score": 0,
+
+                "fusion_score":
+                    bm25_score
+                    * lexical_weight
+            }
+
+        else:
+
+            combined_results[key][
+                "fusion_score"
+            ] += (
+
+                bm25_score
+                * lexical_weight
+            )
+
+        combined_results[key][
+            "bm25_score"
+        ] = bm25_score
+        
+    # -----------------------------------------------------
+    # Normalize Fusion Scores
+    # -----------------------------------------------------
+
+    max_fusion = max(
+
+        item["fusion_score"]
+
+        for item in combined_results.values()
+    )
+
+    if max_fusion > 0:
+
+        for item in combined_results.values():
+
+            item["fusion_score"] = round(
+
+                item["fusion_score"]
+                /
+                max_fusion,
+
+                4
+            )
+    # -----------------------------------------------------
+    # Final Sorting
+    # -----------------------------------------------------
+
+    final_results = sorted(
+
+        combined_results.values(),
+
+        key=lambda x:
+        x["fusion_score"],
+
+        reverse=True
+    )
+
+    return final_results[:top_k]
 
 
-# Save FAISS index + metadata
+# ---------------------------------------------------------
+# Save Index
+# ---------------------------------------------------------
+
 def save_index():
 
     os.makedirs(
@@ -88,40 +223,59 @@ def save_index():
         exist_ok=True
     )
 
-    # Save FAISS index
     faiss.write_index(
+
         index,
+
         "data/vector_store/faiss.index"
     )
 
-    # Save metadata
     with open(
+
         "data/vector_store/metadata.pkl",
+
         "wb"
+
     ) as f:
 
-        pickle.dump(metadata_store, f)
+        pickle.dump(
+            metadata_store,
+            f
+        )
 
-    print("\nFAISS index saved successfully!")
+    print(
+        "\nFAISS index saved successfully!"
+    )
 
 
-# Load FAISS index + metadata
+# ---------------------------------------------------------
+# Load Index
+# ---------------------------------------------------------
+
 def load_index():
 
     global index
     global metadata_store
 
-    # Load FAISS index
     index = faiss.read_index(
         "data/vector_store/faiss.index"
     )
 
-    # Load metadata
     with open(
+
         "data/vector_store/metadata.pkl",
+
         "rb"
+
     ) as f:
 
         metadata_store = pickle.load(f)
 
-    print("\nFAISS index loaded successfully!")
+    # Build BM25
+    build_bm25_index(
+        metadata_store
+    )
+
+    print(
+        "\nFAISS + BM25 loaded successfully!"
+    )

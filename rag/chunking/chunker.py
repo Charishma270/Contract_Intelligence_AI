@@ -1,20 +1,127 @@
-def chunk_text(text, chunk_size=200, overlap=50):
+import re
 
-    words = text.split()
+
+# ---------------------------------------------------------
+# Legal Section Splitter
+# ---------------------------------------------------------
+
+def split_legal_sections(text):
+
+    pattern = r'(?=\n?\s*(\d+\.|\([a-z]\)|[A-Z ]{4,}:))'
+
+    sections = re.split(
+        pattern,
+        text
+    )
+
+    cleaned_sections = []
+
+    for section in sections:
+
+        section = section.strip()
+
+        if len(section) > 50:
+
+            cleaned_sections.append(
+                section
+            )
+
+    return cleaned_sections
+
+
+# ---------------------------------------------------------
+# Smart Chunk Builder
+# ---------------------------------------------------------
+
+def build_chunks(
+
+    sections,
+
+    chunk_size=350,
+
+    overlap=75
+):
 
     chunks = []
 
-    start = 0
+    current_chunk = ""
 
-    while start < len(words):
+    for section in sections:
 
-        end = start + chunk_size
+        # -------------------------------------------------
+        # Large section handling
+        # -------------------------------------------------
 
-        chunk = " ".join(words[start:end])
+        if len(section.split()) > chunk_size:
 
-        chunks.append(chunk)
+            words = section.split()
 
-        # move with overlap
-        start += chunk_size - overlap
+            start = 0
+
+            while start < len(words):
+
+                end = start + chunk_size
+
+                chunk = " ".join(
+                    words[start:end]
+                )
+
+                chunks.append(chunk)
+
+                start += (
+                    chunk_size
+                    - overlap
+                )
+
+            continue
+
+        # -------------------------------------------------
+        # Merge sections intelligently
+        # -------------------------------------------------
+
+        combined_words = (
+
+            current_chunk
+            + " "
+            + section
+        ).split()
+
+        if len(combined_words) <= chunk_size:
+
+            current_chunk += (
+                " " + section
+            )
+
+        else:
+
+            chunks.append(
+                current_chunk.strip()
+            )
+
+            current_chunk = section
+
+    # Final chunk
+    if current_chunk:
+
+        chunks.append(
+            current_chunk.strip()
+        )
+
+    return chunks
+
+
+# ---------------------------------------------------------
+# Main Chunking Function
+# ---------------------------------------------------------
+
+def chunk_text(text):
+
+    sections = split_legal_sections(
+        text
+    )
+
+    chunks = build_chunks(
+        sections
+    )
 
     return chunks
