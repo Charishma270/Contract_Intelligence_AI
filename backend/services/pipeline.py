@@ -6,6 +6,8 @@ Runs: OCR → NLP → RAG indexing sequentially, updating status at each stage.
 Each stage is wrapped in try/except for error recovery.
 
 Day 9: Extracted from analyze route into a clean reusable function.
+Day 14: Replaced mock OCR with real OCR integration (pdfplumber + Tesseract).
+Day 15: Replaced mock NLP with real NLP (Legal-BERT multi-label + spaCy NER).
 """
 
 import logging
@@ -23,8 +25,8 @@ from backend.services.tracking import (
     get_contract_file_path,
     update_contract_status,
 )
-from backend.services.mock_ocr import run_mock_ocr
-from backend.services.mock_nlp import run_mock_nlp
+from backend.services.real_ocr import run_real_ocr
+from backend.services.real_nlp import run_real_nlp
 from backend.services.mock_rag import run_mock_rag
 
 logger = logging.getLogger("contract_ai.pipeline")
@@ -140,9 +142,14 @@ def run_pipeline(contract_id: str) -> AnalysisResponse:
     ocr_output: Optional[OCROutput] = None
     try:
         logger.info(f"[{contract_id}] Stage 1/4: Running OCR...")
-        ocr_output = run_mock_ocr(contract_id, file_path)
+        ocr_output = run_real_ocr(contract_id, file_path)
         update_contract_status(contract_id, ContractStatus.OCR_DONE)
-        logger.info(f"[{contract_id}] OCR complete — {ocr_output.total_pages} pages, {len(ocr_output.chunks)} chunks")
+        logger.info(
+            f"[{contract_id}] OCR complete — {ocr_output.total_pages} pages, "
+            f"{len(ocr_output.chunks)} chunks, "
+            f"method={ocr_output.extraction_method}, "
+            f"time={ocr_output.processing_time_seconds}s"
+        )
     except Exception as e:
         logger.error(f"[{contract_id}] OCR failed: {e}")
         update_contract_status(contract_id, ContractStatus.FAILED, f"OCR error: {e}")
@@ -151,10 +158,14 @@ def run_pipeline(contract_id: str) -> AnalysisResponse:
     # --- Stage 2: NLP (NER + Clause Classification) ---
     nlp_output: Optional[NLPOutput] = None
     try:
-        logger.info(f"[{contract_id}] Stage 2/4: Running NLP...")
-        nlp_output = run_mock_nlp(contract_id)
+        logger.info(f"[{contract_id}] Stage 2/4: Running NLP (Legal-BERT + spaCy)...")
+        nlp_output = run_real_nlp(contract_id, ocr_output)
         update_contract_status(contract_id, ContractStatus.NLP_DONE)
-        logger.info(f"[{contract_id}] NLP complete — {len(nlp_output.clauses)} clauses, {len(nlp_output.entities)} entities")
+        logger.info(
+            f"[{contract_id}] NLP complete — {len(nlp_output.clauses)} clauses, "
+            f"{len(nlp_output.entities)} entities, "
+            f"time={nlp_output.processing_time_seconds}s"
+        )
     except Exception as e:
         logger.error(f"[{contract_id}] NLP failed: {e}")
         update_contract_status(contract_id, ContractStatus.FAILED, f"NLP error: {e}")

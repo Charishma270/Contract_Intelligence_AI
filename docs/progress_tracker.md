@@ -30,7 +30,7 @@
 | 11 | /chat Endpoint (RAG) | ✅ Done | `backend/routes/chat.py`, `backend/services/rag.py` | `feat(routes): integrate Tisha's FAISS retrieval into /chat endpoint` |
 | 12 | Error Handling & Validation | ✅ Done | `backend/utils/exceptions.py`, `backend/utils/validators.py`, all route files, `main.py`, `backend/README.md` | `feat(backend): add comprehensive error handling across all endpoints` |
 | 13 | Structured Logging | ✅ Done | `backend/utils/logging_config.py`, `main.py`, `tracking.py`, `contracts.py`, `tests/backend/test_logging.py`, `backend/README.md` | `feat(utils): add structured logging with JSON file output` |
-| 14 | Real OCR Integration | ⬜ Pending | `backend/services/` | `feat(services): integrate Sruthi's OCR pipeline` |
+| 14 | Real OCR Integration | ✅ Done | `backend/services/real_ocr.py`, `backend/services/ocr_config.py`, `backend/schemas/ocr_schema.py`, `backend/utils/exceptions.py`, `backend/services/pipeline.py`, `tests/backend/test_real_ocr.py` | `feat(services): integrate Sruthi's OCR pipeline with pdfplumber + Tesseract` |
 
 ---
 
@@ -38,7 +38,7 @@
 
 | Day | Task | Status | Files | Commit Message |
 |-----|------|--------|-------|----------------|
-| 15 | Integrate Charishma's NLP | ⬜ Pending | `backend/services/` | `feat(services): integrate Charishma's NER and clause classification` |
+| 15 | Integrate Charishma's NLP | ✅ Done | `backend/services/real_nlp.py`, `backend/services/nlp_config.py`, `backend/schemas/nlp_schema.py`, `backend/utils/exceptions.py`, `backend/services/pipeline.py`, `tests/backend/test_real_nlp.py` | `feat(services): integrate Charishma's NER and clause classification` |
 | 16 | Validate Full Pipeline E2E | ⬜ Pending | — | `test(integration): verify end-to-end pipeline with real services` |
 | 17 | Celery Async Processing | ⬜ Pending | `backend/services/`, `celery_config.py` | `feat(backend): add Celery async task processing with Redis` |
 | 18 | Vector DB Status Endpoint | ⬜ Pending | `backend/routes/` | `feat(routes): add chunk inspection endpoint for RAG debugging` |
@@ -66,11 +66,11 @@
 
 ```
 Week 1: ████████████████████ 100% (7/7)
-Week 2: ████████████████░░░░  86% (6/7)
-Week 3: ░░░░░░░░░░░░░░░░░░░░   0% (0/7)
+Week 2: ████████████████████ 100% (7/7)
+Week 3: ███░░░░░░░░░░░░░░░░░  14% (1/7)
 Week 4: ░░░░░░░░░░░░░░░░░░░░   0% (0/7)
 ─────────────────────────────────────
-Total:  █████████░░░░░░░░░░░  46% (13/28)
+Total:  ███████████░░░░░░░░░  54% (15/28)
 ```
 
 ---
@@ -98,8 +98,12 @@ Contract_Intelligence_AI/
 │   ├── services/
 │   │   ├── __init__.py
 │   │   ├── tracking.py              ← SQLite CRUD
-│   │   ├── pipeline.py              ← Orchestrator              [NEW Day 9]
+│   │   ├── pipeline.py              ← Orchestrator              [UPD Day 15]
 │   │   ├── rag.py                   ← FAISS RAG retrieval        [NEW Day 11]
+│   │   ├── real_ocr.py              ← pdfplumber + Tesseract     [NEW Day 14]
+│   │   ├── ocr_config.py            ← OCR configuration          [NEW Day 14]
+│   │   ├── real_nlp.py              ← Legal-BERT + spaCy NER     [NEW Day 15]
+│   │   ├── nlp_config.py            ← NLP configuration          [NEW Day 15]
 │   │   ├── mock_ocr.py
 │   │   ├── mock_nlp.py
 │   │   └── mock_rag.py

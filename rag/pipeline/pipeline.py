@@ -97,7 +97,15 @@ QUERY_EXPANSIONS = {
 
         "continue",
 
-        "auto renewal"
+        "auto renewal",
+
+        "renewed term",
+
+        "renewal period",
+
+        "contract extension",
+
+        "term extension"
     ]
 }
 
@@ -215,7 +223,8 @@ def build_contract_summary(results):
         return {
             "overall_risk": "Unknown",
             "top_detected_labels": [],
-            "high_confidence_clauses": 0
+            "high_confidence_clauses": 0,
+            "average_confidence": 0
         }
 
     risk_levels = [
@@ -237,6 +246,18 @@ def build_contract_summary(results):
         for label, _ in Counter(labels).most_common(3)
     ]
 
+    average_confidence = round(
+
+        sum(
+            result["final_confidence"]
+            for result in results
+        )
+        /
+        len(results),
+
+        4
+    )
+
     high_confidence_count = sum(
         result["final_confidence"] >= 0.80
         for result in results
@@ -244,14 +265,16 @@ def build_contract_summary(results):
 
     return {
 
-        "overall_risk": overall_risk,
+    "overall_risk": overall_risk,
 
-        "top_detected_labels": top_labels,
+    "top_detected_labels": top_labels,
 
-        "high_confidence_clauses": (
-            high_confidence_count
-        )
-    }
+    "high_confidence_clauses":
+        high_confidence_count,
+
+    "average_confidence":
+        average_confidence
+}
 
 
 # ---------------------------------------------------------
@@ -320,7 +343,7 @@ def run_pipeline(query):
         )
 
         # Skip extremely weak semantic matches
-        if result["score"] < 0.35:
+        if result["score"] < 0.25:
 
             continue
 
@@ -368,6 +391,9 @@ def run_pipeline(query):
                 clause_text
             )
         )
+
+        # Keep only top 3 labels
+        multi_labels = multi_labels[:3]
 
         # Detect disagreement
         model_disagreement = (
@@ -452,8 +478,10 @@ def run_pipeline(query):
         # -------------------------------------------------
         # Query-Aware Boosting
         # -------------------------------------------------
+
         query_lower = query.lower()
 
+        # Termination queries
         if "termination" in query_lower:
 
             if result["label_name"] in [
@@ -462,22 +490,28 @@ def run_pipeline(query):
 
                 "Renewal Term",
 
-                "Post-Termination Services"
+                "Post-Termination Services",
+
+                "Notice Period To Terminate Renewal"
             ]:
 
-                rerank_score += 0.15
+                rerank_score += 0.35
 
+        # Liability queries
         if "liability" in query_lower:
 
             if result["label_name"] in [
 
                 "Cap On Liability",
 
-                "Uncapped Liability"
+                "Uncapped Liability",
+
+                "Liquidated Damages"
             ]:
 
-                rerank_score += 0.15
+                rerank_score += 0.35
 
+        # Renewal queries
         if "renewal" in query_lower:
 
             if result["label_name"] in [
@@ -487,43 +521,60 @@ def run_pipeline(query):
                 "Notice Period To Terminate Renewal"
             ]:
 
-                rerank_score += 0.15
+                rerank_score += 0.40
+
+        # Confidentiality queries
+        if "confidentiality" in query_lower:
+
+            if result["label_name"] in [
+
+                "Non-Disparagement",
+
+                "Covenant Not To Sue"
+            ]:
+
+                rerank_score += 0.25
+
+        # Payment queries
+        if "payment" in query_lower:
+
+            if result["label_name"] in [
+
+                "Revenue/Profit Sharing",
+
+                "Minimum Commitment",
+
+                "Price Restrictions"
+            ]:
+
+                rerank_score += 0.30
 
         rerank_score = round(
-            rerank_score,
+            min(rerank_score, 1.0),
             4
         )
 
         # -------------------------------------------------
-        # Reliability Bands
+        # Reliability Band
         # -------------------------------------------------
-        if final_confidence >= 0.90:
 
-            reliability_band = (
-                "Highly Reliable"
-            )
+        if final_confidence >= 0.85:
 
-        elif final_confidence >= 0.75:
+            reliability_band = "High Confidence"
 
-            reliability_band = (
-                "Reliable"
-            )
+        elif final_confidence >= 0.65:
 
-        elif final_confidence >= 0.60:
-
-            reliability_band = (
-                "Moderate Confidence"
-            )
+            reliability_band = "Moderate Confidence"
 
         else:
 
-            reliability_band = (
-                "Needs Review"
-            )
+            reliability_band = "Low Confidence"
+
 
         # -------------------------------------------------
         # Weak Prediction Detection
         # -------------------------------------------------
+
         weak_prediction = (
 
             final_confidence < 0.65
@@ -537,33 +588,29 @@ def run_pipeline(query):
             result["score"] < 0.40
         )
 
+
         # -------------------------------------------------
-        # Risk Scoring
+        # Risk Calculation
         # -------------------------------------------------
-        risk_level = (
-            calculate_risk(
-                bert_result["prediction"]
-            )
+
+        risk_level = calculate_risk(
+            bert_result["prediction"]
         )
+
 
         # -------------------------------------------------
         # Explainability
         # -------------------------------------------------
-        explanation = (
-            generate_explanation(
 
-                semantic_score=
-                result["score"],
+        explanation = generate_explanation(
 
-                bert_confidence=
-                bert_result["confidence"],
+            result["score"],
 
-                keyword_score=
-                keyword_score,
+            bert_result["confidence"],
 
-                disagreement=
-                model_disagreement
-            )
+            keyword_score,
+
+            model_disagreement
         )
 
         # -------------------------------------------------
@@ -758,12 +805,46 @@ def run_pipeline(query):
         f"{contract_summary['high_confidence_clauses']}"
     )
 
+    print("\nRETRIEVAL ANALYTICS")
+
+    print("=" * 80)
+
+    print(
+        f"Total Retrieved Clauses : "
+        f"{len(pipeline_results)}"
+    )
+
+    if len(pipeline_results) > 0:
+
+        avg_rerank = round(
+
+            sum(
+                result["retrieval_rerank_score"]
+                for result in pipeline_results
+            )
+            /
+            len(pipeline_results),
+
+            4
+        )
+
+        print(
+            f"Average Rerank Score : "
+            f"{avg_rerank}"
+        )
+
+        print(
+            f"Average Confidence : "
+            f"{contract_summary['average_confidence']}"
+        )
+
     return {
 
         "summary": contract_summary,
 
         "results": pipeline_results
     }
+
 
 
 # ---------------------------------------------------------

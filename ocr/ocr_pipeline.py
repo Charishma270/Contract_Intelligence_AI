@@ -1,6 +1,7 @@
 import os
 
 from pdf2image import convert_from_path
+
 import pytesseract
 
 from ocr.preprocessing.text_preprocessing import (
