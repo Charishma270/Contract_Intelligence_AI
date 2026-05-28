@@ -55,6 +55,10 @@ from backend.routes.frontend_analyze import (
     router as frontend_analyze_router
 )
 
+from backend.routes.async_analyze import (
+    router as async_analyze_router
+)
+
 from backend.services.tracking import (
     init_db
 )
@@ -124,7 +128,7 @@ app = FastAPI(
         "risk scoring."
     ),
 
-    version="0.4.0",
+    version="0.5.0",
 
     lifespan=lifespan,
 )
@@ -314,6 +318,16 @@ app.include_router(
     tags=["RAG Pipeline"]
 )
 
+# Async analysis (Day 17: Celery)
+app.include_router(
+
+    async_analyze_router,
+
+    prefix="/api",
+
+    tags=["Async Analysis"]
+)
+
 # Frontend integration — no /api prefix (Mukt's frontend calls POST /analyze)
 app.include_router(
 
@@ -341,7 +355,7 @@ async def health_check():
             "Contract Intelligence AI",
 
         "version":
-            "0.4.0",
+            "0.5.0",
     }
 
 
@@ -384,5 +398,11 @@ async def root():
 
             "rag_pipeline":
                 "POST /api/rag/analyze",
+
+            "async_analyze":
+                "POST /api/analyze/{contract_id}/async",
+
+            "task_status":
+                "GET /api/tasks/{task_id}",
         },
     }

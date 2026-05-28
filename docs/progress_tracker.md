@@ -40,7 +40,7 @@
 |-----|------|--------|-------|----------------|
 | 15 | Integrate Charishma's NLP | ✅ Done | `backend/services/real_nlp.py`, `backend/services/nlp_config.py`, `backend/schemas/nlp_schema.py`, `backend/utils/exceptions.py`, `backend/services/pipeline.py`, `tests/backend/test_real_nlp.py` | `feat(services): integrate Charishma's NER and clause classification` |
 | 16 | Validate Full Pipeline E2E | ✅ Done | `tests/backend/test_e2e_pipeline.py` | `test(integration): verify end-to-end pipeline with real services` |
-| 17 | Celery Async Processing | ⬜ Pending | `backend/services/`, `celery_config.py` | `feat(backend): add Celery async task processing with Redis` |
+| 17 | Celery Async Processing | ✅ Done | `backend/celery_config.py`, `backend/services/celery_tasks.py`, `backend/routes/async_analyze.py`, `backend/schemas/contract_schema.py`, `main.py`, `tests/backend/test_celery_tasks.py` | `feat(backend): add Celery async task processing with Redis` |
 | 18 | Vector DB Status Endpoint | ⬜ Pending | `backend/routes/` | `feat(routes): add chunk inspection endpoint for RAG debugging` |
 | 19 | Frontend API Contract Finalization | ⬜ Pending | `backend/schemas/` | `refactor(schemas): finalize frontend-facing response shapes` |
 | 20 | Config & Environment Variables | ⬜ Pending | `.env.example`, `backend/config.py` | `refactor(backend): externalize configuration to environment variables` |
@@ -67,10 +67,10 @@
 ```
 Week 1: ████████████████████ 100% (7/7)
 Week 2: ████████████████████ 100% (7/7)
-Week 3: ██████░░░░░░░░░░░░░░  29% (2/7)
+Week 3: █████████░░░░░░░░░░░  43% (3/7)
 Week 4: ░░░░░░░░░░░░░░░░░░░░   0% (0/7)
 ─────────────────────────────────────
-Total:  ████████████░░░░░░░░  57% (16/28)
+Total:  █████████████░░░░░░░  61% (17/28)
 ```
 
 ---
@@ -79,14 +79,16 @@ Total:  ████████████░░░░░░░░  57% (16/28
 
 ```
 Contract_Intelligence_AI/
-├── main.py                          ← FastAPI entry point (v0.4.0)
+├── main.py                          ← FastAPI entry point (v0.5.0)
 ├── backend/
 │   ├── __init__.py
+│   ├── celery_config.py             ← Celery app factory         [NEW Day 17]
 │   ├── routes/
 │   │   ├── __init__.py
 │   │   ├── upload.py                ← POST /api/upload
 │   │   ├── contracts.py             ← GET /api/contracts, /api/contracts/{id}
 │   │   ├── analyze.py               ← POST /api/analyze/{id}     [NEW Day 8]
+│   │   ├── async_analyze.py         ← Async analysis + tasks     [NEW Day 17]
 │   │   ├── risk.py                  ← GET /api/risk-score/{id}   [NEW Day 10]
 │   │   └── chat.py                  ← POST /api/chat             [NEW Day 11]
 │   ├── schemas/
@@ -94,11 +96,12 @@ Contract_Intelligence_AI/
 │   │   ├── ocr_schema.py
 │   │   ├── nlp_schema.py
 │   │   ├── rag_schema.py
-│   │   └── contract_schema.py
+│   │   └── contract_schema.py       ← +AsyncTaskResponse         [UPD Day 17]
 │   ├── services/
 │   │   ├── __init__.py
 │   │   ├── tracking.py              ← SQLite CRUD
 │   │   ├── pipeline.py              ← Orchestrator              [UPD Day 15]
+│   │   ├── celery_tasks.py          ← Async task definitions     [NEW Day 17]
 │   │   ├── rag.py                   ← FAISS RAG retrieval        [NEW Day 11]
 │   │   ├── real_ocr.py              ← pdfplumber + Tesseract     [NEW Day 14]
 │   │   ├── ocr_config.py            ← OCR configuration          [NEW Day 14]
@@ -130,6 +133,9 @@ Contract_Intelligence_AI/
 | `POST` | `/api/upload` | Upload PDF contract | 4 |
 | `GET` | `/api/contracts` | List all contracts (paginated) | 5 |
 | `GET` | `/api/contracts/{id}` | Get contract status | 5 |
-| `POST` | `/api/analyze/{id}` | Run full analysis pipeline | **8** |
+| `POST` | `/api/analyze/{id}` | Run full analysis pipeline (sync) | **8** |
 | `GET` | `/api/risk-score/{id}` | Get risk score breakdown | **10** |
 | `POST` | `/api/chat` | RAG-powered Q&A | **11** |
+| `POST` | `/api/analyze/{id}/async` | Submit async analysis (Celery) | **17** |
+| `GET` | `/api/tasks/{task_id}` | Poll async task status | **17** |
+| `POST` | `/api/tasks/{task_id}/revoke` | Cancel async task | **17** |
