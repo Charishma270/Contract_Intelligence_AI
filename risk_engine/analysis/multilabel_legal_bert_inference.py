@@ -6,6 +6,11 @@ from transformers import (
 import torch
 import json
 
+from risk_engine.scoring.risk_calculator import (
+    calculate_risk
+)
+
+
 
 # ---------------------------------------------------------
 # Paths
@@ -100,7 +105,7 @@ def predict_multilabel_legal_bert(
     detected_labels = []
 
     # -----------------------------------------------------
-    # Convert probabilities into labels
+    # Convert probabilities into labels + risk scores
     # -----------------------------------------------------
 
     for idx, probability in enumerate(
@@ -118,13 +123,32 @@ def predict_multilabel_legal_bert(
                 )
             )
 
+            # -------------------------------------------------
+            # Risk scoring: enrich each detection with
+            # risk_level, risk_score, and reason
+            # -------------------------------------------------
+
+            risk_info = calculate_risk(
+                clause_type=label_name,
+                confidence=probability,
+            )
+
             detected_labels.append({
 
                 "label":
                     label_name,
 
                 "confidence":
-                    round(probability, 4)
+                    round(probability, 4),
+
+                "risk_level":
+                    risk_info["risk_level"],
+
+                "risk_score":
+                    risk_info["risk_score"],
+
+                "reason":
+                    risk_info["reason"],
             })
 
     # -----------------------------------------------------
@@ -141,3 +165,4 @@ def predict_multilabel_legal_bert(
     )
 
     return detected_labels
+
