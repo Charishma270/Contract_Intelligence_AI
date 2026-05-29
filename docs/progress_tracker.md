@@ -41,7 +41,7 @@
 | 15 | Integrate Charishma's NLP | ✅ Done | `backend/services/real_nlp.py`, `backend/services/nlp_config.py`, `backend/schemas/nlp_schema.py`, `backend/utils/exceptions.py`, `backend/services/pipeline.py`, `tests/backend/test_real_nlp.py` | `feat(services): integrate Charishma's NER and clause classification` |
 | 16 | Validate Full Pipeline E2E | ✅ Done | `tests/backend/test_e2e_pipeline.py` | `test(integration): verify end-to-end pipeline with real services` |
 | 17 | Celery Async Processing | ✅ Done | `backend/celery_config.py`, `backend/services/celery_tasks.py`, `backend/routes/async_analyze.py`, `backend/schemas/contract_schema.py`, `main.py`, `tests/backend/test_celery_tasks.py` | `feat(backend): add Celery async task processing with Redis` |
-| 18 | Vector DB Status Endpoint | ⬜ Pending | `backend/routes/` | `feat(routes): add chunk inspection endpoint for RAG debugging` |
+| 18 | Vector DB Status Endpoint | ✅ Done | `backend/routes/vectordb.py`, `backend/services/vectordb_service.py`, `backend/schemas/vectordb_schema.py`, `tests/backend/test_vectordb.py`, `main.py` | `feat(routes): add chunk inspection endpoint for RAG debugging` |
 | 19 | Frontend API Contract Finalization | ⬜ Pending | `backend/schemas/` | `refactor(schemas): finalize frontend-facing response shapes` |
 | 20 | Config & Environment Variables | ⬜ Pending | `.env.example`, `backend/config.py` | `refactor(backend): externalize configuration to environment variables` |
 | 21 | Week 3 Integration Demo | ⬜ Pending | — | `test: complete week-3 integration demo` |
@@ -67,10 +67,10 @@
 ```
 Week 1: ████████████████████ 100% (7/7)
 Week 2: ████████████████████ 100% (7/7)
-Week 3: █████████░░░░░░░░░░░  43% (3/7)
+Week 3: ████████████░░░░░░░░  57% (4/7)
 Week 4: ░░░░░░░░░░░░░░░░░░░░   0% (0/7)
 ─────────────────────────────────────
-Total:  █████████████░░░░░░░  61% (17/28)
+Total:  ██████████████░░░░░░  64% (18/28)
 ```
 
 ---
@@ -89,6 +89,7 @@ Contract_Intelligence_AI/
 │   │   ├── contracts.py             ← GET /api/contracts, /api/contracts/{id}
 │   │   ├── analyze.py               ← POST /api/analyze/{id}     [NEW Day 8]
 │   │   ├── async_analyze.py         ← Async analysis + tasks     [NEW Day 17]
+│   │   ├── vectordb.py              ← Vector DB inspection        [NEW Day 18]
 │   │   ├── risk.py                  ← GET /api/risk-score/{id}   [NEW Day 10]
 │   │   └── chat.py                  ← POST /api/chat             [NEW Day 11]
 │   ├── schemas/
@@ -96,6 +97,7 @@ Contract_Intelligence_AI/
 │   │   ├── ocr_schema.py
 │   │   ├── nlp_schema.py
 │   │   ├── rag_schema.py
+│   │   ├── vectordb_schema.py       ← Vector DB schemas           [NEW Day 18]
 │   │   └── contract_schema.py       ← +AsyncTaskResponse         [UPD Day 17]
 │   ├── services/
 │   │   ├── __init__.py
@@ -103,6 +105,7 @@ Contract_Intelligence_AI/
 │   │   ├── pipeline.py              ← Orchestrator              [UPD Day 15]
 │   │   ├── celery_tasks.py          ← Async task definitions     [NEW Day 17]
 │   │   ├── rag.py                   ← FAISS RAG retrieval        [NEW Day 11]
+│   │   ├── vectordb_service.py      ← Vector DB read-only service [NEW Day 18]
 │   │   ├── real_ocr.py              ← pdfplumber + Tesseract     [NEW Day 14]
 │   │   ├── ocr_config.py            ← OCR configuration          [NEW Day 14]
 │   │   ├── real_nlp.py              ← Legal-BERT + spaCy NER     [NEW Day 15]
@@ -139,3 +142,7 @@ Contract_Intelligence_AI/
 | `POST` | `/api/analyze/{id}/async` | Submit async analysis (Celery) | **17** |
 | `GET` | `/api/tasks/{task_id}` | Poll async task status | **17** |
 | `POST` | `/api/tasks/{task_id}/revoke` | Cancel async task | **17** |
+| `GET` | `/api/vectordb/status` | FAISS index health & stats | **18** |
+| `GET` | `/api/vectordb/chunks` | Paginated chunk listing | **18** |
+| `GET` | `/api/vectordb/chunks/{index}` | Single chunk by index | **18** |
+| `POST` | `/api/vectordb/chunks/search` | Search chunks by label/keyword | **18** |

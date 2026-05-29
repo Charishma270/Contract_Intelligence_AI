@@ -59,6 +59,10 @@ from backend.routes.async_analyze import (
     router as async_analyze_router
 )
 
+from backend.routes.vectordb import (
+    router as vectordb_router
+)
+
 from backend.services.tracking import (
     init_db
 )
@@ -328,6 +332,16 @@ app.include_router(
     tags=["Async Analysis"]
 )
 
+# Vector DB inspection (Day 18)
+app.include_router(
+
+    vectordb_router,
+
+    prefix="/api/vectordb",
+
+    tags=["Vector DB"]
+)
+
 # Frontend integration — no /api prefix (Mukt's frontend calls POST /analyze)
 app.include_router(
 
@@ -404,5 +418,11 @@ async def root():
 
             "task_status":
                 "GET /api/tasks/{task_id}",
+
+            "vectordb_status":
+                "GET /api/vectordb/status",
+
+            "vectordb_chunks":
+                "GET /api/vectordb/chunks",
         },
     }
