@@ -21,6 +21,8 @@ class RetrievedChunk(BaseModel):
 
 class ChatRequest(BaseModel):
 
+    contract_id: str
+
     query: str
 
 
