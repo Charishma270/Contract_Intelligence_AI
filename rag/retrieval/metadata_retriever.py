@@ -9,7 +9,7 @@ from risk_engine.analysis.classifier_inference import (
     classify_clause
 )
 
-from risk_engine.scoring.risk_rules import (
+from risk_engine.scoring.risk_calculator import (
     calculate_risk
 )
 

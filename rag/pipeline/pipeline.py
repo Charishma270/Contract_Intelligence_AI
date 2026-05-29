@@ -22,7 +22,7 @@ from risk_engine.analysis.multilabel_legal_bert_inference import (
     predict_multilabel_legal_bert
 )
 
-from risk_engine.scoring.risk_rules import (
+from risk_engine.scoring.risk_calculator import (
     calculate_risk
 )
 
