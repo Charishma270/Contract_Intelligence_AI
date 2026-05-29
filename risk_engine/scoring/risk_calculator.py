@@ -33,7 +33,7 @@ _DEFAULT_RULE = {
 
 def calculate_risk(
     clause_type: str,
-    confidence: float,
+    confidence: float = 1.0,
 ) -> dict:
     """Calculate risk for a single clause prediction.
 
