@@ -1,6 +1,17 @@
+"""
+RAG Schemas
+============
+Pydantic models for RAG (Retrieval-Augmented Generation) pipeline,
+chat interface, and hybrid legal retrieval responses.
+
+Day 11: Initial RAG schemas.
+Day 19: Added average_confidence to ContractSummary,
+        added field descriptions throughout.
+"""
+
 from typing import List, Dict, Any
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 # -------------------------------------------------------------------
@@ -9,30 +20,43 @@ from pydantic import BaseModel
 # -------------------------------------------------------------------
 
 class RetrievedChunk(BaseModel):
+    """A single chunk retrieved from the vector store."""
 
-    chunk_id: str
+    chunk_id: str = Field(..., description="Unique chunk identifier")
 
-    text: str
+    text: str = Field(..., description="Chunk text content")
 
-    page: int
+    page: int = Field(..., description="Source page number")
 
-    similarity_score: float
+    similarity_score: float = Field(..., description="Cosine similarity score")
 
 
 class ChatRequest(BaseModel):
+    """Request body for the /chat endpoint."""
 
-    contract_id: str
+    contract_id: str = Field(..., description="Contract to query against")
 
-    query: str
+    query: str = Field(..., description="Natural language question")
 
 
 class ChatResponse(BaseModel):
+    """Response from the /chat endpoint.
 
-    answer: str
+    The `answer` field is the canonical response — frontend should
+    use `data.answer` to display the chatbot reply.
+    """
 
-    retrieved_chunks: List[RetrievedChunk]
+    answer: str = Field(..., description="Generated answer from RAG pipeline")
 
-    citations: List[str]
+    retrieved_chunks: List[RetrievedChunk] = Field(
+        default_factory=list,
+        description="Source chunks used to generate the answer",
+    )
+
+    citations: List[str] = Field(
+        default_factory=list,
+        description="Page-level citations for the answer",
+    )
 
 
 # -------------------------------------------------------------------
@@ -41,8 +65,9 @@ class ChatResponse(BaseModel):
 # -------------------------------------------------------------------
 
 class QueryRequest(BaseModel):
+    """Request body for the hybrid RAG analyze endpoint."""
 
-    query: str
+    query: str = Field(..., description="Legal clause search query")
 
 
 # -------------------------------------------------------------------
@@ -50,10 +75,11 @@ class QueryRequest(BaseModel):
 # -------------------------------------------------------------------
 
 class MultiLabelPrediction(BaseModel):
+    """A single label prediction from multi-label Legal-BERT."""
 
-    label: str
+    label: str = Field(..., description="CUAD label name")
 
-    confidence: float
+    confidence: float = Field(..., ge=0.0, le=1.0, description="Prediction confidence")
 
 
 # -------------------------------------------------------------------
@@ -61,42 +87,43 @@ class MultiLabelPrediction(BaseModel):
 # -------------------------------------------------------------------
 
 class ClauseResult(BaseModel):
+    """Detailed result for a single clause from the hybrid pipeline."""
 
-    retrieved_label: str
+    retrieved_label: str = Field(..., description="Label from retrieval")
 
-    classical_prediction: str
+    classical_prediction: str = Field(..., description="Classical ML prediction")
 
-    legal_bert_prediction: str
+    legal_bert_prediction: str = Field(..., description="Legal-BERT prediction")
 
     multi_label_predictions: List[
         MultiLabelPrediction
-    ]
+    ] = Field(default_factory=list, description="All multi-label predictions")
 
-    risk_level: str
+    risk_level: str = Field(..., description="Risk level: Low, Medium, High")
 
-    risk_score: float
+    risk_score: float = Field(..., description="Numeric risk score")
 
-    semantic_score: float
+    semantic_score: float = Field(..., description="FAISS semantic similarity score")
 
-    keyword_score: float
+    keyword_score: float = Field(..., description="BM25 keyword match score")
 
-    bert_confidence: float
+    bert_confidence: float = Field(..., description="Legal-BERT confidence")
 
-    final_confidence: float
+    final_confidence: float = Field(..., description="Hybrid fusion confidence")
 
-    retrieval_rerank_score: float
+    retrieval_rerank_score: float = Field(..., description="Reranking score")
 
-    reliability_band: str
+    reliability_band: str = Field(..., description="Confidence band: high, medium, low")
 
-    model_disagreement: bool
+    model_disagreement: bool = Field(..., description="True if retrieval and BERT disagree")
 
-    weak_prediction: bool
+    weak_prediction: bool = Field(..., description="True if confidence is below threshold")
 
-    explanation: str
+    explanation: str = Field(..., description="AI-generated explanation of the prediction")
 
-    target: int
+    target: int = Field(..., description="Binary target (1=positive, 0=negative)")
 
-    clause_text: str
+    clause_text: str = Field(..., description="Full clause text")
 
 
 # -------------------------------------------------------------------
@@ -104,16 +131,38 @@ class ClauseResult(BaseModel):
 # -------------------------------------------------------------------
 
 class ContractSummary(BaseModel):
+    """Aggregate summary statistics for the analysis results.
 
-    overall_risk: str
+    Day 19: Added average_confidence — the Analyze.jsx frontend
+    renders this in the summary dashboard.
+    """
 
-    top_detected_labels: List[str]
+    overall_risk: str = Field(..., description="Overall risk level: Low, Medium, High")
 
-    high_confidence_clauses: int
+    top_detected_labels: List[str] = Field(
+        default_factory=list,
+        description="Most frequently detected CUAD labels",
+    )
+
+    high_confidence_clauses: int = Field(
+        0,
+        description="Count of clauses with confidence above threshold",
+    )
+
+    average_confidence: float = Field(
+        0.0,
+        ge=0.0,
+        le=1.0,
+        description="Mean confidence across all detected clauses",
+    )
 
 
 class QueryResponse(BaseModel):
+    """Top-level response for the hybrid RAG pipeline."""
 
-    summary: ContractSummary
+    summary: ContractSummary = Field(..., description="Aggregate analysis summary")
 
-    results: List[ClauseResult]
+    results: List[ClauseResult] = Field(
+        default_factory=list,
+        description="Per-clause detailed results",
+    )

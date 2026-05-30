@@ -3,15 +3,18 @@ Risk Score Route — /risk-score endpoint
 ========================================
 Day 10: Rule-based risk scoring.
 Day 12: Enhanced error handling with typed exceptions and validators.
+Day 19: Moved RiskScoreResponse to contract_schema.py (schema consolidation).
 """
 
 import logging
 
 from fastapi import APIRouter
-from pydantic import BaseModel, Field
 from typing import List
 
-from backend.schemas.contract_schema import RiskBreakdown
+from backend.schemas.contract_schema import (
+    RiskBreakdown,
+    RiskScoreResponse,
+)
 from backend.services.pipeline import _compute_risk_score
 from backend.services.mock_nlp import run_mock_nlp
 from backend.utils.validators import validate_contract_exists
@@ -19,14 +22,6 @@ from backend.utils.validators import validate_contract_exists
 logger = logging.getLogger("contract_ai.risk")
 
 router = APIRouter()
-
-
-class RiskScoreResponse(BaseModel):
-    """Structured risk score response for a contract."""
-    contract_id: str
-    overall_risk: int = Field(..., ge=0, le=100)
-    severity: str
-    breakdown: List[RiskBreakdown]
 
 
 @router.get("/risk-score/{contract_id}", response_model=RiskScoreResponse)

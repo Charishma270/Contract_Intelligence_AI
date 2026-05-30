@@ -2,6 +2,7 @@
 Async Analyze Route — /analyze/{id}/async & /tasks endpoints
 =============================================================
 Day 17: Asynchronous contract analysis via Celery.
+Day 19: Added TaskRevokeResponse schema for revoke endpoint.
 
 Provides:
   - POST /api/analyze/{contract_id}/async  → Submit analysis as background task
@@ -20,6 +21,7 @@ from backend.schemas.contract_schema import (
     AsyncTaskResponse,
     ContractStatus,
     TaskStatusResponse,
+    TaskRevokeResponse,
 )
 from backend.services.celery_tasks import (
     get_task_info,
@@ -131,6 +133,7 @@ async def get_task_status(task_id: str):
 # ---------------------------------------------------------------------------
 @router.post(
     "/tasks/{task_id}/revoke",
+    response_model=TaskRevokeResponse,
     summary="Cancel a task",
     description="Revoke (cancel) a pending or running async analysis task.",
 )
@@ -152,12 +155,12 @@ async def revoke_task(task_id: str):
 
     logger.info(f"Task revoked: task_id={task_id}")
 
-    return {
-        "task_id": task_id,
-        "status": "revoked",
-        "message": (
+    return TaskRevokeResponse(
+        task_id=task_id,
+        status="revoked",
+        message=(
             f"Task {task_id} has been revoked. "
             "If the task was running, it will be terminated."
         ),
-    }
+    )
 

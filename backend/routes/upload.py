@@ -239,5 +239,7 @@ async def upload_contract(
             f"File uploaded and "
             f"{len(indexed_chunks)} "
             f"chunks indexed successfully"
-        )
+        ),
+
+        file_size_bytes=len(contents),
     )

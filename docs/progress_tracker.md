@@ -42,7 +42,7 @@
 | 16 | Validate Full Pipeline E2E | ✅ Done | `tests/backend/test_e2e_pipeline.py` | `test(integration): verify end-to-end pipeline with real services` |
 | 17 | Celery Async Processing | ✅ Done | `backend/celery_config.py`, `backend/services/celery_tasks.py`, `backend/routes/async_analyze.py`, `backend/schemas/contract_schema.py`, `main.py`, `tests/backend/test_celery_tasks.py` | `feat(backend): add Celery async task processing with Redis` |
 | 18 | Vector DB Status Endpoint | ✅ Done | `backend/routes/vectordb.py`, `backend/services/vectordb_service.py`, `backend/schemas/vectordb_schema.py`, `tests/backend/test_vectordb.py`, `main.py` | `feat(routes): add chunk inspection endpoint for RAG debugging` |
-| 19 | Frontend API Contract Finalization | ⬜ Pending | `backend/schemas/` | `refactor(schemas): finalize frontend-facing response shapes` |
+| 19 | Frontend API Contract Finalization | ✅ Done | `backend/schemas/contract_schema.py`, `rag_schema.py`, `nlp_schema.py`, `__init__.py`, `backend/routes/risk.py`, `async_analyze.py`, `upload.py`, `tests/backend/test_schema_contracts.py` | `refactor(schemas): finalize frontend-facing response shapes` |
 | 20 | Config & Environment Variables | ⬜ Pending | `.env.example`, `backend/config.py` | `refactor(backend): externalize configuration to environment variables` |
 | 21 | Week 3 Integration Demo | ⬜ Pending | — | `test: complete week-3 integration demo` |
 
@@ -67,10 +67,10 @@
 ```
 Week 1: ████████████████████ 100% (7/7)
 Week 2: ████████████████████ 100% (7/7)
-Week 3: ████████████░░░░░░░░  57% (4/7)
+Week 3: ██████████████░░░░░░  71% (5/7)
 Week 4: ░░░░░░░░░░░░░░░░░░░░   0% (0/7)
 ─────────────────────────────────────
-Total:  ██████████████░░░░░░  64% (18/28)
+Total:  ██████████████░░░░░░  68% (19/28)
 ```
 
 ---
