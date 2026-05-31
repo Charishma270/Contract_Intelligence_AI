@@ -792,9 +792,11 @@ def run_pipeline(query):
         # Risk Calculation
         # -------------------------------------------------
 
-        risk_level = calculate_risk(
+        risk_result = calculate_risk(
             bert_result["prediction"]
         )
+
+        risk_level = risk_result["risk_level"]
 
         # -------------------------------------------------
         # Explainability

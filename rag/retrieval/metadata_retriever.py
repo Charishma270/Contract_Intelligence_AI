@@ -51,8 +51,14 @@ for result in results:
     )
 
     # Risk scoring
-    risk_level = calculate_risk(
+    risk_data = calculate_risk(
         predicted_label
+    )
+
+    risk_level = (
+        risk_data.get("risk_level")
+        if isinstance(risk_data, dict)
+        else risk_data
     )
 
     # Output
