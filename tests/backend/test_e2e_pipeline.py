@@ -380,6 +380,7 @@ class TestE2EPipelineHappyPath:
 
         # Initially should be uploaded
         contract = get_contract(contract_id)
+        assert contract is not None
         assert contract.status == ContractStatus.UPLOADED
 
         mock_ocr = _make_mock_ocr_output(contract_id)
@@ -531,6 +532,7 @@ class TestE2EPipelineErrorHandling:
 
         # Contract should be marked as failed in DB
         contract = get_contract(contract_id)
+        assert contract is not None
         assert contract.status == ContractStatus.FAILED
         assert contract.error_message is not None
         assert "ocr" in contract.error_message.lower()
@@ -555,6 +557,7 @@ class TestE2EPipelineErrorHandling:
         assert response.status_code == 500
 
         contract = get_contract(contract_id)
+        assert contract is not None
         assert contract.status == ContractStatus.FAILED
         assert contract.error_message is not None
         assert "nlp" in contract.error_message.lower()

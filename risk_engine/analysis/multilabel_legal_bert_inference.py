@@ -1,3 +1,4 @@
+# pyright: ignore[reportMissingImports]
 from transformers import (
     AutoTokenizer,
     AutoModelForSequenceClassification

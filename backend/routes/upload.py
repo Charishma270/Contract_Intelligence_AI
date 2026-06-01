@@ -2,6 +2,7 @@
 Upload Route — /upload endpoint
 ================================
 Production PDF upload + OCR ingestion pipeline.
+Day 20: Uses centralized backend.config.settings.
 """
 
 import os
@@ -28,6 +29,8 @@ from backend.utils.exceptions import (
     UnsupportedFileTypeError,
 )
 
+from backend.config import settings
+
 from ocr.ocr_pipeline import (
     process_contract
 )
@@ -38,15 +41,11 @@ logger = logging.getLogger(
 
 router = APIRouter()
 
-UPLOAD_DIR = "uploads"
+UPLOAD_DIR = settings.UPLOAD_DIR
 
-MAX_FILE_SIZE_MB = 20
+MAX_FILE_SIZE_MB = settings.MAX_FILE_SIZE_MB
 
-MAX_FILE_SIZE_BYTES = (
-    MAX_FILE_SIZE_MB
-    * 1024
-    * 1024
-)
+MAX_FILE_SIZE_BYTES = settings.MAX_FILE_SIZE_BYTES
 
 ALLOWED_CONTENT_TYPES = {
     "application/pdf"

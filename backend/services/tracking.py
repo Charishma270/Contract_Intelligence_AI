@@ -2,9 +2,9 @@
 Contract Tracking Service
 =========================
 SQLAlchemy + SQLite for tracking contract status through the pipeline.
-Database stored at data/contracts.db.
 
 Day 13: Added structured logging for DB operations.
+Day 20: Reads DB path from centralized backend.config.settings.
 """
 
 import os
@@ -16,14 +16,15 @@ from sqlalchemy import Column, DateTime, Enum, Integer, String, create_engine
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
 from backend.schemas.contract_schema import ContractMetadata, ContractStatus
+from backend.config import settings
 
 logger = logging.getLogger("contract_ai.tracking")
 
 # ---------------------------------------------------------------------------
 # Database setup
 # ---------------------------------------------------------------------------
-DB_PATH = os.path.join("data", "contracts.db")
-DATABASE_URL = f"sqlite:///{DB_PATH}"
+DB_PATH = settings.DATABASE_PATH
+DATABASE_URL = settings.DATABASE_URL
 
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

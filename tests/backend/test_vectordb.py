@@ -97,8 +97,10 @@ _mock_modules = {
     "sklearn.feature_extraction.text": MagicMock(),
     "sklearn.svm": MagicMock(),
     "rank_bm25": MagicMock(),
-    "celery": MagicMock(),
-    "celery.result": MagicMock(),
+    # NOTE: Do NOT mock "celery" or "celery.result" here.
+    # Mocking them at module level replaces the real celery package in
+    # sys.modules, which breaks celery submodule imports (e.g. celery.canvas)
+    # for every test collected after this file in a full pytest run.
     # Risk engine hierarchy
     "risk_engine": MagicMock(),
     "risk_engine.analysis": MagicMock(),

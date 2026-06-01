@@ -12,6 +12,7 @@ Day 12:
 - Added structured exception handling
 Day 13: Integrated structured logging with file output,
         request-scoped context, and request/response logging.
+Day 20: Wired to centralized backend.config.settings.
 """
 
 import os
@@ -76,6 +77,8 @@ from backend.utils.logging_config import (
     request_id_ctx,
 )
 
+from backend.config import settings
+
 
 logger = logging.getLogger("contract_ai")
 
@@ -89,21 +92,25 @@ async def lifespan(app: FastAPI):
     """Initialize logging, DB, and directories on startup."""
 
     os.makedirs(
-        "uploads",
+        settings.UPLOAD_DIR,
         exist_ok=True
     )
 
     os.makedirs(
-        "data",
+        settings.DATABASE_DIR,
         exist_ok=True
     )
 
     os.makedirs(
-        "logs",
+        settings.LOG_DIR,
         exist_ok=True
     )
 
-    setup_logging()
+    setup_logging(
+        log_level=settings.LOG_LEVEL,
+        log_dir=settings.LOG_DIR,
+        log_filename=settings.LOG_FILENAME,
+    )
     init_db()
 
     logger.info(
@@ -122,7 +129,7 @@ async def lifespan(app: FastAPI):
 # ---------------------------------------------------------
 app = FastAPI(
 
-    title="Contract Intelligence AI",
+    title=settings.APP_NAME,
 
     description=(
         "AI-powered legal contract "
@@ -132,9 +139,11 @@ app = FastAPI(
         "risk scoring."
     ),
 
-    version="0.5.0",
+    version=settings.APP_VERSION,
 
     lifespan=lifespan,
+
+    debug=settings.DEBUG,
 )
 
 
@@ -145,9 +154,9 @@ app.add_middleware(
 
     CORSMiddleware,
 
-    allow_origins=["*"],
+    allow_origins=settings.CORS_ORIGINS,
 
-    allow_credentials=True,
+    allow_credentials=settings.CORS_ALLOW_CREDENTIALS,
 
     allow_methods=["*"],
 
@@ -366,10 +375,13 @@ async def health_check():
             "ok",
 
         "service":
-            "Contract Intelligence AI",
+            settings.APP_NAME,
 
         "version":
-            "0.5.0",
+            settings.APP_VERSION,
+
+        "environment":
+            settings.APP_ENV,
     }
 
 

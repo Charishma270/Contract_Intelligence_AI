@@ -43,8 +43,8 @@
 | 17 | Celery Async Processing | ✅ Done | `backend/celery_config.py`, `backend/services/celery_tasks.py`, `backend/routes/async_analyze.py`, `backend/schemas/contract_schema.py`, `main.py`, `tests/backend/test_celery_tasks.py` | `feat(backend): add Celery async task processing with Redis` |
 | 18 | Vector DB Status Endpoint | ✅ Done | `backend/routes/vectordb.py`, `backend/services/vectordb_service.py`, `backend/schemas/vectordb_schema.py`, `tests/backend/test_vectordb.py`, `main.py` | `feat(routes): add chunk inspection endpoint for RAG debugging` |
 | 19 | Frontend API Contract Finalization | ✅ Done | `backend/schemas/contract_schema.py`, `rag_schema.py`, `nlp_schema.py`, `__init__.py`, `backend/routes/risk.py`, `async_analyze.py`, `upload.py`, `tests/backend/test_schema_contracts.py` | `refactor(schemas): finalize frontend-facing response shapes` |
-| 20 | Config & Environment Variables | ⬜ Pending | `.env.example`, `backend/config.py` | `refactor(backend): externalize configuration to environment variables` |
-| 21 | Week 3 Integration Demo | ⬜ Pending | — | `test: complete week-3 integration demo` |
+| 20 | Config & Environment Variables | ✅ Done | `.env.example`, `backend/config.py`, `backend/celery_config.py`, `backend/services/ocr_config.py`, `backend/services/nlp_config.py`, `backend/services/tracking.py`, `backend/routes/upload.py`, `main.py`, `tests/backend/test_config.py` | `refactor(backend): externalize configuration to environment variables` |
+| 21 | Week 3 Integration Demo | ✅ Done | `tests/backend/test_week3_integration.py` | `test: complete week-3 integration demo` |
 
 ---
 
@@ -67,10 +67,10 @@
 ```
 Week 1: ████████████████████ 100% (7/7)
 Week 2: ████████████████████ 100% (7/7)
-Week 3: ██████████████░░░░░░  71% (5/7)
+Week 3: ████████████████████ 100% (7/7)
 Week 4: ░░░░░░░░░░░░░░░░░░░░   0% (0/7)
 ─────────────────────────────────────
-Total:  ██████████████░░░░░░  68% (19/28)
+Total:  ███████████████░░░░░  75% (21/28)
 ```
 
 ---
@@ -79,50 +79,56 @@ Total:  ██████████████░░░░░░  68% (19/28
 
 ```
 Contract_Intelligence_AI/
-├── main.py                          ← FastAPI entry point (v0.5.0)
+├── .env.example                     ← Environment variable template [NEW Day 20]
+├── main.py                          ← FastAPI entry point (v0.6.0)  [UPD Day 20]
 ├── backend/
 │   ├── __init__.py
-│   ├── celery_config.py             ← Celery app factory         [NEW Day 17]
+│   ├── config.py                    ← Centralized settings          [NEW Day 20]
+│   ├── celery_config.py             ← Celery app factory            [UPD Day 20]
 │   ├── routes/
 │   │   ├── __init__.py
-│   │   ├── upload.py                ← POST /api/upload
+│   │   ├── upload.py                ← POST /api/upload              [UPD Day 20]
 │   │   ├── contracts.py             ← GET /api/contracts, /api/contracts/{id}
-│   │   ├── analyze.py               ← POST /api/analyze/{id}     [NEW Day 8]
-│   │   ├── async_analyze.py         ← Async analysis + tasks     [NEW Day 17]
-│   │   ├── vectordb.py              ← Vector DB inspection        [NEW Day 18]
-│   │   ├── risk.py                  ← GET /api/risk-score/{id}   [NEW Day 10]
-│   │   └── chat.py                  ← POST /api/chat             [NEW Day 11]
+│   │   ├── analyze.py               ← POST /api/analyze/{id}        [NEW Day 8]
+│   │   ├── async_analyze.py         ← Async analysis + tasks        [NEW Day 17]
+│   │   ├── vectordb.py              ← Vector DB inspection           [NEW Day 18]
+│   │   ├── risk.py                  ← GET /api/risk-score/{id}      [NEW Day 10]
+│   │   └── chat.py                  ← POST /api/chat                [NEW Day 11]
 │   ├── schemas/
 │   │   ├── __init__.py
 │   │   ├── ocr_schema.py
 │   │   ├── nlp_schema.py
 │   │   ├── rag_schema.py
-│   │   ├── vectordb_schema.py       ← Vector DB schemas           [NEW Day 18]
-│   │   └── contract_schema.py       ← +AsyncTaskResponse         [UPD Day 17]
+│   │   ├── vectordb_schema.py       ← Vector DB schemas              [NEW Day 18]
+│   │   └── contract_schema.py       ← +AsyncTaskResponse            [UPD Day 17]
 │   ├── services/
 │   │   ├── __init__.py
-│   │   ├── tracking.py              ← SQLite CRUD
-│   │   ├── pipeline.py              ← Orchestrator              [UPD Day 15]
-│   │   ├── celery_tasks.py          ← Async task definitions     [NEW Day 17]
-│   │   ├── rag.py                   ← FAISS RAG retrieval        [NEW Day 11]
-│   │   ├── vectordb_service.py      ← Vector DB read-only service [NEW Day 18]
-│   │   ├── real_ocr.py              ← pdfplumber + Tesseract     [NEW Day 14]
-│   │   ├── ocr_config.py            ← OCR configuration          [NEW Day 14]
-│   │   ├── real_nlp.py              ← Legal-BERT + spaCy NER     [NEW Day 15]
-│   │   ├── nlp_config.py            ← NLP configuration          [NEW Day 15]
+│   │   ├── tracking.py              ← SQLite CRUD                   [UPD Day 20]
+│   │   ├── pipeline.py              ← Orchestrator                  [UPD Day 15]
+│   │   ├── celery_tasks.py          ← Async task definitions        [NEW Day 17]
+│   │   ├── rag.py                   ← FAISS RAG retrieval           [NEW Day 11]
+│   │   ├── vectordb_service.py      ← Vector DB read-only service   [NEW Day 18]
+│   │   ├── real_ocr.py              ← pdfplumber + Tesseract        [NEW Day 14]
+│   │   ├── ocr_config.py            ← OCR configuration             [UPD Day 20]
+│   │   ├── real_nlp.py              ← Legal-BERT + spaCy NER        [NEW Day 15]
+│   │   ├── nlp_config.py            ← NLP configuration             [UPD Day 20]
 │   │   ├── mock_ocr.py
 │   │   ├── mock_nlp.py
 │   │   └── mock_rag.py
 │   └── utils/
 │       ├── __init__.py
-│       ├── exceptions.py            ← Custom exception hierarchy [NEW Day 12]
-│       ├── validators.py            ← Reusable request validators[NEW Day 12]
-│       └── logging_config.py        ← Structured logging setup   [NEW Day 13]
+│       ├── exceptions.py            ← Custom exception hierarchy    [NEW Day 12]
+│       ├── validators.py            ← Reusable request validators   [NEW Day 12]
+│       └── logging_config.py        ← Structured logging setup      [NEW Day 13]
+├── tests/
+│   └── backend/
+│       ├── test_config.py           ← Config settings tests         [NEW Day 20]
+│       └── test_week3_integration.py← Week 3 integration demo       [NEW Day 21]
 ├── uploads/
 ├── data/
 │   └── contracts.db                 ← SQLite (auto-created)
 └── logs/
-    └── contract_ai.log              ← JSON Lines (auto-created)  [NEW Day 13]
+    └── contract_ai.log              ← JSON Lines (auto-created)     [NEW Day 13]
 ```
 
 ---
