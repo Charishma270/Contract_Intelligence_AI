@@ -796,7 +796,10 @@ def run_pipeline(query):
             bert_result["prediction"]
         )
 
+
+
         risk_level = risk_result["risk_level"]
+
 
         # -------------------------------------------------
         # Explainability
