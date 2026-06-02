@@ -2,25 +2,20 @@
 OCR Configuration
 ==================
 Day 14: Externalized OCR settings with environment variable overrides.
+Day 20: Delegates to centralized backend.config.settings.
 
 All constants can be overridden via environment variables prefixed with OCR_.
 """
 
-import os
+from backend.config import settings
 
 
 # ---------------------------------------------------------------------------
 # Tesseract / Poppler paths
 # ---------------------------------------------------------------------------
-POPPLER_PATH: str = os.environ.get(
-    "OCR_POPPLER_PATH",
-    r"C:\poppler\poppler-26.02.0\Library\bin",
-)
+POPPLER_PATH: str = settings.OCR_POPPLER_PATH
 
-TESSERACT_CMD: str = os.environ.get(
-    "OCR_TESSERACT_CMD",
-    r"C:\Program Files\Tesseract-OCR\tesseract.exe",
-)
+TESSERACT_CMD: str = settings.OCR_TESSERACT_CMD
 
 # ---------------------------------------------------------------------------
 # Extraction thresholds
@@ -28,15 +23,15 @@ TESSERACT_CMD: str = os.environ.get(
 # Minimum characters per page from pdfplumber before falling back to Tesseract.
 # If pdfplumber extracts fewer chars than this, the page is considered
 # "scanned" and Tesseract OCR is used instead.
-MIN_TEXT_LENGTH: int = int(os.environ.get("OCR_MIN_TEXT_LENGTH", "50"))
+MIN_TEXT_LENGTH: int = settings.OCR_MIN_TEXT_LENGTH
 
 # ---------------------------------------------------------------------------
 # Chunking parameters
 # ---------------------------------------------------------------------------
-CHUNK_SIZE: int = int(os.environ.get("OCR_CHUNK_SIZE", "200"))
-CHUNK_OVERLAP: int = int(os.environ.get("OCR_CHUNK_OVERLAP", "50"))
+CHUNK_SIZE: int = settings.OCR_CHUNK_SIZE
+CHUNK_OVERLAP: int = settings.OCR_CHUNK_OVERLAP
 
 # ---------------------------------------------------------------------------
 # DPI for pdf2image conversion (higher = better OCR accuracy, slower)
 # ---------------------------------------------------------------------------
-OCR_DPI: int = int(os.environ.get("OCR_DPI", "300"))
+OCR_DPI: int = settings.OCR_DPI

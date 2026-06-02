@@ -245,6 +245,57 @@ All errors return a consistent JSON structure:
 
 ---
 
+## Configuration (Day 20)
+
+All backend settings are centralized in `backend/config.py` and read from environment variables at startup. Each setting has a sensible default for local development.
+
+### Quick Setup
+
+```bash
+# 1. Copy the template
+cp .env.example .env
+
+# 2. Edit for your environment
+# (defaults work for local development)
+
+# 3. Start the backend
+uvicorn main:app --reload
+```
+
+### Key Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `APP_ENV` | `development` | Environment: development, staging, production |
+| `DEBUG` | `false` | Enable debug mode (true/false) |
+| `PORT` | `8000` | Server port |
+| `CORS_ORIGINS` | `*` | Comma-separated allowed origins |
+| `MAX_FILE_SIZE_MB` | `20` | Maximum upload file size in MB |
+| `DATABASE_DIR` | `data` | SQLite database directory |
+| `LOG_LEVEL` | `INFO` | Logging level (DEBUG/INFO/WARNING/ERROR) |
+| `LOG_DIR` | `logs` | Log file directory |
+| `OCR_POPPLER_PATH` | (Windows default) | Path to Poppler bin directory |
+| `OCR_TESSERACT_CMD` | (Windows default) | Path to Tesseract executable |
+| `OCR_DPI` | `300` | DPI for PDF-to-image conversion |
+| `NLP_CONFIDENCE_THRESHOLD` | `0.30` | Clause detection confidence threshold |
+| `CELERY_BROKER_URL` | `redis://localhost:6379/0` | Celery broker URL |
+| `CELERY_RESULT_BACKEND` | `redis://localhost:6379/1` | Celery result backend URL |
+
+See `.env.example` for the complete list.
+
+### Usage in Code
+
+```python
+from backend.config import settings
+
+# Access any setting
+print(settings.APP_VERSION)      # "0.6.0"
+print(settings.MAX_FILE_SIZE_MB) # 20
+print(settings.DATABASE_URL)     # "sqlite:///data/contracts.db"
+```
+
+---
+
 ## Progress
 
 - [x] `/api/upload` — PDF upload with validation
@@ -254,10 +305,22 @@ All errors return a consistent JSON structure:
 - [x] `/api/risk-score` — rule-based risk scoring endpoint (Day 10)
 - [x] Comprehensive error handling & validation (Day 12)
 - [x] Structured logging with JSON file output (Day 13)
+- [x] Real OCR integration — pdfplumber + Tesseract (Day 14)
+- [x] Real NLP integration — Legal-BERT + spaCy NER (Day 15)
+- [x] E2E pipeline validation (Day 16)
+- [x] Celery async task processing (Day 17)
+- [x] Vector DB inspection endpoints (Day 18)
+- [x] Frontend API contract finalization (Day 19)
+- [x] Centralized config & environment variables (Day 20)
+- [x] Week 3 integration demo tests (Day 21)
 
-## Next Steps
+## Next Steps (Week 4)
 
-- [ ] Real OCR integration (Day 14)
-- [ ] Celery async task processing
-- [ ] Real NLP/RAG integration (replace mocks)
-- [ ] Authentication & authorization
+- [ ] Backend Dockerfile (Day 22)
+- [ ] Docker Compose integration (Day 23)
+- [ ] AWS EC2 deployment prep (Day 24)
+- [ ] Load testing with Locust (Day 25)
+- [ ] Comprehensive test suite (Day 26)
+- [ ] Final docs & architecture diagram (Day 27)
+- [ ] Demo day & handover (Day 28)
+

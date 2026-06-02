@@ -2,6 +2,7 @@
 Celery Configuration
 =====================
 Day 17: Celery application factory and configuration for async task processing.
+Day 20: Uses centralized backend.config.settings for all configuration.
 
 The Celery app uses Redis as both the message broker and result backend.
 All settings can be overridden via environment variables.
@@ -14,25 +15,20 @@ Usage:
     celery -A backend.celery_config worker --loglevel=info --concurrency=4
 """
 
-import os
 import logging
 
 from celery import Celery
 
+from backend.config import settings
+
 logger = logging.getLogger("contract_ai.celery")
 
 # ---------------------------------------------------------------------------
-# Broker & Backend URLs (configurable via env vars)
+# Broker & Backend URLs (from centralized settings)
 # ---------------------------------------------------------------------------
-BROKER_URL = os.environ.get(
-    "CELERY_BROKER_URL",
-    "redis://localhost:6379/0",
-)
+BROKER_URL = settings.CELERY_BROKER_URL
 
-RESULT_BACKEND = os.environ.get(
-    "CELERY_RESULT_BACKEND",
-    "redis://localhost:6379/1",
-)
+RESULT_BACKEND = settings.CELERY_RESULT_BACKEND
 
 
 # ---------------------------------------------------------------------------
@@ -63,7 +59,7 @@ def create_celery_app() -> Celery:
         accept_content=["json"],
 
         # --- Result expiry ---
-        result_expires=86400,  # 24 hours in seconds
+        result_expires=settings.CELERY_RESULT_EXPIRES,
 
         # --- Reliability ---
         task_acks_late=True,
@@ -71,8 +67,8 @@ def create_celery_app() -> Celery:
         worker_prefetch_multiplier=1,
 
         # --- Time limits ---
-        task_time_limit=300,       # 5 min hard kill
-        task_soft_time_limit=240,  # 4 min soft (raises SoftTimeLimitExceeded)
+        task_time_limit=settings.CELERY_TASK_TIME_LIMIT,
+        task_soft_time_limit=settings.CELERY_TASK_SOFT_TIME_LIMIT,
 
         # --- Timezone ---
         timezone="UTC",
@@ -82,9 +78,7 @@ def create_celery_app() -> Celery:
         task_track_started=True,
 
         # --- Worker ---
-        worker_concurrency=int(
-            os.environ.get("CELERY_WORKER_CONCURRENCY", "2")
-        ),
+        worker_concurrency=settings.CELERY_WORKER_CONCURRENCY,
 
         # --- Task routes (optional, for future multi-queue setup) ---
         task_routes={
