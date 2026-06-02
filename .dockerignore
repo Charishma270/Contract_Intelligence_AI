@@ -20,8 +20,6 @@ notebooks/
 
 .env
 
-# Large local artifacts
-models/
 data/vector_store/
 
 dist/
@@ -30,5 +28,3 @@ build/
 .pytest_cache/
 .vscode/
 .idea/
-
-Dockerfile.old
