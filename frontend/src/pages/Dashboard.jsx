@@ -30,6 +30,7 @@
 import Layout from "../components/layout/Layout";
 import StatsCard from "../components/dashboard/StatsCard";
 import RecentActivity from "../components/dashboard/RecentActivity";
+import ContractsTable from "../components/dashboard/ContractsTable";
 
 function Dashboard() {
   const stats = [
@@ -78,6 +79,7 @@ function Dashboard() {
         ))}
       </div>
       <RecentActivity />
+      <ContractsTable />
     </Layout>
   );
 }
