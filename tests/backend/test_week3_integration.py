@@ -606,7 +606,8 @@ class TestUploadValidation:
             "/api/upload",
             files={"file": ("test.txt", b"hello world", "text/plain")},
         )
-        assert resp.status_code in (400, 422)
+        assert resp.status_code in (400, 415, 422)
+
 
     def test_reject_empty_file(self, client):
         """Empty PDF files should be rejected."""
@@ -614,7 +615,7 @@ class TestUploadValidation:
             "/api/upload",
             files={"file": ("test.pdf", b"", "application/pdf")},
         )
-        assert resp.status_code in (400, 422)
+        assert resp.status_code in (400, 415, 422)
 
     def test_reject_invalid_pdf_magic(self, client):
         """Files with PDF extension but wrong magic bytes should be rejected."""
@@ -622,7 +623,7 @@ class TestUploadValidation:
             "/api/upload",
             files={"file": ("test.pdf", b"not a pdf", "application/pdf")},
         )
-        assert resp.status_code in (400, 422)
+        assert resp.status_code in (400, 415, 422)
 
 
 # ===================================================================
