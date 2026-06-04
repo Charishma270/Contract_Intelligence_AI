@@ -151,6 +151,45 @@ client = TestClient(app)
 
 
 # ================================================================
+# Fixtures — ensure vectordb_service uses OUR mock, not a stale
+# reference from an earlier test module's sys.modules injection.
+# ================================================================
+
+@pytest.fixture(autouse=True)
+def _patch_faiss_store_in_service():
+    """
+    Patch the already-imported ``faiss_store`` reference inside
+    ``backend.services.vectordb_service`` so it points to our
+    properly configured mock.
+
+    Why this is needed:
+    When pytest collects modules alphabetically, test_e2e_pipeline.py
+    may inject its own (bare) MagicMock for ``rag.vector_db.faiss_store``
+    into ``sys.modules`` *before* test_vectordb.py.  The first
+    ``from main import app`` triggers
+    ``backend.services.vectordb_service``'s
+    ``from rag.vector_db import faiss_store``, binding the e2e mock
+    (which lacks .index.ntotal = 5).  Our module-level injection
+    happens too late — the name is already resolved.
+
+    This fixture patches the *resolved* name so every test method
+    sees the correct mock, regardless of collection order.
+    """
+    # Reset to known-good state before each test
+    mock_faiss_index.ntotal = 5
+    mock_faiss_index.d = 384
+    mock_faiss_index.is_trained = True
+    _mock_faiss_store_module.index = mock_faiss_index
+    _mock_faiss_store_module.metadata_store = MOCK_METADATA.copy()
+
+    with patch(
+        "backend.services.vectordb_service.faiss_store",
+        _mock_faiss_store_module,
+    ):
+        yield
+
+
+# ================================================================
 # Tests
 # ================================================================
 
