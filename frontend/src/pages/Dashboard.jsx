@@ -33,6 +33,7 @@ import RecentActivity from "../components/dashboard/RecentActivity";
 import ContractsTable from "../components/dashboard/ContractsTable";
 import RiskChart from "../components/dashboard/RiskChart";
 import ContractDetails from "../components/dashboard/ContractDetails";
+import QuickActions from "../components/dashboard/QuickActions";
 
 function Dashboard() {
   const stats = [
@@ -84,6 +85,7 @@ function Dashboard() {
       <ContractsTable />
       <RiskChart />
       <ContractDetails />
+      <QuickActions />
     </Layout>
   );
 }
