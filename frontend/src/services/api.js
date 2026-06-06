@@ -75,9 +75,21 @@ export const getContracts = async () => {
   return response.data;
 };
 
-export const chatWithContract = async (question) => {
+// export const chatWithContract = async (question) => {
+//   const response = await API.post("/api/chat/chat", {
+//     contract_id: "eb490748-2268-478c-ba40-f7319f10ff59",
+//     query: question,
+//   });
+
+//   return response.data;
+// };
+
+export const chatWithContract = async (
+  contractId,
+  question
+) => {
   const response = await API.post("/api/chat/chat", {
-    contract_id: "eb490748-2268-478c-ba40-f7319f10ff59",
+    contract_id: contractId,
     query: question,
   });
 
