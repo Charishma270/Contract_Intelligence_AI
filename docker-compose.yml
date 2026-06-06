@@ -45,6 +45,9 @@ services:
       - uploads_data:/app/uploads
       - db_data:/app/data
       - log_data:/app/logs
+      # Bind-mount ML models + vector store (excluded from image via .dockerignore)
+      - ./models:/app/models:ro
+      - ./data/vector_store:/app/data/vector_store:ro
 
     restart: unless-stopped
 
@@ -92,6 +95,9 @@ services:
       - uploads_data:/app/uploads
       - db_data:/app/data
       - log_data:/app/logs
+      # Bind-mount ML models + vector store (excluded from image via .dockerignore)
+      - ./models:/app/models:ro
+      - ./data/vector_store:/app/data/vector_store:ro
 
     restart: unless-stopped
 
