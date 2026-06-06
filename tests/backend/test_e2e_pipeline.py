@@ -94,9 +94,17 @@ _mock_modules = {
         predict_multilabel_legal_bert=MagicMock(return_value=[]),
     ),
     "risk_engine.scoring": MagicMock(),
-    "risk_engine.scoring.risk_rules": MagicMock(
-        calculate_risk=MagicMock(return_value="Low"),
+    "risk_engine.scoring.risk_calculator": MagicMock(
+        calculate_risk=MagicMock(return_value={
+            "clause_type": "Unknown",
+            "risk_level": "LOW",
+            "risk_score": 10,
+            "confidence": 0.5,
+            "reason": "No specific risk rule defined for this clause type.",
+        }),
     ),
+    "risk_engine.rules": MagicMock(),
+    "risk_engine.rules.risk_rules": MagicMock(),
     # Leaf-level rag sub-modules with heavy deps
     "rag.retrieval.embedder": _mock_embedder_module,
     "rag.vector_db.faiss_store": _mock_faiss_store_module,

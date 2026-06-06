@@ -799,13 +799,12 @@ def run_pipeline(query):
         # Risk Calculation
         # -------------------------------------------------
 
-        risk_result = calculate_risk(
-            bert_result["prediction"]
+        risk_info = calculate_risk(
+            clause_type=bert_result["prediction"],
+            confidence=bert_result["confidence"],
         )
 
-
-
-        risk_level = risk_result["risk_level"]
+        risk_level = risk_info["risk_level"]
 
 
         # -------------------------------------------------
