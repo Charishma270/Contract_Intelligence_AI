@@ -176,6 +176,9 @@ def hybrid_search(
     # Normalize Fusion Scores
     # -----------------------------------------------------
 
+    if not combined_results:
+        return []
+
     max_fusion = max(
 
         item["fusion_score"]
@@ -253,20 +256,34 @@ def save_index():
 # ---------------------------------------------------------
 
 def load_index():
+    """Load FAISS index and metadata from disk.
+
+    Returns True if loaded successfully, False if index files are missing.
+    """
 
     global index
     global metadata_store
 
+    index_path = "data/vector_store/faiss.index"
+    metadata_path = "data/vector_store/metadata.pkl"
+
+    if (
+        not os.path.exists(index_path)
+        or not os.path.exists(metadata_path)
+    ):
+        print(
+            "\nFAISS index not found — "
+            "no contracts indexed yet."
+        )
+        return False
+
     index = faiss.read_index(
-        "data/vector_store/faiss.index"
+        index_path
     )
 
     with open(
-
-        "data/vector_store/metadata.pkl",
-
+        metadata_path,
         "rb"
-
     ) as f:
 
         metadata_store = pickle.load(f)
@@ -279,3 +296,4 @@ def load_index():
     print(
         "\nFAISS + BM25 loaded successfully!"
     )
+    return True

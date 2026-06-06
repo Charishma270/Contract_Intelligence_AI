@@ -332,7 +332,14 @@ def run_pipeline(query):
 
     print("\nLoading Hybrid Retrieval Engine...\n")
 
-    load_index()
+    if not load_index():
+        print("No index available — returning empty results.")
+        return {"results": [], "summary": {
+            "overall_risk": "Unknown",
+            "top_detected_labels": [],
+            "high_confidence_clauses": 0,
+            "average_confidence": 0,
+        }}
 
     print(f"\nUser Query: {query}\n")
 

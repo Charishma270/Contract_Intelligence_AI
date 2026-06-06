@@ -7,7 +7,7 @@ Day 12: Enhanced error handling with typed exceptions and validators.
 
 import logging
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 
 from backend.schemas.rag_schema import ChatRequest, ChatResponse
 from backend.services.rag import run_rag
@@ -45,5 +45,18 @@ async def chat_with_contract(request: ChatRequest):
         else f"Chat query for contract {request.contract_id}: '{cleaned_query}'"
     )
 
-    response = run_rag(request.contract_id, cleaned_query)
+    try:
+        response = run_rag(request.contract_id, cleaned_query)
+    except Exception as exc:
+        logger.error(
+            f"RAG pipeline error for contract "
+            f"{request.contract_id}: {exc}",
+            exc_info=True,
+        )
+        raise HTTPException(
+            status_code=500,
+            detail=f"RAG pipeline error: {exc}",
+        )
+
     return response
+

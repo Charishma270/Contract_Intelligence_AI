@@ -1,5 +1,25 @@
+# ==============================================================================
+# Contract Intelligence AI — Docker Compose
+# ==============================================================================
+# Day 22: Full-stack local/staging deployment.
+#
+# Services:
+#   backend  — FastAPI API server (uvicorn)
+#   worker   — Celery async task worker
+#   redis    — Message broker + result backend
+#
+# Usage:
+#   docker compose up -d            # Start all services
+#   docker compose ps               # Check health status
+#   docker compose logs -f backend  # Follow backend logs
+#   docker compose down             # Stop and remove containers
+# ==============================================================================
+
 services:
 
+  # -------------------------------------------------------------------------
+  # Backend API Server
+  # -------------------------------------------------------------------------
   backend:
     build:
       context: .
@@ -8,19 +28,122 @@ services:
     container_name: contract-ai-backend
 
     ports:
-      - "8000:8000"
+      - "${PORT:-8000}:8000"
+
+    env_file:
+      - .env
+
+    environment:
+      - APP_ENV=${APP_ENV:-production}
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/1
+      # Override OCR paths for Linux container
+      - OCR_TESSERACT_CMD=/usr/bin/tesseract
+      - OCR_POPPLER_PATH=/usr/bin
+
+    volumes:
+      - uploads_data:/app/uploads
+      - db_data:/app/data
+      - log_data:/app/logs
 
     restart: unless-stopped
 
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
 
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      start_period: 15s
+      retries: 3
+
+    networks:
+      - contract-ai-net
+
+  # -------------------------------------------------------------------------
+  # Celery Worker (async analysis tasks)
+  # -------------------------------------------------------------------------
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: contract-ai-worker
+
+    command: >
+      celery -A backend.celery_config worker
+      --loglevel=info
+      --concurrency=${CELERY_WORKER_CONCURRENCY:-2}
+      --queues=analysis
+
+    env_file:
+      - .env
+
+    environment:
+      - APP_ENV=${APP_ENV:-production}
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/1
+      - OCR_TESSERACT_CMD=/usr/bin/tesseract
+      - OCR_POPPLER_PATH=/usr/bin
+
+    volumes:
+      - uploads_data:/app/uploads
+      - db_data:/app/data
+      - log_data:/app/logs
+
+    restart: unless-stopped
+
+    depends_on:
+      redis:
+        condition: service_healthy
+
+    networks:
+      - contract-ai-net
+
+  # -------------------------------------------------------------------------
+  # Redis — Broker & Result Backend
+  # -------------------------------------------------------------------------
   redis:
     image: redis:7-alpine
 
     container_name: contract-ai-redis
 
     ports:
-      - "6379:6379"
+      - "${REDIS_PORT:-6379}:6379"
+
+    volumes:
+      - redis_data:/data
 
     restart: unless-stopped
+
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      start_period: 5s
+      retries: 3
+
+    networks:
+      - contract-ai-net
+
+# ---------------------------------------------------------------------------
+# Named volumes (persistent across container recreations)
+# ---------------------------------------------------------------------------
+volumes:
+  uploads_data:
+    driver: local
+  db_data:
+    driver: local
+  log_data:
+    driver: local
+  redis_data:
+    driver: local
+
+# ---------------------------------------------------------------------------
+# Network
+# ---------------------------------------------------------------------------
+networks:
+  contract-ai-net:
+    driver: bridge

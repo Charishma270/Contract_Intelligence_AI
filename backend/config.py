@@ -88,8 +88,15 @@ class Settings:
         ))
 
         # --- CORS ---
+        # NOTE: allow_credentials=True requires explicit origins (not "*").
+        # The CORS spec forbids credentials with wildcard origins, and
+        # FastAPI silently drops the Access-Control-Allow-Origin header
+        # in that case — causing the browser CORS error.
         self.CORS_ORIGINS: List[str] = _list(
-            os.environ.get("CORS_ORIGINS", "*"),
+            os.environ.get(
+                "CORS_ORIGINS",
+                "http://localhost:5173,http://127.0.0.1:5173,http://localhost:8000",
+            ),
         )
         self.CORS_ALLOW_CREDENTIALS: bool = _bool(os.environ.get(
             "CORS_ALLOW_CREDENTIALS", "true",
