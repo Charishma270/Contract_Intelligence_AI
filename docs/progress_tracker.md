@@ -52,7 +52,7 @@
 
 | Day | Task | Status | Files | Commit Message |
 |-----|------|--------|-------|----------------|
-| 22 | Backend Dockerfile | ⬜ Pending | `Dockerfile` | `feat(deploy): add backend Dockerfile` |
+| 22 | Backend Dockerfile | ✅ Done | `Dockerfile`, `docker-compose.yml`, `.dockerignore` | `feat(deploy): production-grade multi-stage Dockerfile with Celery worker` |
 | 23 | Docker Compose with Mukt | ⬜ Pending | `docker-compose.yml` | `feat(deploy): integrate backend into docker-compose stack` |
 | 24 | AWS EC2 Deployment Prep | ⬜ Pending | — | `chore(deploy): production configuration for AWS EC2` |
 | 25 | Load Testing | ⬜ Pending | `tests/load/` | `test(performance): add locust load testing scripts` |
@@ -68,9 +68,9 @@
 Week 1: ████████████████████ 100% (7/7)
 Week 2: ████████████████████ 100% (7/7)
 Week 3: ████████████████████ 100% (7/7)
-Week 4: ░░░░░░░░░░░░░░░░░░░░   0% (0/7)
+Week 4: ███░░░░░░░░░░░░░░░░░  14% (1/7)
 ─────────────────────────────────────
-Total:  ███████████████░░░░░  75% (21/28)
+Total:  ████████████████░░░░  79% (22/28)
 ```
 
 ---
