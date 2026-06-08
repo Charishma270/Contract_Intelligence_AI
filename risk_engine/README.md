@@ -38,7 +38,7 @@ Legal Text (clause snippet)
 │   inference.py)               │
 │                               │
 │  ┌─────────────────────────┐  │
-│  │ Tokenize → Model →     │  │
+│  │ Tokenize → Model →      │  │
 │  │ Sigmoid → Threshold     │  │
 │  └─────────────────────────┘  │
 │        │                      │

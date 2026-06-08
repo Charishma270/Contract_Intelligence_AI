@@ -36,8 +36,9 @@ contract_ai_gpu_env/
 # -----------------------------
 # Logs
 # -----------------------------
-logs/*.log
+logs/*
 !logs/.gitkeep
+
 
 # -----------------------------
 # Temporary Files
