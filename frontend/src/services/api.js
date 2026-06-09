@@ -48,7 +48,7 @@ import axios from "axios";
 // In Docker (behind nginx proxy): leave VITE_API_BASE_URL unset → relative URLs
 // For local dev: set VITE_API_BASE_URL=http://localhost:8000 in frontend/.env
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "",
+  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:8000",
 });
 
 export const analyzeClause = async (query) => {
