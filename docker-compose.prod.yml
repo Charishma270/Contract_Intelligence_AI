@@ -1,0 +1,108 @@
+# ==============================================================================
+# Contract Intelligence AI — Production Docker Compose Override
+# ==============================================================================
+# Day 24: Production-specific overrides for AWS EC2 deployment.
+#
+# Usage:
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+#
+# What this file adds/changes vs docker-compose.yml:
+#   - Resource limits (CPU + memory) for all services
+#   - Redis port NOT exposed to the host (internal only)
+#   - Log rotation (json-file driver with size+count limits)
+#   - Stricter restart policies
+#   - Production environment variables enforced
+# ==============================================================================
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # Frontend — stricter limits
+  # ---------------------------------------------------------------------------
+  frontend:
+    restart: always
+    environment:
+      - NODE_ENV=production
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+        reservations:
+          cpus: "0.1"
+          memory: 64M
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  # ---------------------------------------------------------------------------
+  # Backend API — production tuning
+  # ---------------------------------------------------------------------------
+  backend:
+    restart: always
+    environment:
+      - APP_ENV=production
+      - DEBUG=false
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1G
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "10"
+
+  # ---------------------------------------------------------------------------
+  # Celery Worker — production tuning
+  # ---------------------------------------------------------------------------
+  worker:
+    restart: always
+    environment:
+      - APP_ENV=production
+      - DEBUG=false
+    deploy:
+      resources:
+        limits:
+          cpus: "1.5"
+          memory: 2G
+        reservations:
+          cpus: "0.5"
+          memory: 512M
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "10"
+
+  # ---------------------------------------------------------------------------
+  # Redis — internal only (no host port exposure in production)
+  # ---------------------------------------------------------------------------
+  redis:
+    restart: always
+    ports: []        # Remove host-level port mapping — Redis is internal only
+    command: >
+      redis-server
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+      --save 60 1
+      --loglevel warning
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 384M
+        reservations:
+          cpus: "0.05"
+          memory: 64M
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
