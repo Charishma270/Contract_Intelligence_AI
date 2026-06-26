@@ -81,6 +81,7 @@ class AuthResponse(BaseModel):
     message: str
     token: Optional[str] = None
     user: Optional[UserResponse] = None
+    requires_2fa: bool = False
 
 
 class MessageResponse(BaseModel):

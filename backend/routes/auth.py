@@ -100,12 +100,33 @@ async def signup(body: SignupRequest):
     response_model=AuthResponse,
 )
 async def login(body: LoginRequest):
-    """Authenticate a user and return a JWT token."""
+    """Authenticate a user and return a JWT token.
+
+    If 2FA is enabled, returns requires_2fa=True and a
+    temporary token. The client must then verify the TOTP
+    code via POST /api/auth/2fa/login.
+    """
 
     user = authenticate_user(
         email=body.email,
         password=body.password,
     )
+
+    # If 2FA is enabled, don't issue full token yet
+    if user.two_factor_enabled:
+        # Issue a short-lived token for 2FA verification
+        from datetime import timedelta
+        temp_token = create_access_token(
+            user.id,
+            expires_delta=timedelta(minutes=5),
+        )
+        return AuthResponse(
+            success=True,
+            message="2FA verification required.",
+            token=temp_token,
+            user=_user_to_response(user),
+            requires_2fa=True,
+        )
 
     token = create_access_token(user.id)
     user_data = _user_to_response(user)

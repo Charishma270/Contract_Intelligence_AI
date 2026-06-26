@@ -8,8 +8,10 @@ Day 19: Moved RiskScoreResponse to contract_schema.py (schema consolidation).
 
 import logging
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from typing import List
+
+from backend.utils.jwt_utils import get_current_user_id
 
 from backend.schemas.contract_schema import (
     RiskBreakdown,
@@ -25,7 +27,10 @@ router = APIRouter()
 
 
 @router.get("/risk-score/{contract_id}", response_model=RiskScoreResponse)
-async def get_risk_score(contract_id: str):
+async def get_risk_score(
+    contract_id: str,
+    user_id: int = Depends(get_current_user_id),
+):
     """
     Get the risk score breakdown for a contract.
 

@@ -61,6 +61,10 @@ class User(Base):
         Boolean,
         default=False,
     )
+    totp_secret = Column(
+        String,
+        nullable=True,
+    )
     created_at = Column(
         DateTime,
         default=datetime.utcnow,

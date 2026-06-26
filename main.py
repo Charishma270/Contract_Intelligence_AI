@@ -76,6 +76,10 @@ from backend.routes.dashboard import (
     router as dashboard_router
 )
 
+from backend.routes.two_factor import (
+    router as two_factor_router
+)
+
 from backend.services.tracking import (
     init_db
 )
@@ -399,6 +403,16 @@ app.include_router(
     prefix="/api/dashboard",
 
     tags=["Dashboard"]
+)
+
+# Two-factor authentication
+app.include_router(
+
+    two_factor_router,
+
+    prefix="/api/auth",
+
+    tags=["Two-Factor Auth"]
 )
 
 

@@ -7,7 +7,9 @@ Exposes read-only views into the FAISS vector store.
 
 import logging
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
+
+from backend.utils.jwt_utils import get_current_user_id
 
 from backend.schemas.vectordb_schema import (
     ChunkDetail,
@@ -38,7 +40,9 @@ router = APIRouter()
     "/status",
     response_model=VectorDBStatusResponse,
 )
-async def vectordb_status():
+async def vectordb_status(
+    user_id: int = Depends(get_current_user_id),
+):
     """
     Return FAISS index health and statistics.
 
@@ -91,6 +95,8 @@ async def get_chunks(
         le=100,
         description="Number of chunks per page",
     ),
+
+    user_id: int = Depends(get_current_user_id),
 ):
     """
     List stored chunks with pagination.
@@ -125,7 +131,10 @@ async def get_chunks(
     "/chunks/{index}",
     response_model=ChunkDetail,
 )
-async def get_single_chunk(index: int):
+async def get_single_chunk(
+    index: int,
+    user_id: int = Depends(get_current_user_id),
+):
     """
     Get a single chunk by its FAISS index position.
 
@@ -171,6 +180,7 @@ async def get_single_chunk(index: int):
 )
 async def search_stored_chunks(
     request: ChunkSearchRequest,
+    user_id: int = Depends(get_current_user_id),
 ):
     """
     Search stored chunks by label name or text keyword.

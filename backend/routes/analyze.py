@@ -7,7 +7,9 @@ Day 12: Enhanced error handling with typed exceptions and validators.
 
 import logging
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+
+from backend.utils.jwt_utils import get_current_user_id
 
 from backend.schemas.contract_schema import AnalysisResponse
 from backend.services.pipeline import run_pipeline
@@ -20,7 +22,10 @@ router = APIRouter()
 
 
 @router.post("/analyze/{contract_id}", response_model=AnalysisResponse)
-async def analyze_contract(contract_id: str):
+async def analyze_contract(
+    contract_id: str,
+    user_id: int = Depends(get_current_user_id),
+):
     """
     Run the full analysis pipeline on an uploaded contract.
 
