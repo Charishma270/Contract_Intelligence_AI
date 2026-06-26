@@ -314,13 +314,38 @@ print(settings.DATABASE_URL)     # "sqlite:///data/contracts.db"
 - [x] Centralized config & environment variables (Day 20)
 - [x] Week 3 integration demo tests (Day 21)
 
-## Next Steps (Week 4)
+## Week 4 Completion Status
 
-- [ ] Backend Dockerfile (Day 22)
-- [ ] Docker Compose integration (Day 23)
-- [ ] AWS EC2 deployment prep (Day 24)
-- [ ] Load testing with Locust (Day 25)
-- [ ] Comprehensive test suite (Day 26)
-- [ ] Final docs & architecture diagram (Day 27)
-- [ ] Demo day & handover (Day 28)
+- [x] Backend Dockerfile — multi-stage production image (Day 22)
+- [x] Docker Compose integration — nginx + frontend + Celery (Day 23)
+- [x] AWS EC2 deployment prep — scripts, prod compose, `.env.production` (Day 24)
+- [x] Load testing with Locust — 50/100/200 concurrent users (Day 25)
+- [x] Comprehensive test suite — endpoints, validators, exceptions (Day 26)
+- [x] Final docs & architecture diagram — API reference + Mermaid diagrams (Day 27)
+- [x] Demo day & project handover (Day 28)
+
+---
+
+## Running the Test Suite
+
+```bash
+# Run all backend tests
+python -m pytest tests/backend/ -v
+
+# Run specific Day 26 test files
+python -m pytest tests/backend/test_endpoints.py \
+                 tests/backend/test_validators.py \
+                 tests/backend/test_exceptions.py -v
+
+# With coverage report
+python -m pytest tests/backend/ --cov=backend --cov-report=term-missing
+```
+
+---
+
+## Documentation
+
+- [API Reference](../docs/api_docs/api_reference.md) — Complete endpoint documentation
+- [Architecture](../docs/architecture/architecture.md) — System diagrams and data flow
+- [Progress Tracker](../docs/progress_tracker.md) — Day-by-day log
 
