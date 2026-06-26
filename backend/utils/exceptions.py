@@ -138,3 +138,38 @@ class InvalidContractIdError(ContractAIError):
             status_code=400,
         )
         self.contract_id = contract_id
+
+
+# ---------------------------------------------------------------------------
+# Auth exceptions
+# ---------------------------------------------------------------------------
+class AuthenticationError(ContractAIError):
+    """Raised when authentication fails (missing/invalid token)."""
+
+    def __init__(self, message: str = "Authentication required."):
+        super().__init__(message=message, status_code=401)
+
+
+class EmailAlreadyExistsError(ContractAIError):
+    """Raised when registering with an email that already exists."""
+
+    def __init__(self, email: str):
+        super().__init__(
+            message=f"Account with email '{email}' already exists.",
+            status_code=409,
+        )
+        self.email = email
+
+
+class InvalidCredentialsError(ContractAIError):
+    """Raised when login credentials are incorrect."""
+
+    def __init__(self, message: str = "Invalid email or password."):
+        super().__init__(message=message, status_code=401)
+
+
+class WeakPasswordError(ContractAIError):
+    """Raised when a password does not meet requirements."""
+
+    def __init__(self, message: str = "Password does not meet requirements."):
+        super().__init__(message=message, status_code=400)

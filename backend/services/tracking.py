@@ -50,6 +50,8 @@ class ContractRecord(Base):
 # ---------------------------------------------------------------------------
 def init_db():
     """Create all tables if they don't exist."""
+    # Import User model so Base.metadata includes the users table
+    from backend.models.user_model import User  # noqa: F401
     os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
     Base.metadata.create_all(bind=engine)
 

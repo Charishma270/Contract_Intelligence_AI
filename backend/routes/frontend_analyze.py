@@ -7,8 +7,10 @@ Bridge endpoint for frontend Analyze page.
 import logging
 from typing import List, Optional
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
+
+from backend.utils.jwt_utils import get_current_user_id
 
 from backend.services.rag_service import (
     analyze_contract_query
@@ -289,7 +291,9 @@ def _map_to_frontend_result(
 
 async def frontend_analyze(
 
-    request: FrontendAnalyzeRequest
+    request: FrontendAnalyzeRequest,
+
+    user_id: int = Depends(get_current_user_id),
 ):
 
     query = request.query.strip()

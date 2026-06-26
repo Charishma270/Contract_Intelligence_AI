@@ -7,7 +7,9 @@ Day 12: Enhanced error handling with typed exceptions and validators.
 
 import logging
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
+
+from backend.utils.jwt_utils import get_current_user_id
 
 from backend.schemas.rag_schema import ChatRequest, ChatResponse
 from backend.services.rag import run_rag
@@ -19,7 +21,10 @@ router = APIRouter()
 
 
 @router.post("/chat", response_model=ChatResponse)
-async def chat_with_contract(request: ChatRequest):
+async def chat_with_contract(
+    request: ChatRequest,
+    user_id: int = Depends(get_current_user_id),
+):
     """
     Ask a natural language question about an uploaded contract.
 

@@ -9,7 +9,9 @@ Day 13: Added structured logging.
 import logging
 from typing import List
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Depends, Query
+
+from backend.utils.jwt_utils import get_current_user_id
 
 from backend.schemas.contract_schema import ContractMetadata
 from backend.services.tracking import list_contracts
@@ -21,7 +23,10 @@ router = APIRouter()
 
 
 @router.get("/contracts/{contract_id}", response_model=ContractMetadata)
-async def get_contract_status(contract_id: str):
+async def get_contract_status(
+    contract_id: str,
+    user_id: int = Depends(get_current_user_id),
+):
     """
     Get the current status and metadata of a specific contract.
 
@@ -38,6 +43,7 @@ async def get_contract_status(contract_id: str):
 async def list_all_contracts(
     skip: int = Query(0, ge=0, description="Number of records to skip"),
     limit: int = Query(20, ge=1, le=100, description="Max records to return"),
+    user_id: int = Depends(get_current_user_id),
 ):
     """
     List all contracts with pagination (newest first).

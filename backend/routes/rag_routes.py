@@ -1,4 +1,6 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+
+from backend.utils.jwt_utils import get_current_user_id
 
 from backend.schemas.rag_schema import (
     QueryRequest,
@@ -17,7 +19,8 @@ router = APIRouter()
     response_model=QueryResponse
 )
 def analyze_query(
-    request: QueryRequest
+    request: QueryRequest,
+    user_id: int = Depends(get_current_user_id),
 ):
 
     pipeline_output = (

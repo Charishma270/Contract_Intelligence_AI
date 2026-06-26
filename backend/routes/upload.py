@@ -11,8 +11,13 @@ import logging
 
 from fastapi import (
     APIRouter,
+    Depends,
     File,
     UploadFile
+)
+
+from backend.utils.jwt_utils import (
+    get_current_user_id
 )
 
 from backend.schemas.contract_schema import (
@@ -67,7 +72,9 @@ ALLOWED_EXTENSIONS = {
 
 async def upload_contract(
 
-    file: UploadFile = File(...)
+    file: UploadFile = File(...),
+
+    user_id: int = Depends(get_current_user_id),
 ):
 
     """

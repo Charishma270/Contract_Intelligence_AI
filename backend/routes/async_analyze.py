@@ -12,9 +12,11 @@ Provides:
 
 import logging
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
 from celery.result import AsyncResult
+
+from backend.utils.jwt_utils import get_current_user_id
 
 from backend.celery_config import celery_app
 from backend.schemas.contract_schema import (
@@ -49,7 +51,10 @@ router = APIRouter()
         "Returns immediately with a task_id for polling."
     ),
 )
-async def submit_async_analysis(contract_id: str):
+async def submit_async_analysis(
+    contract_id: str,
+    user_id: int = Depends(get_current_user_id),
+):
     """
     Submit the analysis pipeline as an async Celery task.
 
@@ -103,7 +108,10 @@ async def submit_async_analysis(contract_id: str):
         "States: PENDING, STARTED, PROGRESS, SUCCESS, FAILURE, REVOKED."
     ),
 )
-async def get_task_status(task_id: str):
+async def get_task_status(
+    task_id: str,
+    user_id: int = Depends(get_current_user_id),
+):
     """
     Query the current state and result of a Celery task.
 
@@ -137,7 +145,10 @@ async def get_task_status(task_id: str):
     summary="Cancel a task",
     description="Revoke (cancel) a pending or running async analysis task.",
 )
-async def revoke_task(task_id: str):
+async def revoke_task(
+    task_id: str,
+    user_id: int = Depends(get_current_user_id),
+):
     """
     Cancel a Celery task by ID.
 
