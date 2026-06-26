@@ -1,7 +1,7 @@
-import Sidebar from "./Sidebar";
-import Navbar from "./Navbar";
+// import Sidebar from "./Sidebar";
+// import Navbar from "./Navbar";
 
-// function Layout({ children }) {
+// function Layout({ children, fullWidth = false }) {
 //   return (
 //     <div className="flex">
 //       <Sidebar />
@@ -9,7 +9,11 @@ import Navbar from "./Navbar";
 //       <div className="flex-1">
 //         <Navbar />
 
-//         <div className="p-6 bg-gray-100 min-h-screen">
+//         <div
+//           className={`bg-gray-100 min-h-screen ${
+//             fullWidth ? "" : "p-6"
+//           }`}
+//         >
 //           {children}
 //         </div>
 //       </div>
@@ -19,39 +23,54 @@ import Navbar from "./Navbar";
 
 // export default Layout;
 
-// function Layout({ children }) {
+
+//recently updated layout.jsx file
+// import Sidebar from "./Sidebar";
+// import Navbar from "./Navbar";
+
+// function Layout({ children, fullWidth = false }) {
 //   return (
-//     <div className="flex">
+//     <div className="flex min-h-screen bg-slate-100">
 //       <Sidebar />
 
-//       <div className="flex-1">
+//       <div className="flex-1 min-w-0">
 //         <Navbar />
 
-//         {/* KEEP THIS */}
-//         <div className="p-6 bg-gray-100 min-h-screen">
+//         <main
+//           className={`min-h-screen ${
+//             fullWidth ? "" : "px-6 py-6 lg:px-8"
+//           }`}
+//         >
 //           {children}
-//         </div>
+//         </main>
 //       </div>
 //     </div>
 //   );
 // }
 
+// export default Layout;
+
+
+// changes 2
+
+import Sidebar from "./Sidebar";
+import Navbar from "./Navbar";
 
 function Layout({ children, fullWidth = false }) {
   return (
-    <div className="flex">
+    <div className="flex min-h-screen bg-slate-100 dark:bg-slate-950">
       <Sidebar />
 
-      <div className="flex-1">
+      <div className="flex-1 min-w-0">
         <Navbar />
 
-        <div
-          className={`bg-gray-100 min-h-screen ${
-            fullWidth ? "" : "p-6"
+        <main
+          className={`min-h-screen ${
+            fullWidth ? "" : "px-6 py-6 lg:px-8"
           }`}
         >
           {children}
-        </div>
+        </main>
       </div>
     </div>
   );

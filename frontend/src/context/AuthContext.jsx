@@ -1,0 +1,318 @@
+// import { createContext, useContext, useEffect, useState } from "react";
+
+// const AuthContext = createContext();
+
+// export function AuthProvider({ children }) {
+//   const [currentUser, setCurrentUser] = useState(() => {
+//     const savedUser = localStorage.getItem("currentUser");
+//     return savedUser ? JSON.parse(savedUser) : null;
+//   });
+
+//   useEffect(() => {
+//     if (currentUser) {
+//       localStorage.setItem("currentUser", JSON.stringify(currentUser));
+//     } else {
+//       localStorage.removeItem("currentUser");
+//     }
+//   }, [currentUser]);
+
+//   const signup = (userData) => {
+//     const users = JSON.parse(localStorage.getItem("users")) || [];
+
+//     const userExists = users.find(
+//       (user) => user.email === userData.email
+//     );
+
+//     if (userExists) {
+//       return {
+//         success: false,
+//         message: "Account already exists. Please login.",
+//       };
+//     }
+
+//     const newUser = {
+//       id: Date.now(),
+//       name: userData.name,
+//       email: userData.email,
+//       password: userData.password,
+//       role: "Frontend Developer",
+//       organization: "Zaalima Development Ltd.",
+//       phone: "+91 98765 43210",
+//       joinedDate: "June 2026",
+//       lastLogin: "Today",
+//     };
+
+//     localStorage.setItem("users", JSON.stringify([...users, newUser]));
+//     setCurrentUser(newUser);
+
+//     return {
+//       success: true,
+//       message: "Signup successful.",
+//     };
+//   };
+
+//   const login = (email, password) => {
+//     const users = JSON.parse(localStorage.getItem("users")) || [];
+
+//     const user = users.find(
+//       (item) => item.email === email && item.password === password
+//     );
+
+//     if (!user) {
+//       return {
+//         success: false,
+//         message: "Invalid email or password.",
+//       };
+//     }
+
+//     setCurrentUser({
+//       ...user,
+//       lastLogin: "Today",
+//     });
+
+//     return {
+//       success: true,
+//       message: "Login successful.",
+//     };
+//   };
+
+//   const logout = () => {
+//     setCurrentUser(null);
+//   };
+
+//   return (
+//     <AuthContext.Provider value={{ currentUser, signup, login, logout }}>
+//       {children}
+//     </AuthContext.Provider>
+//   );
+// }
+
+// export function useAuth() {
+//   return useContext(AuthContext);
+// }
+
+
+
+
+
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+
+const AuthContext = createContext();
+
+export function AuthProvider({ children }) {
+  const [currentUser, setCurrentUser] = useState(() => {
+    const savedUser = localStorage.getItem("currentUser");
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+
+  useEffect(() => {
+    if (currentUser) {
+      localStorage.setItem(
+        "currentUser",
+        JSON.stringify(currentUser)
+      );
+    } else {
+      localStorage.removeItem("currentUser");
+    }
+  }, [currentUser]);
+
+  const getUsers = () => {
+    return JSON.parse(localStorage.getItem("users")) || [];
+  };
+
+  const saveUsers = (users) => {
+    localStorage.setItem("users", JSON.stringify(users));
+  };
+
+  const signup = (userData) => {
+    const users = getUsers();
+
+    const userExists = users.find(
+      (user) => user.email === userData.email
+    );
+
+    if (userExists) {
+      return {
+        success: false,
+        message: "Account already exists. Please login.",
+      };
+    }
+
+    const newUser = {
+      id: Date.now(),
+      name: userData.name,
+      email: userData.email,
+      password: userData.password,
+      role: "Frontend Developer",
+      organization: "Zaalima Development Ltd.",
+      phone: "+91 98765 43210",
+      joinedDate: "June 2026",
+      lastLogin: "Today",
+    };
+
+    saveUsers([...users, newUser]);
+    setCurrentUser(newUser);
+
+    return {
+      success: true,
+      message: "Signup successful.",
+    };
+  };
+
+  const login = (email, password) => {
+    const users = getUsers();
+
+    const user = users.find(
+      (item) =>
+        item.email === email && item.password === password
+    );
+
+    if (!user) {
+      return {
+        success: false,
+        message: "Invalid email or password.",
+      };
+    }
+
+    const updatedUser = {
+      ...user,
+      lastLogin: "Today",
+    };
+
+    setCurrentUser(updatedUser);
+
+    return {
+      success: true,
+      message: "Login successful.",
+    };
+  };
+
+  const updateProfile = (updatedData) => {
+    if (!currentUser) {
+      return {
+        success: false,
+        message: "No logged-in user found.",
+      };
+    }
+
+    const users = getUsers();
+
+    const emailTaken = users.find(
+      (user) =>
+        user.email === updatedData.email &&
+        user.id !== currentUser.id
+    );
+
+    if (emailTaken) {
+      return {
+        success: false,
+        message: "This email is already used by another account.",
+      };
+    }
+
+    const updatedUser = {
+      ...currentUser,
+      ...updatedData,
+    };
+
+    const updatedUsers = users.map((user) =>
+      user.id === currentUser.id ? updatedUser : user
+    );
+
+    saveUsers(updatedUsers);
+    setCurrentUser(updatedUser);
+
+    return {
+      success: true,
+      message: "Profile updated successfully.",
+    };
+  };
+
+  const changePassword = ({
+    currentPassword,
+    newPassword,
+    confirmPassword,
+  }) => {
+    if (!currentUser) {
+      return {
+        success: false,
+        message: "No logged-in user found.",
+      };
+    }
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      return {
+        success: false,
+        message: "Please fill all password fields.",
+      };
+    }
+
+    if (currentUser.password !== currentPassword) {
+      return {
+        success: false,
+        message: "Current password is incorrect.",
+      };
+    }
+
+    if (newPassword !== confirmPassword) {
+      return {
+        success: false,
+        message: "New password and confirm password do not match.",
+      };
+    }
+
+    if (newPassword.length < 6) {
+      return {
+        success: false,
+        message: "Password must be at least 6 characters.",
+      };
+    }
+
+    const updatedUser = {
+      ...currentUser,
+      password: newPassword,
+    };
+
+    const users = getUsers();
+
+    const updatedUsers = users.map((user) =>
+      user.id === currentUser.id ? updatedUser : user
+    );
+
+    saveUsers(updatedUsers);
+    setCurrentUser(updatedUser);
+
+    return {
+      success: true,
+      message: "Password updated successfully.",
+    };
+  };
+
+  const logout = () => {
+    setCurrentUser(null);
+  };
+
+  return (
+    <AuthContext.Provider
+      value={{
+        currentUser,
+        signup,
+        login,
+        updateProfile,
+        changePassword,
+        logout,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export function useAuth() {
+  return useContext(AuthContext);
+}
