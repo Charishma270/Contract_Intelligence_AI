@@ -1,28 +1,124 @@
+// function RecentActivity() {
+//   const activities = [
+//     "Contract uploaded successfully",
+//     "Termination clause analyzed",
+//     "Chatbot queried for confidentiality",
+//     "Risk scoring completed",
+//   ];
+
+//   return (
+//     <div className="bg-white rounded-xl shadow-md p-6 mt-8">
+//       <h2 className="text-2xl font-bold mb-5">
+//         Recent Activity
+//       </h2>
+
+//       <div className="space-y-4">
+//         {activities.map((activity, index) => (
+//           <div
+//             key={index}
+//             className="border-b pb-3 text-gray-700"
+//           >
+//             • {activity}
+//           </div>
+//         ))}
+//       </div>
+//     </div>
+//   );
+// }
+
+// export default RecentActivity;
+
+
+
+
+
+
+//recently changed code
+
+import {
+  UploadCloud,
+  FileSearch,
+  MessageSquare,
+  ShieldCheck,
+} from "lucide-react";
+
 function RecentActivity() {
   const activities = [
-    "Contract uploaded successfully",
-    "Termination clause analyzed",
-    "Chatbot queried for confidentiality",
-    "Risk scoring completed",
+    {
+      title: "Contract uploaded successfully",
+      time: "2 hours ago",
+      icon: UploadCloud,
+      color: "bg-blue-100 text-blue-600",
+    },
+    {
+      title: "Termination clause analyzed",
+      time: "4 hours ago",
+      icon: FileSearch,
+      color: "bg-amber-100 text-amber-600",
+    },
+    {
+      title: "Chatbot queried for confidentiality",
+      time: "6 hours ago",
+      icon: MessageSquare,
+      color: "bg-purple-100 text-purple-600",
+    },
+    {
+      title: "Risk scoring completed",
+      time: "Today",
+      icon: ShieldCheck,
+      color: "bg-emerald-100 text-emerald-600",
+    },
   ];
 
   return (
-    <div className="bg-white rounded-xl shadow-md p-6 mt-8">
-      <h2 className="text-2xl font-bold mb-5">
-        Recent Activity
-      </h2>
+    <section className="rounded-3xl bg-white p-7 shadow-sm border border-slate-100">
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-slate-900">
+            Recent Activity
+          </h2>
+          <p className="text-sm text-slate-500">
+            Latest actions across your contract workspace
+          </p>
+        </div>
+
+        <span className="rounded-full bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-600">
+          Live
+        </span>
+      </div>
 
       <div className="space-y-4">
-        {activities.map((activity, index) => (
-          <div
-            key={index}
-            className="border-b pb-3 text-gray-700"
-          >
-            • {activity}
-          </div>
-        ))}
+        {activities.map((activity, index) => {
+          const Icon = activity.icon;
+
+          return (
+            <div
+              key={index}
+              className="flex items-center justify-between rounded-2xl border border-slate-100 bg-slate-50 p-4 transition hover:bg-white hover:shadow-md"
+            >
+              <div className="flex items-center gap-4">
+                <div
+                  className={`flex h-12 w-12 items-center justify-center rounded-2xl ${activity.color}`}
+                >
+                  <Icon size={20} />
+                </div>
+
+                <div>
+                  <h3 className="font-semibold text-slate-800">
+                    {activity.title}
+                  </h3>
+                  <p className="text-sm text-slate-500">
+                    {activity.time}
+                  </p>
+                </div>
+              </div>
+
+              <div className="h-2 w-2 rounded-full bg-blue-500"></div>
+            </div>
+          );
+        })}
       </div>
-    </div>
+    </section>
   );
 }
 

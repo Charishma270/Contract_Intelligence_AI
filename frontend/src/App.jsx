@@ -1,28 +1,146 @@
+//imppppppppppppppppppppppp
+
+// import { BrowserRouter, Routes, Route } from "react-router-dom";
+// import Dashboard from "./pages/Dashboard";
+// import Upload from "./pages/Upload"; 
+// import ClauseViewer from "./pages/ClauseViewer";
+// import Chatbot from "./pages/Chatbot";
+// import Analyze from "./pages/Analyze";
+
+// function App() {
+//   return (
+//     <BrowserRouter>
+//       <Routes>
+
+//         <Route path="/" element={<Dashboard />} />
+//         <Route path="/dashboard" element={<Dashboard />} />
+//         <Route path="/upload" element={<Upload />} />
+//         <Route path="/viewer" element={<ClauseViewer />} />
+//         <Route path="/chatbot" element={<Chatbot />} />
+//        <Route path="/analyze" element={<Analyze />} />
+        
+//       </Routes>
+//     </BrowserRouter>
+//   );
+// }
+
+// export default App;
+
+
+
+
+//recent basissss
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+
 import Dashboard from "./pages/Dashboard";
-import Upload from "./pages/Upload"; 
+import Upload from "./pages/Upload";
 import ClauseViewer from "./pages/ClauseViewer";
 import Chatbot from "./pages/Chatbot";
 import Analyze from "./pages/Analyze";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import ForgotPassword from "./pages/ForgotPassword";
+import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Authentication */}
+        <Route path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
 
-        <Route path="/" element={<Dashboard />} />
+        {/* Application */}
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/upload" element={<Upload />} />
         <Route path="/viewer" element={<ClauseViewer />} />
         <Route path="/chatbot" element={<Chatbot />} />
-       <Route path="/analyze" element={<Analyze />} />
-        
+        <Route path="/analyze" element={<Analyze />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/settings" element={<Settings />} />
       </Routes>
     </BrowserRouter>
   );
 }
 
 export default App;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // function App() {
 //   return (
