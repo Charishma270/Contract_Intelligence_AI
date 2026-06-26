@@ -64,6 +64,18 @@ from backend.routes.vectordb import (
     router as vectordb_router
 )
 
+from backend.routes.auth import (
+    router as auth_router
+)
+
+from backend.routes.profile import (
+    router as profile_router
+)
+
+from backend.routes.dashboard import (
+    router as dashboard_router
+)
+
 from backend.services.tracking import (
     init_db
 )
@@ -243,7 +255,7 @@ async def add_request_metadata(
 
     client_ip = request.client.host if request.client else "unknown"
     logger.info(
-        f"\u2192 {request.method} {request.url.path} "
+        f"-> {request.method} {request.url.path} "
         f"(client={client_ip})"
     )
 
@@ -267,7 +279,7 @@ async def add_request_metadata(
     ] = request_id
 
     logger.info(
-        f"\u2190 {request.method} {request.url.path} "
+        f"<- {request.method} {request.url.path} "
         f"status={response.status_code} time={elapsed:.4f}s"
     )
 
@@ -359,6 +371,36 @@ app.include_router(
     tags=["Frontend Integration"]
 )
 
+# Auth (signup, login, logout, me)
+app.include_router(
+
+    auth_router,
+
+    prefix="/api/auth",
+
+    tags=["Authentication"]
+)
+
+# Profile (get, update, change-password)
+app.include_router(
+
+    profile_router,
+
+    prefix="/api/profile",
+
+    tags=["Profile"]
+)
+
+# Dashboard stats
+app.include_router(
+
+    dashboard_router,
+
+    prefix="/api/dashboard",
+
+    tags=["Dashboard"]
+)
+
 
 # ---------------------------------------------------------
 # Health Endpoint
@@ -436,5 +478,23 @@ async def root():
 
             "vectordb_chunks":
                 "GET /api/vectordb/chunks",
+
+            "auth_signup":
+                "POST /api/auth/signup",
+
+            "auth_login":
+                "POST /api/auth/login",
+
+            "auth_me":
+                "GET /api/auth/me",
+
+            "profile":
+                "GET/PUT /api/profile",
+
+            "change_password":
+                "PUT /api/profile/change-password",
+
+            "dashboard_stats":
+                "GET /api/dashboard/stats",
         },
     }

@@ -60,6 +60,8 @@ class Settings:
         "CELERY_BROKER_URL", "CELERY_RESULT_BACKEND",
         "CELERY_WORKER_CONCURRENCY", "CELERY_TASK_TIME_LIMIT",
         "CELERY_TASK_SOFT_TIME_LIMIT", "CELERY_RESULT_EXPIRES",
+        "JWT_SECRET_KEY", "JWT_ALGORITHM",
+        "JWT_ACCESS_TOKEN_EXPIRE_MINUTES",
     )
 
     def __init__(self) -> None:
@@ -200,6 +202,20 @@ class Settings:
             "CELERY_RESULT_EXPIRES", "86400",
         ))
 
+        # --- JWT / Auth ---
+        self.JWT_SECRET_KEY: str = os.environ.get(
+            "JWT_SECRET_KEY",
+            "dev-secret-change-in-production",
+        )
+        self.JWT_ALGORITHM: str = os.environ.get(
+            "JWT_ALGORITHM", "HS256",
+        )
+        self.JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = int(
+            os.environ.get(
+                "JWT_ACCESS_TOKEN_EXPIRE_MINUTES", "1440",
+            )
+        )
+
     # -------------------------------------------------------------------
     # Derived properties
     # -------------------------------------------------------------------
@@ -239,6 +255,8 @@ class Settings:
             "log_level": self.LOG_LEVEL,
             "log_path": self.LOG_PATH,
             "celery_broker": self.CELERY_BROKER_URL,
+            "jwt_algorithm": self.JWT_ALGORITHM,
+            "jwt_expire_minutes": self.JWT_ACCESS_TOKEN_EXPIRE_MINUTES,
         }
 
     def __repr__(self) -> str:
