@@ -462,8 +462,8 @@ const [message, setMessage] = useState("");
               </button>
 
               <button
-  onClick={() => {
-    const result = updateProfile(editData);
+  onClick={ async () => {
+    const result = await updateProfile(editData);
     setMessage(result.message);
 
     if (result.success) {
@@ -543,8 +543,8 @@ const [message, setMessage] = useState("");
               </button>
 
               <button
-  onClick={() => {
-    const result = changePassword(passwordData);
+  onClick={ async () => {
+    const result = await changePassword(passwordData);
     setMessage(result.message);
 
     if (result.success) {

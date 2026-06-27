@@ -308,6 +308,8 @@
 
 // changes 
 
+
+import { useNavigate } from "react-router-dom";
 import Layout from "../components/layout/Layout";
 import { useEffect, useState } from "react";
 import { getContracts } from "../services/api";
@@ -331,6 +333,7 @@ function ClauseViewer() {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchContracts();
@@ -589,14 +592,20 @@ function ClauseViewer() {
                   )}
 
                   <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                    <button className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white transition hover:bg-blue-700">
-                      <Eye size={18} />
-                      View Clauses
-                    </button>
+                   <button
+  onClick={() => navigate("/analyze")}
+  className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white transition hover:bg-blue-700"
+>
+  <Eye size={18} />
+  View Clauses
+</button>
 
-                    <button className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-slate-100 px-5 py-3 font-semibold text-slate-700 transition hover:bg-slate-200">
-                      Analyze Contract
-                    </button>
+<button
+  onClick={() => navigate("/analyze")}
+  className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-slate-100 px-5 py-3 font-semibold text-slate-700 transition hover:bg-slate-200"
+>
+  Analyze Contract
+</button>
                   </div>
                 </div>
               ))}
