@@ -404,6 +404,11 @@ export const forgotPasswordApi = async (email) => {
   return response.data;
 };
 
+export const resetPasswordApi = async (resetData) => {
+  const response = await API.post("/api/auth/reset-password", resetData);
+  return response.data;
+};
+
 export default API;
 
 
