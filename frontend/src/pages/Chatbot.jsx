@@ -1304,19 +1304,22 @@ function Chatbot() {
       };
 
       setMessages((prev) => [...prev, botMessage]);
-    } catch (error) {
-      console.log("Chat error:", error);
+   } catch (error) {
+  console.log("Chat error:", error);
 
-      setMessages((prev) => [
-        ...prev,
-        {
-          sender: "bot",
-          text: "Backend unavailable. Please try again later.",
-          time: getTime(),
-          sources: [],
-        },
-      ]);
-    } finally {
+  setMessages((prev) => [
+    ...prev,
+    {
+      sender: "bot",
+      text:
+        error.response?.data?.detail ||
+        error.response?.data?.message ||
+        "Backend unavailable. Please try again later.",
+      time: getTime(),
+      sources: [],
+    },
+  ]);
+} finally {
       setLoading(false);
     }
   };

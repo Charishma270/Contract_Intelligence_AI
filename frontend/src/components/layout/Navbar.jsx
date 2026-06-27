@@ -987,7 +987,6 @@
 
 
 
-
 import { useEffect, useRef, useState } from "react";
 import {
   Bell,
@@ -999,17 +998,16 @@ import {
   LogOut,
   ChevronDown,
   FileText,
-  ShieldAlert,
-  MessageSquare,
-  CheckCircle,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../../context/ThemeContext";
 import { useAuth } from "../../context/AuthContext";
+import { getContracts } from "../../services/api";
 
 function Navbar() {
   const [openProfile, setOpenProfile] = useState(false);
   const [openNotifications, setOpenNotifications] = useState(false);
+  const [notifications, setNotifications] = useState([]);
 
   const profileRef = useRef(null);
   const notificationRef = useRef(null);
@@ -1022,38 +1020,32 @@ function Navbar() {
   const displayRole = currentUser?.role || "User";
   const avatarLetter = displayName.charAt(0).toUpperCase();
 
-  const notifications = [
-    {
-      title: "Contract uploaded successfully",
-      time: "2 hours ago",
-      icon: FileText,
-      color:
-        "bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-300",
-    },
-    {
-      title: "High risk clause detected",
-      time: "4 hours ago",
-      icon: ShieldAlert,
-      color:
-        "bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-300",
-    },
-    {
-      title: "Chatbot answered your query",
-      time: "6 hours ago",
-      icon: MessageSquare,
-      color:
-        "bg-purple-100 text-purple-600 dark:bg-purple-900/40 dark:text-purple-300",
-    },
-    {
-      title: "Risk analysis completed",
-      time: "Today",
-      icon: CheckCircle,
-      color:
-        "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-300",
-    },
-  ];
-
   useEffect(() => {
+    const loadNotifications = async () => {
+      try {
+        const data = await getContracts();
+
+        const contracts = Array.isArray(data)
+          ? data
+          : data?.contracts || [];
+
+        const latest = contracts.slice(0, 5).map((contract) => ({
+          title: `${contract.filename || "Contract"} uploaded`,
+          time: contract.upload_time
+            ? new Date(contract.upload_time).toLocaleString()
+            : "Recently",
+          icon: FileText,
+          color:
+            "bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-300",
+        }));
+
+        setNotifications(latest);
+      } catch (err) {
+        console.log("Notification fetch error:", err);
+        setNotifications([]);
+      }
+    };
+
     const handleClickOutside = (e) => {
       if (
         profileRef.current &&
@@ -1070,6 +1062,8 @@ function Navbar() {
       }
     };
 
+    loadNotifications();
+
     document.addEventListener("mousedown", handleClickOutside);
 
     return () => {
@@ -1081,6 +1075,11 @@ function Navbar() {
     logout();
     setOpenProfile(false);
     navigate("/login");
+  };
+
+  const handleViewNotifications = () => {
+    setOpenNotifications(false);
+    navigate("/viewer");
   };
 
   return (
@@ -1104,21 +1103,32 @@ function Navbar() {
 
           <input
             type="text"
-            placeholder="Search..."
+            placeholder="Search contracts..."
+            onChange={(e) => {
+              window.dispatchEvent(
+                new CustomEvent("dashboard-search", {
+                  detail: e.target.value,
+                })
+              );
+            }}
             className="pl-11 pr-4 py-2 w-72 rounded-xl border border-slate-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
         <div className="relative" ref={notificationRef}>
           <button
-            onClick={() => setOpenNotifications(!openNotifications)}
+            onClick={() =>
+              setOpenNotifications(!openNotifications)
+            }
             className="relative w-11 h-11 rounded-xl bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white transition flex items-center justify-center"
           >
             <Bell size={20} />
 
-            <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[11px] font-bold text-white">
-              4
-            </span>
+            {notifications.length > 0 && (
+              <span className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[11px] font-bold text-white">
+                {notifications.length}
+              </span>
+            )}
           </button>
 
           {openNotifications && (
@@ -1130,47 +1140,57 @@ function Navbar() {
                   </h3>
 
                   <p className="text-sm text-slate-500 dark:text-slate-400">
-                    Latest project updates
+                    Latest contract updates
                   </p>
                 </div>
 
                 <span className="rounded-full bg-blue-50 dark:bg-blue-900/40 px-3 py-1 text-xs font-semibold text-blue-600 dark:text-blue-300">
-                  4 New
+                  {notifications.length} New
                 </span>
               </div>
 
               <div className="space-y-3">
-                {notifications.map((item, index) => {
-                  const Icon = item.icon;
+                {notifications.length === 0 ? (
+                  <div className="rounded-xl bg-slate-50 dark:bg-slate-800 p-5 text-center text-slate-500 dark:text-slate-400">
+                    No notifications yet.
+                  </div>
+                ) : (
+                  notifications.map((item, index) => {
+                    const Icon = item.icon;
 
-                  return (
-                    <div
-                      key={index}
-                      className="flex items-start gap-3 rounded-xl p-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
-                    >
-                      <div
-                        className={`flex h-10 w-10 items-center justify-center rounded-xl ${item.color}`}
+                    return (
+                      <button
+                        key={index}
+                        onClick={handleViewNotifications}
+                        className="w-full flex items-start gap-3 rounded-xl p-3 text-left hover:bg-slate-50 dark:hover:bg-slate-800 transition"
                       >
-                        <Icon size={18} />
-                      </div>
+                        <div
+                          className={`flex h-10 w-10 items-center justify-center rounded-xl ${item.color}`}
+                        >
+                          <Icon size={18} />
+                        </div>
 
-                      <div className="flex-1">
-                        <h4 className="font-semibold text-slate-800 dark:text-white">
-                          {item.title}
-                        </h4>
+                        <div className="flex-1">
+                          <h4 className="font-semibold text-slate-800 dark:text-white">
+                            {item.title}
+                          </h4>
 
-                        <p className="text-sm text-slate-500 dark:text-slate-400">
-                          {item.time}
-                        </p>
-                      </div>
+                          <p className="text-sm text-slate-500 dark:text-slate-400">
+                            {item.time}
+                          </p>
+                        </div>
 
-                      <div className="mt-2 h-2 w-2 rounded-full bg-blue-500"></div>
-                    </div>
-                  );
-                })}
+                        <div className="mt-2 h-2 w-2 rounded-full bg-blue-500"></div>
+                      </button>
+                    );
+                  })
+                )}
               </div>
 
-              <button className="mt-4 w-full rounded-xl bg-blue-600 py-3 font-semibold text-white hover:bg-blue-700 transition">
+              <button
+                onClick={handleViewNotifications}
+                className="mt-4 w-full rounded-xl bg-blue-600 py-3 font-semibold text-white hover:bg-blue-700 transition"
+              >
                 View All Notifications
               </button>
             </div>
