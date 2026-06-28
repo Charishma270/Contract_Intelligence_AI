@@ -82,7 +82,12 @@ rank-bm25==0.2.2
 celery[redis]==5.5.3
 redis==5.2.1
 python-multipart==0.0.20
-
+PyJWT==2.13.0
+email-validator==2.3.0
+passlib[bcrypt]==1.7.4
+bcrypt==4.3.0
+pyotp==2.9.0
+qrcode[pil]==8.2
 # Docker CPU-only PyTorch
 --extra-index-url https://download.pytorch.org/whl/cpu
 
