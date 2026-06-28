@@ -1,158 +1,194 @@
 # ⚖️ Contract Intelligence AI
 
-An AI-powered legal contract analysis platform designed to automate contract understanding, semantic retrieval, clause detection, and explainable risk analysis for legal and compliance teams.
-
-This system combines OCR, NLP, Transformer-based clause classification, semantic vector search, Retrieval-Augmented Generation (RAG), and conversational AI into a unified enterprise-grade workflow.
+<p align="center">
+AI-Powered Legal Contract Analysis, Semantic Retrieval, Risk Assessment & Conversational Intelligence
+</p>
 
 ---
 
-# 🚀 Core Features
+# 📌 Overview
+
+**Contract Intelligence AI** is an enterprise-inspired AI platform developed to simplify legal contract review by combining modern Natural Language Processing (NLP), Retrieval-Augmented Generation (RAG), semantic search, explainable AI, and intelligent document processing.
+
+The platform enables users to upload legal contracts, automatically extract and preprocess text, classify legal clauses, perform explainable risk analysis, retrieve relevant contractual information using hybrid search, and interact with contracts through a conversational AI assistant.
+
+Designed with a modular architecture, the project integrates OCR, transformer-based models, vector databases, backend APIs, authentication, and a responsive web interface into a single intelligent contract analysis system.
+
+---
+
+# 🚀 Key Features
 
 ## 📄 Intelligent Contract Processing
 
-- Upload legal contracts in PDF format
-- OCR-based text extraction from scanned documents
-- Automatic preprocessing and chunking of legal text
+* Upload legal contracts in PDF format
+* OCR support for scanned contracts
+* Automatic text extraction
+* Document preprocessing and normalization
+* Intelligent legal text chunking
 
 ---
 
-## 🧠 NLP & Contract Understanding
+## 🧠 Legal Clause Classification
 
-- Named Entity Recognition (NER)
-- Legal clause classification using Transformer models
+Transformer-based legal clause identification using Legal NLP models.
 
-### Supported Clause Types
+Supported clause categories include:
 
-- Termination clauses
-- Liability clauses
-- Confidentiality clauses
-- Auto-renewal clauses
-- Payment obligations
-- Jurisdiction details
+* Confidentiality
+* Termination
+* Liability
+* Payment
+* Jurisdiction
+* Indemnification
+* Auto-Renewal
+* Force Majeure
+* Governing Law
+* Intellectual Property
+* Warranty
+* Dispute Resolution
 
 ---
 
 ## ⚠️ Explainable Risk Analysis
 
-- Rule-based legal risk scoring
-- Detection of potentially dangerous clauses
-- Business logic-driven contract evaluation
-- Structured JSON-based analysis output
+The platform evaluates contracts using predefined legal business rules and AI-assisted analysis.
+
+Features include:
+
+* Risk scoring
+* Risk severity classification
+* Clause-wise explanations
+* Missing clause detection
+* High-risk obligation identification
+* Explainable JSON output
 
 ---
 
-## 🔍 Semantic Search & Retrieval
+## 🔍 Hybrid Semantic Retrieval
 
-- Embedding-based semantic search
-- Context-aware retrieval using vector similarity
-- Meaning-based contract exploration
-- Retrieval-Augmented Generation (RAG)
+Hybrid retrieval combines dense and sparse search techniques for improved legal document retrieval.
 
----
+Implemented using:
 
-## 🤖 Conversational Contract AI
-
-- Ask natural language questions about uploaded contracts
-- Grounded responses using retrieved contract context
-- LLM-powered legal assistance workflow
-
----
-
-## 🌐 Backend & Deployment
-
-- REST API architecture using FastAPI
-- Docker-ready deployment structure
-- AWS-compatible infrastructure
+* FAISS Vector Search
+* BM25 Ranking
+* Sentence Transformers
+* Metadata-aware Retrieval
+* Query Expansion
+* Hybrid Score Fusion
+* Retrieval Re-ranking
 
 ---
 
-# 🧠 System Workflow
+## 🤖 Conversational AI
 
-## Step 1 — Contract Upload
+Ask natural language questions about uploaded contracts.
 
-The user uploads a legal contract through the frontend interface.
+Examples:
 
-↓
+* What are the termination conditions?
+* Is there unlimited liability?
+* Who are the contracting parties?
+* What are the payment obligations?
+* Does this contract auto-renew?
 
-## Step 2 — OCR Processing
+Responses are generated using Retrieval-Augmented Generation (RAG) grounded in retrieved contract content.
 
-OCR extracts readable text from scanned PDFs and image-based contracts.
+---
 
-↓
+## 🔐 Authentication & Security
 
-## Step 3 — Text Preprocessing
+Secure user authentication system including:
 
-The extracted text is:
+* User Registration
+* Login & Logout
+* JWT Authentication
+* Time-based One-Time Password (TOTP) Two-Factor Authentication
+* Password Reset Workflow
+* Protected API Endpoints
+* Secure Password Hashing
 
-- cleaned
-- normalized
-- segmented into semantic chunks
+---
 
-↓
+## 📊 Analytics & Explainability
 
-## Step 4 — Named Entity Recognition (NER)
+* Clause classification confidence
+* Retrieval analytics
+* Explainable AI outputs
+* Structured JSON responses
+* Risk summaries
 
-NER models identify and extract:
+---
 
-- Organizations
-- Contract parties
-- Dates
-- Monetary values
-- Jurisdictions
-- Legal references
+## 🌐 REST API
 
-↓
+Backend APIs provide:
 
-## Step 5 — Clause Classification
+* Authentication
+* Contract Upload
+* OCR Processing
+* Clause Analysis
+* Risk Assessment
+* Semantic Retrieval
+* Chat Assistant
+* User Profile Management
 
-Transformer-based models classify legal clauses into predefined categories.
+---
 
-### Example Clause Categories
+# 🏗️ System Workflow
 
-- Termination
-- Liability
-- Confidentiality
-- Auto-renewal
-- Indemnification
+```
+User Uploads Contract
+          │
+          ▼
+OCR Text Extraction
+          │
+          ▼
+Text Cleaning & Preprocessing
+          │
+          ▼
+Legal Text Chunking
+          │
+          ▼
+Named Entity Recognition
+          │
+          ▼
+Legal Clause Classification
+          │
+          ▼
+Risk Analysis Engine
+          │
+          ▼
+Embedding Generation
+          │
+          ▼
+FAISS + BM25 Hybrid Retrieval
+          │
+          ▼
+Conversational AI (RAG)
+          │
+          ▼
+Explainable Results
+```
 
-↓
+---
 
-## Step 6 — Risk Analysis Engine
+# 🧠 AI Pipeline
 
-Business rules and heuristics evaluate contract risks.
+The platform follows a complete legal document intelligence pipeline:
 
-### Example Risks
-
-- unlimited liability
-- missing liability cap
-- auto-renewal risks
-- vague termination conditions
-
-↓
-
-## Step 7 — Embedding Generation
-
-Sentence embeddings are generated from contract chunks.
-
-These embeddings capture semantic meaning rather than exact keywords.
-
-↓
-
-## Step 8 — Vector Database Storage
-
-Embeddings are stored inside a vector database for semantic retrieval.
-
-↓
-
-## Step 9 — Conversational AI (RAG)
-
-Users ask questions about the contract.
-
-The system:
-
-1. retrieves relevant chunks using semantic similarity
-2. injects retrieved context into prompts
-3. generates grounded responses using an LLM
+1. Contract Upload
+2. OCR Text Extraction
+3. Text Preprocessing
+4. Legal Chunk Generation
+5. Named Entity Recognition
+6. Legal Clause Classification
+7. Explainable Risk Analysis
+8. Embedding Generation
+9. Hybrid Retrieval (FAISS + BM25)
+10. Retrieval Re-ranking
+11. Conversational Question Answering
+12. Explainable AI Response Generation
 
 ---
 
@@ -160,257 +196,281 @@ The system:
 
 ## Programming Language
 
-- Python
+* Python
 
 ---
 
-## Backend Framework
+## Backend
 
-- FastAPI
-- Uvicorn
-
----
-
-## OCR Pipeline
-
-- Tesseract OCR
-- pdf2image
-
----
-
-## NLP & Deep Learning
-
-- spaCy
-- Hugging Face Transformers
-- Legal-BERT
-- RoBERTa
-- Sentence Transformers
-- PyTorch
-
----
-
-## Semantic Retrieval / RAG
-
-- FAISS
-- LangChain
-
----
-
-## Conversational LLM
-
-- Llama 3
-- Mistral
+* FastAPI
+* Uvicorn
+* Pydantic
+* SQLAlchemy
 
 ---
 
 ## Frontend
 
-- React
+* React
+* Vite
+* JavaScript
+* HTML5
+* CSS3
 
 ---
 
-## Deployment & Infrastructure
+## Authentication
 
-- Docker
-- AWS EC2
+* JWT Authentication
+* Passlib
+* PyJWT
+* TOTP Two-Factor Authentication
+
+---
+
+## OCR
+
+* Tesseract OCR
+* pdf2image
+* pdfplumber
+
+---
+
+## Machine Learning & NLP
+
+* Hugging Face Transformers
+* Sentence Transformers
+* spaCy
+* Legal-BERT
+* PyTorch
+* Scikit-learn
+
+---
+
+## Retrieval-Augmented Generation
+
+* FAISS
+* BM25
+* LangChain
+
+---
+
+## Data Processing
+
+* Pandas
+* NumPy
+* SciPy
+
+---
+
+## Background Processing
+
+* Celery
+* Redis
+
+---
+
+## Deployment
+
+* Docker
+* Docker Compose
+
+> AWS deployment is planned as the production deployment target after project submission.
 
 ---
 
 ## Version Control
 
-- Git
-- GitHub
+* Git
+* GitHub
 
 ---
 
-# 📂 Project Architecture
+# 📂 Project Structure
 
-```plaintext
+```text
 CONTRACT_INTELLIGENCE_AI/
 │
 ├── backend/
-│   ├── api/
+│   ├── models/
 │   ├── routes/
 │   ├── schemas/
 │   ├── services/
-│   └── utils/
-│
-├── data/
-│   ├── embeddings/
-│   ├── processed/
-│   ├── raw/
-│   └── sample_contracts/
-│
-├── docs/
-│   ├── api_docs/
-│   ├── architecture/
-│   └── workflows/
+│   ├── utils/
+│   ├── middleware/
+│   └── database/
 │
 ├── frontend/
-│   ├── components/
-│   ├── public/
-│   └── src/
-│
-├── logs/
-│
-├── models/
-│   ├── clause_classifier/
-│   ├── embeddings/
-│   ├── llm/
-│   └── ner/
-│
-├── notebooks/
-│
-├── ocr/
-│   ├── extraction/
-│   ├── outputs/
-│   └── preprocessing/
 │
 ├── rag/
 │   ├── chunking/
-│   ├── prompts/
 │   ├── retrieval/
-│   └── vector_db/
+│   ├── prompts/
+│   ├── pipeline/
+│   └── vector_store/
 │
 ├── risk_engine/
-│   ├── analysis/
-│   ├── rules/
-│   └── scoring/
 │
-├── scripts/
-│
-├── tests/
-│   ├── backend/
-│   ├── models/
-│   └── rag/
+├── data/
 │
 ├── uploads/
 │
-├── .gitignore
-├── main.py
-├── README.md
-└── requirements.txt
+├── tests/
+│
+├── docs/
+│
+├── logs/
+│
+├── Dockerfile
+├── docker-compose.yml
+├── requirements.txt
+└── main.py
 ```
 
 ---
 
-# 👥 Team Responsibilities
+# 👥 Team Contributions
 
-| Team Member | Responsibility |
-|---|---|
-| Sruthi Lakshmi Mada | OCR, Data Pipeline & Document Processing |
-| Charishma Ganta     | Legal AI Engineer                        |
-| Tisha Soni          | AI Retrieval and LLM Engineer            |
-| Shah Rushabh        | Backend & System Integration Lead        |       
-| Mukt Patel          | Frontend, DevOps & QA Engineer           |
+| Team Member             | Role                               | Major Contributions                                                                                                                                    |
+| ----------------------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Sruthi Lakshmi Mada** | OCR & Document Processing Engineer | OCR pipeline, PDF preprocessing, document extraction, preprocessing workflow, data preparation                                                         |
+| **Charishma Ganta**     | Legal AI Engineer                  | Legal clause classification, transformer integration, risk analysis modules, Legal-BERT integration                                                    |
+| **Tisha Soni**          | AI Retrieval & LLM Engineer        | Hybrid Retrieval (FAISS + BM25), RAG pipeline, semantic search, retrieval analytics, metadata-aware indexing, reranking, conversational AI integration |
+| **Shah Rushabh**        | Backend & System Integration Lead  | FastAPI backend, REST APIs, JWT authentication, TOTP 2FA, backend integration, database management, testing                                            |
+| **Mukt Patel**          | Frontend, DevOps & QA Engineer     | React frontend, authentication UI, dashboard, notifications, Docker configuration, deployment setup, testing                                           |
 
 ---
 
 # ⚙️ Local Setup
 
-## 1. Clone Repository
+## Clone Repository
 
 ```bash
 git clone <repository-url>
 ```
 
----
-
-## 2. Navigate to Project Directory
+## Navigate to Project
 
 ```bash
-cd CONTRACT_INTELLIGENCE_AI
+cd Contract_Intelligence_AI
 ```
 
----
-
-## 3. Create Virtual Environment
+## Create Virtual Environment
 
 ```bash
 python -m venv contract_ai_env
 ```
 
----
+## Activate Environment
 
-## 4. Activate Virtual Environment
-
-### Windows
+Windows
 
 ```bash
 contract_ai_env\Scripts\activate
 ```
 
-### Linux / macOS
+Linux / macOS
 
 ```bash
 source contract_ai_env/bin/activate
 ```
 
----
-
-## 5. Install Dependencies
+## Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
----
-
-## 6. Run Backend Server
+## Run Backend
 
 ```bash
 uvicorn main:app --reload
 ```
 
----
+## Run Frontend
 
-# 📌 Current Development Status
-
-## ✅ Completed
-
-- Project architecture planning
-- Folder structure setup
-- Environment setup
-- Dependency management
-- Git & GitHub initialization
-- Workflow design
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
 ---
 
-## 🚧 In Progress
+# 🐳 Docker
 
-- OCR pipeline development
-- Text preprocessing pipeline
-- FastAPI backend initialization
+Build the application:
+
+```bash
+docker compose build
+```
+
+Run all services:
+
+```bash
+docker compose up -d
+```
+
+Stop services:
+
+```bash
+docker compose down
+```
 
 ---
 
-## ⏳ Planned
+# 🧪 Testing
 
-- NER integration
-- Clause classification model
-- Vector search implementation
-- RAG conversational pipeline
-- Frontend dashboard
-- Docker deployment
-- AWS deployment
+The project includes testing for:
+
+* Backend APIs
+* Authentication
+* Clause Classification
+* Retrieval Pipeline
+* Risk Analysis
+* Performance
+* End-to-End Workflow
+
+Run tests using:
+
+```bash
+pytest
+```
 
 ---
 
-# 🎯 Project Objective
+# 🎯 Project Objectives
 
-To build an enterprise-grade AI-powered contract intelligence system capable of:
+The primary objective of this project is to build an intelligent legal contract analysis platform capable of:
 
-- automated legal document understanding
-- semantic contract retrieval
-- explainable risk analysis
-- conversational contract exploration using modern NLP and LLM architectures
+* Understanding legal documents automatically
+* Identifying important legal clauses
+* Explaining contractual risks
+* Enabling semantic contract retrieval
+* Supporting conversational legal document exploration
+* Improving legal review efficiency using Artificial Intelligence
+
+---
+
+# 🚀 Future Enhancements
+
+* AWS Cloud Deployment
+* CI/CD Pipeline
+* Multi-language Contract Support
+* Contract Comparison Engine
+* Clause Recommendation System
+* User Collaboration Features
+* Advanced Legal Analytics Dashboard
+* Model Fine-Tuning on Custom Legal Datasets
+
+---
+
+# 📜 License
+
+This project has been developed for academic, educational, and research purposes.
 
 ---
 
 # ⚠️ Disclaimer
 
-This project is intended for educational and research purposes.
-
-Generated outputs should not be considered professional legal advice.
-setup done 
+This application is designed as an AI-assisted legal document analysis system for educational and research use. It is **not** a substitute for professional legal advice. Users should consult qualified legal professionals before making legal or contractual decisions based on the generated analysis.
