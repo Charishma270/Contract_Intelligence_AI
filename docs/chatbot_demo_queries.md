@@ -10,7 +10,7 @@
 
 ## Liability
 
-- What is the liability cap?
+- What is the liability cap?w
 - Are there uncapped liabilities?
 - What damages can be claimed?
 
